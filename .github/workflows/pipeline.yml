@@ -7,5 +7,13 @@ jobs:
   build:
     runs-on: ubuntu-22.04
     steps:
-      - name: Build
-        run: npm run build
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+      - name: Install dependencies
+        run: npm install
+      - name: Lint
+        run: npm run lint
