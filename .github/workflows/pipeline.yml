@@ -1,0 +1,13 @@
+name: CI pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Build
+        run: npm build
