@@ -2,8 +2,6 @@ name: CI pipeline
 
 on:
   push:
-    branches:
-      - main
 
 jobs:
   build:
