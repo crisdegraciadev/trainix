@@ -1,8 +1,5 @@
 name: CI pipeline
 
-on:
-  push:
-
 jobs:
   build:
     runs-on: ubuntu-22.04
@@ -15,14 +12,41 @@ jobs:
         with:
           node-version: '18'
 
+      - uses: pnpm/action-setup@v2
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: 7
+          run_install: false
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
       - name: Install dependencies
-        run: npm install --no-audit --no-fund --no-optional
+        run: pnpm install
+
+      - name: Install dependencies
+        run: pnpm install
 
       - name: Lint
-        run: npm run lint
+        run: pnpm lint
 
       - name: Build
-        run: npm run build
+        run: pnpm build
 
-      - name: Test
-        run: npm run test
+      - name: E2E tests
+        uses: cypress-io/github-action@v2
+        with:
+          command: pnpm test:e2e
+          start: pnpm start:dev
