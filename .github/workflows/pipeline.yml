@@ -48,6 +48,6 @@ jobs:
       - name: E2E tests
         uses: cypress-io/github-action@v2
         with:
-          install: false
+          # install: false
           command: pnpm test:e2e
           start: pnpm start:dev
