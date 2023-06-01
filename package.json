@@ -9,7 +9,7 @@
     "build": "tsc && vite build",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "test": "",
-    "test:e2e": "npx cypress run",
+    "test:e2e": "pnpm cypress run",
     "cypress:open": "cypress:open",
     "preview": "vite preview",
     "sync": "npx cap sync",
