@@ -1,3 +1,22 @@
+import {
+  IonContent,
+  IonHeader,
+  IonPage,
+  IonTitle,
+  IonToolbar,
+} from '@ionic/react'
+
 export function ExercisesPage() {
-  return <h1>Exercises</h1>
+  return (
+    <IonPage>
+      <IonHeader>
+        <IonToolbar>
+          <IonTitle>Exercises</IonTitle>
+        </IonToolbar>
+      </IonHeader>
+      <IonContent className="ion-padding">
+        <h1>Content</h1>
+      </IonContent>
+    </IonPage>
+  )
 }

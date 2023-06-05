@@ -1,3 +1,22 @@
+import {
+  IonContent,
+  IonHeader,
+  IonPage,
+  IonTitle,
+  IonToolbar,
+} from '@ionic/react'
+
 export function SettingsPage() {
-  return <h1>Settings</h1>
+  return (
+    <IonPage>
+      <IonHeader>
+        <IonToolbar>
+          <IonTitle>Settings</IonTitle>
+        </IonToolbar>
+      </IonHeader>
+      <IonContent className="ion-padding">
+        <h1>Content</h1>
+      </IonContent>
+    </IonPage>
+  )
 }
