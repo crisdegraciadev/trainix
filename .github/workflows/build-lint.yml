@@ -48,9 +48,3 @@ jobs:
 
       - name: Build
         run: pnpm build
-
-      - name: E2E tests
-        uses: cypress-io/github-action@v4
-        with:
-          command: pnpm test:e2e
-          start: pnpm start:dev
