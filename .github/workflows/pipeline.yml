@@ -1,12 +1,6 @@
 name: CI pipeline
 
-on:
-  [push]
-
-  #   branches: [main]
-  # pull_request:
-  #   branches: [main]
-  #   types: [opened, synchronize]
+on: [push]
 
 jobs:
   build:
