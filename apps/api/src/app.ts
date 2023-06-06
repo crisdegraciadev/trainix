@@ -1,20 +1,30 @@
-import express from 'express'
-import { Request, Response } from 'express'
+import express from 'express';
+import morgan from 'morgan';
+import helmet from 'helmet';
+import cors from 'cors';
 
-import path from 'path'
+import * as middlewares from './middlewares';
+import api from './api';
+import MessageResponse from './interfaces/MessageResponse';
 
-const app = express()
+require('dotenv').config();
 
-app.set('port', process.env.PORT ?? 3000)
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
+const app = express();
 
-app.use(
-  express.static(path.join(__dirname, '../public'), { maxAge: 31557600000 })
-)
+app.use(morgan('dev'));
+app.use(helmet());
+app.use(cors());
+app.use(express.json());
 
-app.get('/', (_req: Request, res: Response) => {
-  return res.send('Hello world')
-})
+app.get<{}, MessageResponse>('/', (req, res) => {
+  res.json({
+    message: '🦄🌈✨👋🌎🌍🌏✨🌈🦄',
+  });
+});
 
-export default app
+app.use('/api/v1', api);
+
+app.use(middlewares.notFound);
+app.use(middlewares.errorHandler);
+
+export default app;
