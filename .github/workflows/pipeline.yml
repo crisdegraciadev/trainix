@@ -48,11 +48,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Install Cypress
-        uses: cypress-io/github-action@v4
-        with:
-          runTests: false
-
       - name: Build
         run: pnpm run build
 
@@ -63,5 +58,5 @@ jobs:
         uses: cypress-io/github-action@v4
         with:
           project: apps/mobile
-          install: false
+          command: pnpm run test:e2e
           start: pnpm run dev
