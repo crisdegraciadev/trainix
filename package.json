@@ -4,7 +4,7 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
-    "test:e2e": "cd ./apps/mobile/ && pnpm run test:e2e"
+    "test:e2e": "cd ./apps/mobile/ && pnpm run test:e2e",
     "start:test": "cd ./apps/mobile/ && pnpm start:test",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
