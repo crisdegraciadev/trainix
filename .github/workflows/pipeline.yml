@@ -8,7 +8,8 @@ on:
   #   types: [opened, synchronize]
 
 jobs:
-  build & test:
+  build:
+    name: Build & Test
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v2
