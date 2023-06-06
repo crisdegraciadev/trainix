@@ -56,6 +56,5 @@ jobs:
       - name: E2E tests
         uses: cypress-io/github-action@v4
         with:
-          working-directory: apps/mobile
           command: pnpx run test:e2e
           start: pnpm run dev
