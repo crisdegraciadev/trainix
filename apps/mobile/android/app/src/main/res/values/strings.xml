@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">trainix</string>
+    <string name="title_activity_main">trainix</string>
+    <string name="package_name">com.trainix.app</string>
+    <string name="custom_url_scheme">com.trainix.app</string>
+</resources>
