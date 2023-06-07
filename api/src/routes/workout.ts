@@ -1,14 +1,8 @@
 import express from 'express';
 import { RouteInfo } from '../types';
-import {
-  createWorkout,
-  deleteWorkout,
-  findAllWorkouts,
-  findWorkoutById,
-  updateWorkout,
-} from '../controllers/workout-controller';
+import { createWorkout, deleteWorkout, findAllWorkouts, findWorkoutById, updateWorkout } from '../controllers';
 
-export const userRouter = express.Router();
+export const workoutRouter = express.Router();
 
 const routes: RouteInfo[] = [
   { path: '/:id', verb: 'get', handler: findWorkoutById },
@@ -19,5 +13,5 @@ const routes: RouteInfo[] = [
 ];
 
 routes.forEach(({ path, verb, handler }) => {
-  userRouter[verb](path, handler);
+  workoutRouter[verb](path, handler);
 });

@@ -8,8 +8,8 @@
     "dev": "nodemon src/index.ts",
     "build": "tsc",
     "lint": "eslint --fix src test",
-    "test": "jest",
-    "prisma:generate": "pnpx prisma generate"
+    "test": "cp .env.test .env && jest",
+    "prisma:update": "pnpx prisma generate && pnpx prisma db push"
   },
   "keywords": [],
   "author": "CJ R. <cj@null.computer> (https://w3cj.now.sh)",
