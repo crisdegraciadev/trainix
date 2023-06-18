@@ -38,6 +38,7 @@ export const createUser = async (req: Request, res: Response) => {
   } catch (error) {
     if (error instanceof InvalidUserDtoError) res.status(HttpStatus.BAD_REQUEST).send({ error });
     if (error instanceof DuplicateUserError) res.status(HttpStatus.CONFLICT).send({ error });
+    throw error;
   }
 };
 
