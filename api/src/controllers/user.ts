@@ -1,23 +1,27 @@
 import { Request, Response } from 'express';
-import { isValidUserDTO } from '../utils';
+import { HttpStatus } from '../constants';
+import { userCrud } from '../crud';
 import { DuplicateUserError, InvalidUserDtoError, UserNotFoundError } from '../errors';
-import { findUserById, findUsersByFields, saveUser } from '../crud';
+import { UserRequestParams } from '../types';
+import { isValidUserDTO } from '../utils';
 
-export const findUser = async (req: Request, res: Response) => {
+const { findById, findByFields, create, update, remove } = userCrud();
+
+export const findUser = async (req: Request<UserRequestParams>, res: Response) => {
   const { id: userId } = req.params;
 
   try {
-    const user = await findUserById(userId);
+    const user = await findById(userId);
 
-    res.status(200).send(user);
+    res.status(HttpStatus.OK).send(user);
   } catch (error) {
-    if (error instanceof UserNotFoundError) res.status(404).send({ error });
+    if (error instanceof UserNotFoundError) res.status(HttpStatus.NOT_FOUND).send({ error });
   }
 };
 
 export const findAllUsers = async (_req: Request, res: Response) => {
-  const users = await findUsersByFields();
-  res.status(200).send(users);
+  const users = await findByFields();
+  res.status(HttpStatus.OK).send(users);
 };
 
 export const createUser = async (req: Request, res: Response) => {
@@ -28,19 +32,35 @@ export const createUser = async (req: Request, res: Response) => {
       throw new InvalidUserDtoError();
     }
 
-    const user = await saveUser(body);
+    const user = await create(body);
 
-    res.status(201).send(user);
+    res.status(HttpStatus.CREATED).send(user);
   } catch (error) {
-    if (error instanceof InvalidUserDtoError) res.status(400).send({ error });
-    if (error instanceof DuplicateUserError) res.status(409).send({ error });
+    if (error instanceof InvalidUserDtoError) res.status(HttpStatus.BAD_REQUEST).send({ error });
+    if (error instanceof DuplicateUserError) res.status(HttpStatus.CONFLICT).send({ error });
   }
 };
 
-export const updateUser = (_req: Request, res: Response) => {
-  res.send('Unimplemented');
+export const updateUser = async (req: Request<UserRequestParams>, res: Response) => {
+  const { id: userId } = req.params;
+  const { body } = req;
+
+  try {
+    const user = await update(userId, body);
+    res.status(HttpStatus.OK).send(user);
+  } catch (error) {
+    if (error instanceof InvalidUserDtoError) res.status(HttpStatus.BAD_REQUEST).send({ error });
+    if (error instanceof UserNotFoundError) res.status(HttpStatus.NOT_FOUND).send({ error });
+  }
 };
 
-export const deleteUser = (_req: Request, res: Response) => {
-  res.send('Unimplemented');
+export const deleteUser = async (req: Request<UserRequestParams>, res: Response) => {
+  const { id: userId } = req.params;
+
+  try {
+    await remove(userId);
+    res.status(HttpStatus.NO_CONTENT).send();
+  } catch (error) {
+    if (error instanceof UserNotFoundError) res.status(HttpStatus.NOT_FOUND).send({ error });
+  }
 };

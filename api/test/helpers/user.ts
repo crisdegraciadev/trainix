@@ -12,6 +12,10 @@ export const isValidUserResponse = (body: unknown): body is UserResponse => {
   return !!id && !!username;
 };
 
+export const findUserById = async (id: string): Promise<User | null> => {
+  return prisma.user.findFirst({ where: { id } });
+};
+
 export const createUser = async (data: UserDto): Promise<User> => {
   return prisma.user.create({ data });
 };
