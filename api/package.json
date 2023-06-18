@@ -8,7 +8,7 @@
     "dev": "nodemon src/index.ts",
     "build": "tsc",
     "lint": "eslint --fix src test",
-    "test": "pnpm prisma:update && cp .env.test .env && jest",
+    "test": "cp .env.test .env && pnpm prisma:update && jest",
     "prisma:update": "pnpm prisma generate && pnpm prisma db push"
   },
   "keywords": [],
