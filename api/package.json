@@ -8,7 +8,8 @@
     "dev": "nodemon src/index.ts",
     "build": "tsc",
     "lint": "eslint --fix src test",
-    "test": "cp .env.test .env && jest",
+    "test": "cp .env.test .env && pnpm setup:test:db && jest",
+    "setup:test:db": "cd ./containers && docker compose up -d",
     "prisma:update": "pnpx prisma generate && pnpx prisma db push"
   },
   "keywords": [],
