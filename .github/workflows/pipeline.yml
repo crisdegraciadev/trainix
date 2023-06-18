@@ -40,17 +40,20 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm init 
 
       - name: Build
-        run: pnpm run build
+        run: pnpm build
 
       - name: Lint
-        run: pnpm run lint
+        run: pnpm lint
+
+      - name: API tests
+        run: pnpm run test:api
 
       - name: E2E tests
         uses: cypress-io/github-action@v4
         with:
           working-directory: apps/mobile
-          command: pnpm run test:e2e
+          command: pnpm run test:mobile
           start: pnpm run dev
