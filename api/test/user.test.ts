@@ -3,6 +3,7 @@ import request from 'supertest';
 import app from '../src/app';
 import { UserResponse, createUser, deleteAllUsers, findUserById, isValidUserResponse } from './helpers';
 import { isErrorResponse } from './helpers/error';
+import { HttpStatus } from '../src/constants';
 
 const BASE_PATH = '/users';
 
