@@ -43,6 +43,9 @@ jobs:
         uses: supercharge/mongodb-github-action@1.8.0
         with:
           mongodb-version: '6.0'
+          mongodb-username: admin
+          mongodb-password: pass123
+          mongodb-db: trainix-test
 
       - name: Install dependencies
         run: pnpm run setup
