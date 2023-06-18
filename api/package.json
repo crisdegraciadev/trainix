@@ -8,15 +8,11 @@
     "dev": "nodemon src/index.ts",
     "build": "tsc",
     "lint": "eslint --fix src test",
-    "test": "cp .env.test .env && jest",
+    "test": "pnpm prisma:update && cp .env.test .env && jest",
     "prisma:update": "pnpx prisma generate && pnpx prisma db push"
   },
   "keywords": [],
-  "author": "CJ R. <cj@null.computer> (https://w3cj.now.sh)",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/w3cj/express-api-starter.git"
-  },
+  "author": "Cristian",
   "license": "MIT",
   "dependencies": {
     "@prisma/client": "^4.15.0",
