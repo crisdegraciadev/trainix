@@ -40,13 +40,13 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies
-        run: pnpm init 
+        run: pnpm run setup
 
       - name: Build
-        run: pnpm build
+        run: pnpm run build
 
       - name: Lint
-        run: pnpm lint
+        run: pnpm run lint
 
       - name: API tests
         run: pnpm run test:api
