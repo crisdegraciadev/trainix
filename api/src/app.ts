@@ -3,7 +3,7 @@ import morgan from 'morgan';
 import helmet from 'helmet';
 import cors from 'cors';
 import { exerciseRouter, userRouter, workoutRouter } from './routes';
-import { RoutesConstants } from './constants/routes';
+import { RoutesConstants } from './constants';
 
 require('dotenv').config();
 

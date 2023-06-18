@@ -1,12 +1,6 @@
 import express from 'express';
 import { RouteInfo } from '../types';
-import {
-  createExercise,
-  deleteExercise,
-  findAllExercises,
-  findExerciseById,
-  updateExercise,
-} from '../controllers/exercise-controller';
+import { createExercise, deleteExercise, findAllExercises, findExerciseById, updateExercise } from '../controllers';
 
 export const exerciseRouter = express.Router();
 

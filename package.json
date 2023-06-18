@@ -1,10 +1,17 @@
 {
   "private": true,
   "scripts": {
-    "build": "turbo run build",
-    "dev": "turbo run dev",
-    "lint": "turbo run lint",
-    "test:e2e": "turbo run test:e2e",
+    "setup": "pnpm install && pnpm setup:api && pnpm setup:mobile",
+    "setup:api": "cd ./api && pnpm install",
+    "setup:mobile": "cd ./mobile && pnpm install",
+    "build": "pnpm build:api && pnpm build:mobile",
+    "build:api": "cd ./api && pnpm build",
+    "build:mobile": "cd ./mobile && pnpm build",
+    "lint": "pnpm lint:api && pnpm lint:mobile",
+    "lint:api": "cd ./api && pnpm lint",
+    "lint:mobile": "cd ./mobile && pnpm lint",
+    "test:api": "cd ./api && pnpm test",
+    "test:mobile": "cd ./mobile && pnpm run test:e2e",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {

@@ -39,8 +39,17 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
 
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.8.0
+        with:
+          mongodb-version: '6.0'
+          mongodb-replica-set: test-rs
+          mongodb-username: admin
+          mongodb-password: pass123
+          mongodb-db: trainix-test
+
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm run setup
 
       - name: Build
         run: pnpm run build
@@ -48,9 +57,12 @@ jobs:
       - name: Lint
         run: pnpm run lint
 
+      - name: API tests
+        run: pnpm run test:api
+
       - name: E2E tests
         uses: cypress-io/github-action@v4
         with:
           working-directory: apps/mobile
-          command: pnpm run test:e2e
+          command: pnpm run test:mobile
           start: pnpm run dev
