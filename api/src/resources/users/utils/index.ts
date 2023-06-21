@@ -1,1 +1,1 @@
-export * from './is-valid-user-dto';
+export * from './is-valid-dto';

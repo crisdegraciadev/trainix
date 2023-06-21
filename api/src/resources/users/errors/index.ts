@@ -1,3 +1,3 @@
-export * from './duplicate-user';
-export * from './invalid-user-dto';
-export * from './user-not-found';
+export * from './duplicate';
+export * from './invalid-dto';
+export * from './not-found';
