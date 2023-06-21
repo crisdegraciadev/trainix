@@ -1,6 +1,6 @@
 import { UserDto } from '../types';
 
-export const isValidUserDTO = (body: unknown): body is UserDto => {
+export const isValidUserDto = (body: unknown): body is UserDto => {
   const { username } = body as UserDto;
   return !!username;
 };

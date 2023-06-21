@@ -1,6 +1,6 @@
 import { User } from '@prisma/client';
 import prisma from '../../src/config/prisma';
-import { UserDto } from '../../src/types';
+import { UserDto } from '../../src/resources/users/types';
 
 export type UserResponse = {
   id: string;
