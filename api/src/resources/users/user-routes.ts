@@ -1,5 +1,7 @@
 import express from 'express';
-import { createUser, deleteUser, findAllUsers, findUser, updateUser } from '../controllers';
+import { userController } from './users-controller';
+
+const { findUser, findAllUsers, createUser, updateUser, deleteUser } = userController();
 
 export const userRouter = express.Router();
 
