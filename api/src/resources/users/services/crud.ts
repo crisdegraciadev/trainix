@@ -1,9 +1,9 @@
 import { User } from '@prisma/client';
 import { PrismaClientKnownRequestError, PrismaClientValidationError } from '@prisma/client/runtime/library';
-import { UserDto } from '../types/user-dto';
 import { DuplicateUserError, InvalidUserDtoError, UserNotFoundError } from '../errors';
 import prisma from '../../../config/prisma';
 import { Errors } from '../../../constants';
+import { UserDto } from '../types';
 
 export const userCrudService = () => {
   const findById = async (userId: string): Promise<User> => {

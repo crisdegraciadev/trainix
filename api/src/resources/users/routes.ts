@@ -1,5 +1,5 @@
 import express from 'express';
-import { userController } from './users-controller';
+import { userController } from './controller';
 
 const { findUser, findAllUsers, createUser, updateUser, deleteUser } = userController();
 
