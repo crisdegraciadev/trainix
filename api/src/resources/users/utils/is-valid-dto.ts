@@ -1,11 +1,11 @@
-import { UserDto } from '../types';
+import { CreateUserDto, UpdateUserDto } from '../types';
 
-export const isValidUserDto = (body: unknown): body is UserDto => {
-  const { username } = body as UserDto;
+export const isValidCreateUserDto = (body: unknown): body is CreateUserDto => {
+  const { username } = body as CreateUserDto;
   return !!username;
 };
 
-export const isValidUpdateUserDto = (body: unknown): body is Partial<UserDto> => {
-  const { username } = body as UserDto;
+export const isValidUpdateUserDto = (body: unknown): body is UpdateUserDto => {
+  const { username } = body as CreateUserDto;
   return !!username;
 };

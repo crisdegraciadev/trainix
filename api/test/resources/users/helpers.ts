@@ -1,6 +1,6 @@
 import { User } from '@prisma/client';
 import prisma from '../../../src/config/prisma';
-import { UserDto } from '../../../src/resources/users/types';
+import { CreateUserDto } from '../../../src/resources/users/types';
 
 export type UserResponse = {
   id: number;
@@ -16,7 +16,7 @@ export const findUserById = async (id: number): Promise<User | null> => {
   return prisma.user.findFirst({ where: { id } });
 };
 
-export const createUser = async (data: UserDto): Promise<User> => {
+export const createUser = async (data: CreateUserDto): Promise<User> => {
   return prisma.user.create({ data });
 };
 

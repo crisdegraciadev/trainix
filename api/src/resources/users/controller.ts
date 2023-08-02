@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 import { userCrudService } from './services';
-import { InvalidUserDtoError } from './errors';
+import { DuplicateUserError, InvalidUserDtoError, UserNotFoundError } from './errors';
 import { HttpStatus } from '../../constants';
-import { Effect, Exit, pipe } from 'effect';
+import { Cause, Effect, Exit, Option, pipe } from 'effect';
 import { User } from '@prisma/client';
-import { handleUserErrors, isValidUpdateUserDto, isValidUserDto } from './utils';
+import { isValidUpdateUserDto, isValidCreateUserDto } from './utils';
 
 export type UserRequestParams = {
   id: number;
@@ -21,7 +21,7 @@ export const userController = () => {
 
     Exit.match(findByIdResult, {
       onSuccess: (user: User) => res.status(HttpStatus.OK).send(user),
-      onFailure: (cause) => handleUserErrors(cause, res),
+      onFailure: (cause) => handleErrors(cause, res),
     });
   };
 
@@ -37,7 +37,7 @@ export const userController = () => {
   const createUser = async (req: Request, res: Response) => {
     const { body } = req;
 
-    const createUserEffect = Effect.if(isValidUserDto(body), {
+    const createUserEffect = Effect.if(isValidCreateUserDto(body), {
       onTrue: create(body),
       onFalse: Effect.fail(new InvalidUserDtoError()),
     });
@@ -46,7 +46,7 @@ export const userController = () => {
 
     Exit.match(createUserResult, {
       onSuccess: (user: User) => res.status(HttpStatus.CREATED).send(user),
-      onFailure: (cause) => handleUserErrors(cause, res),
+      onFailure: (cause) => handleErrors(cause, res),
     });
   };
 
@@ -65,7 +65,7 @@ export const userController = () => {
 
     Exit.match(updateUserResult, {
       onSuccess: (user: User) => res.status(HttpStatus.OK).send(user),
-      onFailure: (cause) => handleUserErrors(cause, res),
+      onFailure: (cause) => handleErrors(cause, res),
     });
   };
 
@@ -77,7 +77,18 @@ export const userController = () => {
 
     Exit.match(removeResult, {
       onSuccess: (user: User) => res.status(HttpStatus.OK).send(user),
-      onFailure: (cause) => handleUserErrors(cause, res),
+      onFailure: (cause) => handleErrors(cause, res),
+    });
+  };
+
+  const handleErrors = (cause: Cause.Cause<InvalidUserDtoError | DuplicateUserError>, res: Response) => {
+    Option.match(Cause.failureOption(cause), {
+      onSome: (error) => {
+        if (error instanceof InvalidUserDtoError) res.status(HttpStatus.BAD_REQUEST).send({ error });
+        if (error instanceof UserNotFoundError) res.status(HttpStatus.NOT_FOUND).send({ error });
+        if (error instanceof DuplicateUserError) res.status(HttpStatus.CONFLICT).send({ error });
+      },
+      onNone: () => res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({}),
     });
   };
 
