@@ -1,5 +1,5 @@
 export class InvalidWorkoutDtoError extends Error {
-  public type = 'WorkoutDtoError';
+  public type = InvalidWorkoutDtoError.name;
 
   constructor(message?: string) {
     super();

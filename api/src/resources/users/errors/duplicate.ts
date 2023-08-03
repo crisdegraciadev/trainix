@@ -1,5 +1,5 @@
 export class DuplicateUserError extends Error {
-  public type = 'DuplicateUserError';
+  public type = DuplicateUserError.name;
 
   constructor(message?: string) {
     super();

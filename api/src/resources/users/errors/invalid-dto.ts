@@ -1,5 +1,5 @@
 export class InvalidUserDtoError extends Error {
-  public type = 'UserDtoError';
+  public type = InvalidUserDtoError.name;
 
   constructor(message?: string) {
     super();

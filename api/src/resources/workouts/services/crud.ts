@@ -4,18 +4,14 @@ import { DuplicateWorkoutError, InvalidWorkoutDtoError, WorkoutNotFoundError } f
 import { PrismaClientKnownRequestError, PrismaClientValidationError } from '@prisma/client/runtime/library';
 import { WorkoutDto } from '../types';
 import { Errors } from '../../../constants';
+import { Effect } from 'effect';
 
 export const workoutCrudService = () => {
-  const findById = async (workoutId: number): Promise<Workout> => {
-    try {
-      return await prisma.workout.findUniqueOrThrow({
-        where: {
-          id: workoutId,
-        },
-      });
-    } catch (error) {
-      throw new WorkoutNotFoundError();
-    }
+  const findById = (workoutId: number): Effect.Effect<never, WorkoutNotFoundError, Workout> => {
+    return Effect.tryPromise({
+      try: () => prisma.workout.findUniqueOrThrow({ where: { id: workoutId } }),
+      catch: () => new WorkoutNotFoundError(),
+    });
   };
 
   const findByFields = async (): Promise<Workout[]> => {

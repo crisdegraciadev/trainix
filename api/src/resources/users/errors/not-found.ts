@@ -1,5 +1,5 @@
 export class UserNotFoundError extends Error {
-  public type = 'UserNotFoundError';
+  public type = UserNotFoundError.name;
 
   constructor(message?: string) {
     super();

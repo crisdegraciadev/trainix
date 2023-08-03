@@ -5,9 +5,12 @@ import { HttpStatus } from '../../constants';
 import { Cause, Effect, Exit, Option, pipe } from 'effect';
 import { User } from '@prisma/client';
 import { isValidUpdateUserDto, isValidCreateUserDto } from './utils';
+import { mapIdToNumber } from '../../utils';
+import { InvalidRequestIdError } from '../../errors/invalid-request-id';
+import { UpdateUserDto } from './types';
 
 export type UserRequestParams = {
-  id: number;
+  id: string;
 };
 
 export const userController = () => {
@@ -15,9 +18,14 @@ export const userController = () => {
 
   const findUser = async (req: Request<UserRequestParams>, res: Response) => {
     const { id } = req.params;
-    const userId = pipe(id, Number);
 
-    const findByIdResult = await Effect.runPromiseExit(findById(userId));
+    const findByIdEffect = pipe(
+      Effect.succeed(id),
+      Effect.flatMap((id) => mapIdToNumber(id)),
+      Effect.flatMap((id) => findById(id))
+    );
+
+    const findByIdResult = await Effect.runPromiseExit(findByIdEffect);
 
     Exit.match(findByIdResult, {
       onSuccess: (user: User) => res.status(HttpStatus.OK).send(user),
@@ -37,33 +45,34 @@ export const userController = () => {
   const createUser = async (req: Request, res: Response) => {
     const { body } = req;
 
-    const createUserEffect = Effect.if(isValidCreateUserDto(body), {
-      onTrue: create(body),
-      onFalse: Effect.fail(new InvalidUserDtoError()),
-    });
+    const createEffect = pipe(
+      Effect.succeed(body),
+      Effect.flatMap((body) => isValidUpdateUserDto(body)),
+      Effect.flatMap(() => create(body))
+    );
 
-    const createUserResult = await Effect.runPromiseExit(createUserEffect);
+    const createResult = await Effect.runPromiseExit(createEffect);
 
-    Exit.match(createUserResult, {
+    Exit.match(createResult, {
       onSuccess: (user: User) => res.status(HttpStatus.CREATED).send(user),
       onFailure: (cause) => handleFailureCauses(cause, res),
     });
   };
 
-  const updateUser = async (req: Request<UserRequestParams>, res: Response) => {
+  const updateUser = async (req: Request<UserRequestParams, unknown, UpdateUserDto>, res: Response) => {
     const { body } = req;
-
     const { id } = req.params;
-    const userId = pipe(id, Number);
 
-    const updateUserEffect = Effect.if(isValidUpdateUserDto(body), {
-      onTrue: update(userId, body),
-      onFalse: Effect.fail(new InvalidUserDtoError()),
-    });
+    const updateEffect = pipe(
+      Effect.succeed(body),
+      Effect.flatMap((body) => isValidUpdateUserDto(body)),
+      Effect.flatMap(() => mapIdToNumber(id)),
+      Effect.flatMap((userId) => update(userId, body))
+    );
 
-    const updateUserResult = await Effect.runPromiseExit(updateUserEffect);
+    const updateResult = await Effect.runPromiseExit(updateEffect);
 
-    Exit.match(updateUserResult, {
+    Exit.match(updateResult, {
       onSuccess: (user: User) => res.status(HttpStatus.OK).send(user),
       onFailure: (cause) => handleFailureCauses(cause, res),
     });
@@ -71,9 +80,14 @@ export const userController = () => {
 
   const deleteUser = async (req: Request<UserRequestParams>, res: Response) => {
     const { id } = req.params;
-    const userId = pipe(id, Number);
 
-    const removeResult = await Effect.runPromiseExit(remove(userId));
+    const removeEffect = pipe(
+      Effect.succeed(id),
+      Effect.flatMap((id) => mapIdToNumber(id)),
+      Effect.flatMap((id) => remove(id))
+    );
+
+    const removeResult = await Effect.runPromiseExit(removeEffect);
 
     Exit.match(removeResult, {
       onSuccess: (user: User) => res.status(HttpStatus.OK).send(user),
@@ -81,11 +95,12 @@ export const userController = () => {
     });
   };
 
-  const handleFailureCauses = (cause: Cause.Cause<InvalidUserDtoError | DuplicateUserError>, res: Response) => {
+  const handleFailureCauses = <T>(cause: Cause.Cause<T>, res: Response) => {
     const failureOption = Cause.failureOption(cause);
 
     Option.match(failureOption, {
       onSome: (error) => {
+        if (error instanceof InvalidRequestIdError) res.status(HttpStatus.BAD_REQUEST).send({ error });
         if (error instanceof InvalidUserDtoError) res.status(HttpStatus.BAD_REQUEST).send({ error });
         if (error instanceof UserNotFoundError) res.status(HttpStatus.NOT_FOUND).send({ error });
         if (error instanceof DuplicateUserError) res.status(HttpStatus.CONFLICT).send({ error });

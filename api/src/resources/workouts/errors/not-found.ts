@@ -1,5 +1,5 @@
 export class WorkoutNotFoundError extends Error {
-  public type = 'WorkoutNotFoundError';
+  public type = WorkoutNotFoundError.name;
 
   constructor(message?: string) {
     super();

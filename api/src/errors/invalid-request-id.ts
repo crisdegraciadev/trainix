@@ -1,5 +1,5 @@
-export class DuplicateWorkoutError extends Error {
-  public type = DuplicateWorkoutError.name;
+export class InvalidRequestIdError extends Error {
+  public type = InvalidRequestIdError.name;
 
   constructor(message?: string) {
     super();
