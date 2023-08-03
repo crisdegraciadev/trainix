@@ -21,7 +21,7 @@ export const userController = () => {
 
     Exit.match(findByIdResult, {
       onSuccess: (user: User) => res.status(HttpStatus.OK).send(user),
-      onFailure: (cause) => handleErrors(cause, res),
+      onFailure: (cause) => handleFailureCauses(cause, res),
     });
   };
 
@@ -46,7 +46,7 @@ export const userController = () => {
 
     Exit.match(createUserResult, {
       onSuccess: (user: User) => res.status(HttpStatus.CREATED).send(user),
-      onFailure: (cause) => handleErrors(cause, res),
+      onFailure: (cause) => handleFailureCauses(cause, res),
     });
   };
 
@@ -65,7 +65,7 @@ export const userController = () => {
 
     Exit.match(updateUserResult, {
       onSuccess: (user: User) => res.status(HttpStatus.OK).send(user),
-      onFailure: (cause) => handleErrors(cause, res),
+      onFailure: (cause) => handleFailureCauses(cause, res),
     });
   };
 
@@ -77,12 +77,14 @@ export const userController = () => {
 
     Exit.match(removeResult, {
       onSuccess: (user: User) => res.status(HttpStatus.OK).send(user),
-      onFailure: (cause) => handleErrors(cause, res),
+      onFailure: (cause) => handleFailureCauses(cause, res),
     });
   };
 
-  const handleErrors = (cause: Cause.Cause<InvalidUserDtoError | DuplicateUserError>, res: Response) => {
-    Option.match(Cause.failureOption(cause), {
+  const handleFailureCauses = (cause: Cause.Cause<InvalidUserDtoError | DuplicateUserError>, res: Response) => {
+    const failureOption = Cause.failureOption(cause);
+
+    Option.match(failureOption, {
       onSome: (error) => {
         if (error instanceof InvalidUserDtoError) res.status(HttpStatus.BAD_REQUEST).send({ error });
         if (error instanceof UserNotFoundError) res.status(HttpStatus.NOT_FOUND).send({ error });

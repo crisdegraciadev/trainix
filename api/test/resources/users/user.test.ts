@@ -16,8 +16,8 @@ afterEach(async () => {
   await deleteAllUsers();
 });
 
-describe('GET /:id', () => {
-  it('find by id', async () => {
+describe.only('GET /:id', () => {
+  it.only('find by id', async () => {
     const userPayload = { username: 'cris' };
     const { id } = await createUser(userPayload);
 

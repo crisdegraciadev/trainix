@@ -1,13 +1,16 @@
 import { deleteAllUsers } from '../users/helpers';
+import { deleteAllWorkouts } from './helpers';
 
 // const BASE_PATH = '/worksuts';
 
 beforeAll(async () => {
   await deleteAllUsers();
+  await deleteAllWorkouts();
 });
 
 afterEach(async () => {
   await deleteAllUsers();
+  await deleteAllWorkouts();
 });
 
 describe('GET /:id', () => {
