@@ -1,12 +1,13 @@
 import { Effect } from 'effect';
-import { CreateUserDto, InvalidUserDtoError, UpdateUserDto } from '../types';
+import { CreateUserDto, UpdateUserDto } from '../types';
+import { InvalidDtoError } from '../../../types/errors/invalid-dto';
 
-export const isValidCreateUserDto = (body: unknown): Effect.Effect<never, InvalidUserDtoError, true> => {
+export const isValidCreateUserDto = (body: unknown): Effect.Effect<never, InvalidDtoError, true> => {
   const { username } = body as CreateUserDto;
-  return !!username ? Effect.succeed(true) : Effect.fail(new InvalidUserDtoError());
+  return !!username ? Effect.succeed(true) : Effect.fail(new InvalidDtoError({}));
 };
 
-export const isValidUpdateUserDto = (body: unknown): Effect.Effect<never, InvalidUserDtoError, true> => {
+export const isValidUpdateUserDto = (body: unknown): Effect.Effect<never, InvalidDtoError, true> => {
   const { username } = body as UpdateUserDto;
-  return !!username ? Effect.succeed(true) : Effect.fail(new InvalidUserDtoError());
+  return !!username ? Effect.succeed(true) : Effect.fail(new InvalidDtoError({}));
 };

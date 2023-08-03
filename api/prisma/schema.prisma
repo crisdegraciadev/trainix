@@ -20,7 +20,7 @@ model Exercise {
 
 model Workout {
   id          Int        @id @default(autoincrement()) 
-  name        String
+  name        String     @unique
   user        User       @relation(fields: [userId], references: [id])
   userId      Int 
   exercises   ExercisesOnWorkouts[] 

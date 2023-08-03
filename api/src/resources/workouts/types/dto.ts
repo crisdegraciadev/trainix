@@ -1,4 +1,4 @@
-export type WorkoutDto = {
+export type CreateWorkoutDto = {
   name: string;
   userId: number;
 };

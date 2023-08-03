@@ -5,12 +5,8 @@ import { Effect, Exit, pipe } from 'effect';
 import { User } from '@prisma/client';
 import { isValidUpdateUserDto } from './utils';
 import { mapIdToNumber } from '../../utils';
-import { UpdateUserDto } from './types';
+import { UpdateUserDto, UserRequestParams } from './types';
 import { handleFailureCauses } from '../../errors/failure';
-
-export type UserRequestParams = {
-  id: string;
-};
 
 export const userController = () => {
   const { findById, findByFields, create, update, remove } = userCrudService();

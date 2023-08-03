@@ -1,54 +1,34 @@
 import { Workout } from '@prisma/client';
 import prisma from '../../../config/prisma';
-import { DuplicateWorkoutError, InvalidWorkoutDtoError, WorkoutNotFoundError } from '../errors';
-import { PrismaClientKnownRequestError, PrismaClientValidationError } from '@prisma/client/runtime/library';
-import { WorkoutDto } from '../types';
-import { Errors } from '../../../constants';
+import { CreateWorkoutDto, CreateWorkoutErrors, FindWorkoutByIdErrors, UpdateWorkoutErrors } from '../types';
 import { Effect } from 'effect';
+import { NotFoundError } from '../../../types';
+import { handlePrismaErrors } from '../../../errors';
 
 export const workoutCrudService = () => {
-  const findById = (workoutId: number): Effect.Effect<never, WorkoutNotFoundError, Workout> => {
+  const findById = (workoutId: number): Effect.Effect<never, FindWorkoutByIdErrors, Workout> => {
     return Effect.tryPromise({
       try: () => prisma.workout.findUniqueOrThrow({ where: { id: workoutId } }),
-      catch: () => new WorkoutNotFoundError(),
+      catch: (error) => handlePrismaErrors(error),
     });
   };
 
-  const findByFields = async (): Promise<Workout[]> => {
-    return prisma.workout.findMany();
+  const findByFields = (): Effect.Effect<never, never, Workout[]> => {
+    return Effect.promise(() => prisma.workout.findMany());
   };
 
-  const create = async (data: WorkoutDto): Promise<Workout> => {
-    try {
-      return await prisma.workout.create({ data });
-    } catch (error) {
-      if (error instanceof PrismaClientKnownRequestError) {
-        const { code } = error;
-
-        if (code === Errors.Prisma.Codes.P2002) throw new DuplicateWorkoutError();
-      }
-
-      throw error;
-    }
+  const create = (data: CreateWorkoutDto): Effect.Effect<never, CreateWorkoutErrors, Workout> => {
+    return Effect.tryPromise({
+      try: () => prisma.workout.create({ data }),
+      catch: (error) => handlePrismaErrors(error),
+    });
   };
 
-  const update = async (workoutId: number, data: WorkoutDto): Promise<Workout> => {
-    try {
-      return await prisma.workout.update({
-        where: { id: workoutId },
-        data,
-      });
-    } catch (error) {
-      if (error instanceof PrismaClientKnownRequestError) {
-        const { code } = error;
-
-        if (code === Errors.Prisma.Codes.P2025) throw new WorkoutNotFoundError();
-      }
-
-      if (error instanceof PrismaClientValidationError) throw new InvalidWorkoutDtoError();
-
-      throw error;
-    }
+  const update = (workoutId: number, data: CreateWorkoutDto): Effect.Effect<never, UpdateWorkoutErrors, Workout> => {
+    return Effect.tryPromise({
+      try: () => prisma.workout.update({ where: { id: workoutId }, data }),
+      catch: (error) => handlePrismaErrors(error),
+    });
   };
 
   const remove = async (workoutId: number) => {
@@ -57,7 +37,7 @@ export const workoutCrudService = () => {
         where: { id: workoutId },
       });
     } catch (error) {
-      throw new WorkoutNotFoundError();
+      throw new NotFoundError({});
     }
   };
 

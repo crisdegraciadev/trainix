@@ -1,0 +1,1 @@
+export const UNEXISTENT_ID = 987654321;

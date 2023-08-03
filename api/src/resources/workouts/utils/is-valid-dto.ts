@@ -1,6 +1,13 @@
-import { WorkoutDto } from '../types';
+import { Effect } from 'effect';
+import { CreateWorkoutDto } from '../types';
+import { InvalidDtoError } from '../../../types/errors/invalid-dto';
 
-export const isValidWorkoutDto = (body: unknown): body is WorkoutDto => {
-  const { name, userId } = body as WorkoutDto;
-  return !!name && !!userId;
+export const isValidCreateWorkoutDto = (body: unknown): Effect.Effect<never, InvalidDtoError, true> => {
+  const { name, userId } = body as CreateWorkoutDto;
+  return !!name && !!userId ? Effect.succeed(true) : Effect.fail(new InvalidDtoError({}));
+};
+
+export const isValidUpdateWorkoutDto = (body: unknown): Effect.Effect<never, InvalidDtoError, true> => {
+  const { name, userId } = body as CreateWorkoutDto;
+  return !!name || !!userId ? Effect.succeed(true) : Effect.fail(new InvalidDtoError({}));
 };
