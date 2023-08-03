@@ -1,13 +1,12 @@
 import { Request, Response } from 'express';
 import { userCrudService } from './services';
-import { DuplicateUserError, InvalidUserDtoError, UserNotFoundError } from './errors';
 import { HttpStatus } from '../../constants';
-import { Cause, Effect, Exit, Option, pipe } from 'effect';
+import { Effect, Exit, pipe } from 'effect';
 import { User } from '@prisma/client';
-import { isValidUpdateUserDto, isValidCreateUserDto } from './utils';
+import { isValidUpdateUserDto } from './utils';
 import { mapIdToNumber } from '../../utils';
-import { InvalidRequestIdError } from '../../errors/invalid-request-id';
 import { UpdateUserDto } from './types';
+import { handleFailureCauses } from '../../errors/failure';
 
 export type UserRequestParams = {
   id: string;
@@ -92,20 +91,6 @@ export const userController = () => {
     Exit.match(removeResult, {
       onSuccess: (user: User) => res.status(HttpStatus.OK).send(user),
       onFailure: (cause) => handleFailureCauses(cause, res),
-    });
-  };
-
-  const handleFailureCauses = <T>(cause: Cause.Cause<T>, res: Response) => {
-    const failureOption = Cause.failureOption(cause);
-
-    Option.match(failureOption, {
-      onSome: (error) => {
-        if (error instanceof InvalidRequestIdError) res.status(HttpStatus.BAD_REQUEST).send({ error });
-        if (error instanceof InvalidUserDtoError) res.status(HttpStatus.BAD_REQUEST).send({ error });
-        if (error instanceof UserNotFoundError) res.status(HttpStatus.NOT_FOUND).send({ error });
-        if (error instanceof DuplicateUserError) res.status(HttpStatus.CONFLICT).send({ error });
-      },
-      onNone: () => res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({}),
     });
   };
 

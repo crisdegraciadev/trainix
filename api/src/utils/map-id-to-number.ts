@@ -1,6 +1,6 @@
 import { Effect, pipe } from 'effect';
-import { InvalidRequestIdError } from '../errors/invalid-request-id';
 import { isNumber } from 'effect/Predicate';
+import { InvalidRequestIdError } from '../types';
 
 export const mapIdToNumber = (id: string): Effect.Effect<never, InvalidRequestIdError, number> => {
   const mappedId = pipe(id, Number);

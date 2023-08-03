@@ -1,7 +1,6 @@
 import { User } from '@prisma/client';
-import { DuplicateUserError, UserNotFoundError } from '../errors';
 import prisma from '../../../config/prisma';
-import { CreateUserDto } from '../types';
+import { CreateUserDto, DuplicateUserError, UserNotFoundError } from '../types';
 import { Effect } from 'effect';
 
 export const userCrudService = () => {
