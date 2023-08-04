@@ -9,7 +9,7 @@ import {
   RemoveUserErrors,
   UpdateUserErrors,
 } from '../types';
-import { handlePrismaErrors } from '../../../errors';
+import { handlePrismaErrors } from '../../../errors/handlers';
 
 export const userCrudService = () => {
   const findById = (userId: number): Effect.Effect<never, FindUserByIdErrors, User> => {

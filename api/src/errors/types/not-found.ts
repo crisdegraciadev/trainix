@@ -1,4 +1,4 @@
-import { ErrorParams } from '../error-params';
+import { ErrorParams } from '.';
 
 export class NotFoundError extends Error {
   public type = NotFoundError.name;

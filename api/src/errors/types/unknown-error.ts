@@ -1,4 +1,4 @@
-import { ErrorParams } from '../error-params';
+import { ErrorParams } from '.';
 
 export class UnknownError extends Error {
   public type = UnknownError.name;

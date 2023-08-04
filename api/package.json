@@ -8,7 +8,7 @@
     "dev": "cp .env.dev .env && nodemon src/index.ts",
     "build": "tsc",
     "lint": "eslint --fix src test",
-    "test": "cp .env.test .env && pnpm prisma:update:test && jest",
+    "test": "cp .env.test .env && pnpm prisma:update:test && jest --verbose",
     "prisma:update:dev": "cp .env.dev .env && pnpm dlx prisma migrate dev --name init",
     "prisma:update:test": "cp .env.test .env && pnpm dlx prisma migrate dev --name init",
     "db:up": "docker-compose -f containers/docker-compose.yml up -d"

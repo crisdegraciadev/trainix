@@ -1,4 +1,4 @@
-import { ErrorParams } from '../error-params';
+import { ErrorParams } from '.';
 
 export class DuplicateError extends Error {
   public type = DuplicateError.name;

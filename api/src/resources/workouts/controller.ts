@@ -1,16 +1,12 @@
 import { Request, Response } from 'express';
 import { workoutCrudService } from './services';
-import { HttpStatus } from '../../constants';
+import { HttpStatus } from '../../consts';
 import { isValidCreateWorkoutDto, isValidUpdateWorkoutDto } from './utils';
 import { Effect, Exit, pipe } from 'effect';
 import { Workout } from '@prisma/client';
-import { handleFailureCauses } from '../../errors/failure';
 import { mapIdToNumber } from '../../utils';
-import { NotFoundError } from '../../types';
-
-export type WorkoutRequestParams = {
-  id: string;
-};
+import { WorkoutRequestParams } from './types';
+import { handleFailureCauses } from '../../errors/handlers';
 
 export const workoutController = () => {
   const { findById, findByFields, create, update, remove } = workoutCrudService();
@@ -78,14 +74,20 @@ export const workoutController = () => {
   };
 
   const deleteWorkout = async (req: Request<WorkoutRequestParams>, res: Response) => {
-    const { id: workoutId } = req.params;
+    const { id } = req.params;
 
-    try {
-      await remove(Number(workoutId));
-      res.status(HttpStatus.NO_CONTENT).send();
-    } catch (error) {
-      if (error instanceof NotFoundError) res.status(HttpStatus.NOT_FOUND).send({ error });
-    }
+    const removeEffect = pipe(
+      Effect.succeed(id),
+      Effect.flatMap((id) => mapIdToNumber(id)),
+      Effect.flatMap((id) => remove(id))
+    );
+
+    const removeResult = await Effect.runPromiseExit(removeEffect);
+
+    Exit.match(removeResult, {
+      onSuccess: (workout: Workout) => res.status(HttpStatus.OK).send(workout),
+      onFailure: (cause) => handleFailureCauses(cause, res),
+    });
   };
 
   return { findWorkout, findAllWorkouts, createWorkout, updateWorkout, deleteWorkout };

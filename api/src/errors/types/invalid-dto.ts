@@ -1,4 +1,4 @@
-import { ErrorParams } from '../error-params';
+import { ErrorParams } from '.';
 
 export class InvalidDtoError extends Error {
   public type = InvalidDtoError.name;

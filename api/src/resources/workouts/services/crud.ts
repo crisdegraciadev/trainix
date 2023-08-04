@@ -2,8 +2,7 @@ import { Workout } from '@prisma/client';
 import prisma from '../../../config/prisma';
 import { CreateWorkoutDto, CreateWorkoutErrors, FindWorkoutByIdErrors, UpdateWorkoutErrors } from '../types';
 import { Effect } from 'effect';
-import { NotFoundError } from '../../../types';
-import { handlePrismaErrors } from '../../../errors';
+import { handlePrismaErrors } from '../../../errors/handlers';
 
 export const workoutCrudService = () => {
   const findById = (workoutId: number): Effect.Effect<never, FindWorkoutByIdErrors, Workout> => {
@@ -31,14 +30,11 @@ export const workoutCrudService = () => {
     });
   };
 
-  const remove = async (workoutId: number) => {
-    try {
-      await prisma.workout.delete({
-        where: { id: workoutId },
-      });
-    } catch (error) {
-      throw new NotFoundError({});
-    }
+  const remove = (workoutId: number) => {
+    return Effect.tryPromise({
+      try: () => prisma.workout.delete({ where: { id: workoutId } }),
+      catch: (error) => handlePrismaErrors(error),
+    });
   };
 
   return { findById, findByFields, create, update, remove };

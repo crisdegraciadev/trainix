@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
 import { userCrudService } from './services';
-import { HttpStatus } from '../../constants';
+import { HttpStatus } from '../../consts';
 import { Effect, Exit, pipe } from 'effect';
 import { User } from '@prisma/client';
 import { isValidUpdateUserDto } from './utils';
 import { mapIdToNumber } from '../../utils';
 import { UpdateUserDto, UserRequestParams } from './types';
-import { handleFailureCauses } from '../../errors/failure';
+import { handleFailureCauses } from '../../errors/handlers';
 
 export const userController = () => {
   const { findById, findByFields, create, update, remove } = userCrudService();

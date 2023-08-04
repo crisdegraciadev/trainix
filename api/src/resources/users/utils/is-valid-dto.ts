@@ -1,6 +1,6 @@
 import { Effect } from 'effect';
 import { CreateUserDto, UpdateUserDto } from '../types';
-import { InvalidDtoError } from '../../../types/errors/invalid-dto';
+import { InvalidDtoError } from '../../../errors/types';
 
 export const isValidCreateUserDto = (body: unknown): Effect.Effect<never, InvalidDtoError, true> => {
   const { username } = body as CreateUserDto;
