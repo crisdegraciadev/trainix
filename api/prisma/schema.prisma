@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,11 +8,36 @@ datasource db {
 }
 
 model Exercise {
-  id         Int       @id @default(autoincrement()) 
-  name       String
-  sets       Int
-  reps       Int
-  workouts   ExercisesOnWorkouts[]
+  id          Int       @id @default(autoincrement()) 
+  name        String
+  description String 
+  exercise    ExercisesOnActivities[]  
+}
+
+model ExercisesOnActivities {
+  exercise    Exercise  @relation(fields: [exerciseId], references: [id])
+  exerciseId  Int
+  activity    Activity  @relation(fields: [activityId], references: [id])
+  activityId  Int
+
+  @@id([exerciseId,activityId])
+}
+
+model Activity {
+  id            Int                   @id @default(autoincrement()) 
+  exercise      ExercisesOnActivities[]
+  sets          Int
+  reps          Int
+  workouts      ActivitiesOnWorkouts[]
+}
+
+model ActivitiesOnWorkouts {
+  acitivity   Activity @relation(fields: [activityId], references: [id])
+  activityId  Int
+  workout     Workout   @relation(fields: [workoutId], references: [id])
+  workoutId   Int
+
+  @@id([activityId, workoutId])
 }
 
 model Workout {
@@ -23,17 +45,9 @@ model Workout {
   name        String     @unique
   user        User       @relation(fields: [userId], references: [id])
   userId      Int 
-  exercises   ExercisesOnWorkouts[] 
+  activities  ActivitiesOnWorkouts[] 
 }
 
-model ExercisesOnWorkouts {
-  exercise    Exercise  @relation(fields: [exerciseId], references: [id])
-  exerciseId  Int
-  workout     Workout   @relation(fields: [workoutId], references: [id])
-  workoutId   Int
-
-  @@id([exerciseId, workoutId])
-}
 
 model User {
   id       Int       @id @default(autoincrement())
