@@ -9,22 +9,22 @@ datasource db {
 
 model Exercise {
   id          Int       @id @default(autoincrement()) 
-  name        String
+  name        String    @unique
   description String 
-  exercise    ExercisesOnActivities[]  
+  activity    ExercisesOnActivities[]  
 }
 
 model ExercisesOnActivities {
-  exercise    Exercise  @relation(fields: [exerciseId], references: [id])
+  exercise    Exercise?  @relation(fields: [exerciseId], references: [id])
   exerciseId  Int
-  activity    Activity  @relation(fields: [activityId], references: [id])
+  activity    Activity?  @relation(fields: [activityId], references: [id])
   activityId  Int
 
   @@id([exerciseId,activityId])
 }
 
 model Activity {
-  id            Int                   @id @default(autoincrement()) 
+  id            Int                       @id @default(autoincrement()) 
   exercise      ExercisesOnActivities[]
   sets          Int
   reps          Int

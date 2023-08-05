@@ -8,11 +8,18 @@
     "dev": "cp .env.dev .env && nodemon src/index.ts",
     "build": "tsc",
     "lint": "eslint --fix src test",
-    "test:u": "cp .env.test .env && jest --verbose ./test/unit/*",
-    "test:e2e": "cp .env.test .env && pnpm prisma:update:test && jest --verbose --maxWorkers=1 ./test/e2e/*",
-    "prisma:update:dev": "cp .env.dev .env && pnpm dlx prisma migrate dev --name init",
-    "prisma:update:test": "cp .env.test .env && pnpm dlx prisma migrate dev --name init",
+    "set:env:dev": "cp .env.dev .env",
+    "set:env:test": "cp .env.test .env",
+    "test:u": "pnpm set:env:test && jest --verbose ./test/unit/*",
+    "test:e2e": "pnpm set:env:test && pnpm prisma:update:test && jest --verbose --maxWorkers=1 ./test/e2e/*",
+    "prisma:update:dev": "pnpm set:env:dev && pnpm dlx prisma migrate dev --name init",
+    "prisma:update:test": "pnpm set:env:test && pnpm dlx prisma migrate dev --name init",
+    "prisma:seed:dev": "pnpm set:env:dev && pnpm dlx prisma db seed",
+    "prisma:seed:test": "pnpm set:env:test && pnpm dlx prisma db seed",
     "db:up": "docker-compose -f containers/docker-compose.yml up -d"
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
   },
   "keywords": [],
   "author": "Cristian",
