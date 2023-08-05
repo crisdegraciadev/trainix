@@ -1,7 +1,7 @@
 import request from 'supertest';
 
-import app from '../../src/app';
-import { HttpStatus } from '../../src/consts';
+import app from '../../../src/app';
+import { HttpStatus } from '../../../src/consts';
 import {
   BASE_USER_PATH,
   UNEXISTENT_ID,

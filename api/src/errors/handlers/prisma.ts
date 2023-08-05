@@ -8,7 +8,6 @@ const { Codes } = Errors.Prisma;
 export const handlePrismaErrors = (error: unknown) => {
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
     const { code, meta } = error;
-
     return pipe(
       Match.value(code),
       Match.when(Codes.P2002, () => new DuplicateError({ meta })),

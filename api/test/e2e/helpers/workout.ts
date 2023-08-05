@@ -1,6 +1,6 @@
 import { Workout } from '@prisma/client';
-import prisma from '../../src/config/prisma';
-import { CreateWorkoutDto } from '../../src/resources/workouts/types';
+import prisma from '../../../src/config/prisma';
+import { CreateWorkoutDto } from '../../../src/resources/workouts/types';
 
 export type WorkoutResponse = {
   id: number;

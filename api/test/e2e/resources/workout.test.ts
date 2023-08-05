@@ -1,5 +1,5 @@
 import request from 'supertest';
-import { HttpStatus } from '../../src/consts';
+import { HttpStatus } from '../../../src/consts';
 import { UNEXISTENT_ID, createUser, deleteUser, isErrorResponse } from '../helpers';
 import {
   BASE_WORKOUT_PATH,
@@ -9,7 +9,7 @@ import {
   findWorkoutById,
   isValidWorkoutResponse,
 } from '../helpers/workout';
-import app from '../../src/app';
+import app from '../../../src/app';
 
 describe('WORKOUTS', () => {
   describe('GET /:id', () => {
