@@ -3,7 +3,7 @@ import { userCrudService } from './services';
 import { HttpStatus } from '../../consts';
 import { Effect, Exit, pipe } from 'effect';
 import { User } from '@prisma/client';
-import { isValidUpdateUserDto } from './utils';
+import { isValidCreateUserDto, isValidUpdateUserDto } from './utils';
 import { mapIdToNumber } from '../../utils';
 import { UpdateUserDto, UserRequestParams } from './types';
 import { handleFailureCauses } from '../../errors/handlers';
@@ -14,13 +14,11 @@ export const userController = () => {
   const findUser = async (req: Request<UserRequestParams>, res: Response) => {
     const { id } = req.params;
 
-    const findByIdEffect = pipe(
-      Effect.succeed(id),
-      Effect.flatMap((id) => mapIdToNumber(id)),
-      Effect.flatMap((id) => findById(id))
+    const findByIdResult = await pipe(
+      Effect.all([mapIdToNumber(id)]),
+      Effect.flatMap(([id]) => findById({ id })),
+      Effect.runPromiseExit
     );
-
-    const findByIdResult = await Effect.runPromiseExit(findByIdEffect);
 
     Exit.match(findByIdResult, {
       onSuccess: (user: User) => res.status(HttpStatus.OK).send(user),
@@ -29,7 +27,7 @@ export const userController = () => {
   };
 
   const findAllUsers = async (_req: Request, res: Response) => {
-    const findByFieldsResult = await Effect.runPromiseExit(findByFields());
+    const findByFieldsResult = await Effect.runPromiseExit(findByFields({}));
 
     Exit.match(findByFieldsResult, {
       onSuccess: (users: User[]) => res.status(HttpStatus.OK).send(users),
@@ -40,13 +38,11 @@ export const userController = () => {
   const createUser = async (req: Request, res: Response) => {
     const { body } = req;
 
-    const createEffect = pipe(
-      Effect.succeed(body),
-      Effect.flatMap((body) => isValidUpdateUserDto(body)),
-      Effect.flatMap(() => create(body))
+    const createResult = await pipe(
+      Effect.all([isValidCreateUserDto(body)]),
+      Effect.flatMap(([data]) => create({ data })),
+      Effect.runPromiseExit
     );
-
-    const createResult = await Effect.runPromiseExit(createEffect);
 
     Exit.match(createResult, {
       onSuccess: (user: User) => res.status(HttpStatus.CREATED).send(user),
@@ -58,14 +54,11 @@ export const userController = () => {
     const { body } = req;
     const { id } = req.params;
 
-    const updateEffect = pipe(
-      Effect.succeed(body),
-      Effect.flatMap((body) => isValidUpdateUserDto(body)),
-      Effect.flatMap(() => mapIdToNumber(id)),
-      Effect.flatMap((userId) => update(userId, body))
+    const updateResult = await pipe(
+      Effect.all([mapIdToNumber(id), isValidUpdateUserDto(body)]),
+      Effect.flatMap(([id, data]) => update({ id, data })),
+      Effect.runPromiseExit
     );
-
-    const updateResult = await Effect.runPromiseExit(updateEffect);
 
     Exit.match(updateResult, {
       onSuccess: (user: User) => res.status(HttpStatus.OK).send(user),
@@ -76,13 +69,11 @@ export const userController = () => {
   const deleteUser = async (req: Request<UserRequestParams>, res: Response) => {
     const { id } = req.params;
 
-    const removeEffect = pipe(
-      Effect.succeed(id),
-      Effect.flatMap((id) => mapIdToNumber(id)),
-      Effect.flatMap((id) => remove(id))
+    const removeResult = await pipe(
+      Effect.all([mapIdToNumber(id)]),
+      Effect.flatMap(([id]) => remove({ id })),
+      Effect.runPromiseExit
     );
-
-    const removeResult = await Effect.runPromiseExit(removeEffect);
 
     Exit.match(removeResult, {
       onSuccess: (user: User) => res.status(HttpStatus.OK).send(user),

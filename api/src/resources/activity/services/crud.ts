@@ -1,59 +1,59 @@
-import { Workout } from '@prisma/client';
-import prisma from '../../../config/prisma';
-import { CreateWorkoutDto, UpdateWorkoutDto } from '../types';
 import { Effect } from 'effect';
+import prisma from '../../../config/prisma';
 import { handlePrismaErrors } from '../../../errors/handlers';
+import { CreateActivityDto, ActivityWithExercise, UpdateActivityDto } from '../types';
+import { Activity } from '@prisma/client';
 import { DuplicateError, NotFoundError } from '../../../errors/types';
 
-export const workoutCrudService = () => {
+export const activityCrudService = () => {
   type FindByIdArgs = { id: number };
   type FindByIdErrors = NotFoundError;
-  type FindByIdReturn = Effect.Effect<never, FindByIdErrors, Workout>;
+  type FindByIdReturn = Effect.Effect<never, FindByIdErrors, ActivityWithExercise>;
 
   const findById = ({ id }: FindByIdArgs): FindByIdReturn => {
     return Effect.tryPromise({
-      try: () => prisma.workout.findUniqueOrThrow({ where: { id } }),
+      try: () => prisma.activity.findUniqueOrThrow({ where: { id }, include: { exercise: true } }),
       catch: (error) => handlePrismaErrors(error),
     });
   };
 
   type FindByFieldsArgs = {};
   type FindByFieldsErrors = never;
-  type FindByFieldsReturn = Effect.Effect<never, FindByFieldsErrors, Workout[]>;
+  type FindByFieldsReturn = Effect.Effect<never, FindByFieldsErrors, Activity[]>;
 
   const findByFields = ({}: FindByFieldsArgs): FindByFieldsReturn => {
-    return Effect.promise(() => prisma.workout.findMany());
+    return Effect.promise(() => prisma.activity.findMany());
   };
 
-  type CreateArgs = { data: CreateWorkoutDto };
+  type CreateArgs = { data: CreateActivityDto };
   type CreateErrors = DuplicateError;
-  type CreateReturn = Effect.Effect<never, CreateErrors, Workout>;
+  type CreateReturn = Effect.Effect<never, CreateErrors, Activity>;
 
   const create = ({ data }: CreateArgs): CreateReturn => {
     return Effect.tryPromise({
-      try: () => prisma.workout.create({ data }),
+      try: () => prisma.activity.create({ data }),
       catch: (error) => handlePrismaErrors(error),
     });
   };
 
-  type UpdateArgs = { id: number; data: UpdateWorkoutDto };
+  type UpdateArgs = { id: number; data: UpdateActivityDto };
   type UpdateErrors = NotFoundError;
-  type UpdateReturn = Effect.Effect<never, UpdateErrors, Workout>;
+  type UpdateReturn = Effect.Effect<never, UpdateErrors, Activity>;
 
   const update = ({ id, data }: UpdateArgs): UpdateReturn => {
     return Effect.tryPromise({
-      try: () => prisma.workout.update({ where: { id }, data }),
+      try: () => prisma.activity.update({ where: { id }, data }),
       catch: (error) => handlePrismaErrors(error),
     });
   };
 
   type RemoveArgs = { id: number };
   type RemoveErrors = NotFoundError;
-  type RemoveReturn = Effect.Effect<never, RemoveErrors, Workout>;
+  type RemoveReturn = Effect.Effect<never, RemoveErrors, Activity>;
 
   const remove = ({ id }: RemoveArgs): RemoveReturn => {
     return Effect.tryPromise({
-      try: () => prisma.workout.delete({ where: { id } }),
+      try: () => prisma.activity.delete({ where: { id } }),
       catch: (error) => handlePrismaErrors(error),
     });
   };
