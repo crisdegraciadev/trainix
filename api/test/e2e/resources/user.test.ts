@@ -6,12 +6,17 @@ import {
   BASE_USER_PATH,
   UNEXISTENT_ID,
   UserResponse,
+  cleanDatabase,
   createUser,
   deleteUser,
   findUserById,
   isErrorResponse,
   isValidUserResponse,
 } from '../helpers';
+
+beforeAll(async () => {
+  await cleanDatabase();
+});
 
 describe('USERS', () => {
   describe('GET /:id', () => {
@@ -67,9 +72,9 @@ describe('USERS', () => {
       expect(statusCode).toBe(HttpStatus.CREATED);
       expect(isValidUserResponse(body)).toBeTruthy();
 
-      const { id, username } = body as UserResponse;
-      expect(username).toBe(createUserPayload.username);
+      const { id } = body as UserResponse;
       expect(id).toBeDefined();
+      expect(body).toMatchObject({ id, ...createUserPayload });
 
       await deleteUser(id);
     });

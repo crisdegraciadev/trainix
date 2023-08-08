@@ -11,21 +11,15 @@ model Exercise {
   id          Int       @id @default(autoincrement()) 
   name        String    @unique
   description String 
-  activity    ExercisesOnActivities[]  
+  activity    Activity[]  
 }
 
-model ExercisesOnActivities {
-  exercise    Exercise?  @relation(fields: [exerciseId], references: [id])
-  exerciseId  Int
-  activity    Activity?  @relation(fields: [activityId], references: [id])
-  activityId  Int
 
-  @@id([exerciseId,activityId])
-}
 
 model Activity {
   id            Int                       @id @default(autoincrement()) 
-  exercise      ExercisesOnActivities[]
+  exercise      Exercise                  @relation(fields: [exerciseId], references: [id])
+  exerciseId    Int 
   sets          Int
   reps          Int
   workouts      ActivitiesOnWorkouts[]

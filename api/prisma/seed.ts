@@ -13,10 +13,7 @@ async function main() {
   for (const exercise of exercises) {
     try {
       await prisma.exercise.create({ data: exercise }).then();
-    } catch (error) {
-      console.log('\nExercise already exists');
-      console.log({ exercise });
-    }
+    } catch (error) {}
   }
 }
 main()

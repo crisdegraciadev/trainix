@@ -22,7 +22,7 @@ export const activityCrudService = () => {
   type FindByFieldsReturn = Effect.Effect<never, FindByFieldsErrors, Activity[]>;
 
   const findByFields = ({}: FindByFieldsArgs): FindByFieldsReturn => {
-    return Effect.promise(() => prisma.activity.findMany());
+    return Effect.promise(() => prisma.activity.findMany({ include: { exercise: true } }));
   };
 
   type CreateArgs = { data: CreateActivityDto };
@@ -31,7 +31,7 @@ export const activityCrudService = () => {
 
   const create = ({ data }: CreateArgs): CreateReturn => {
     return Effect.tryPromise({
-      try: () => prisma.activity.create({ data }),
+      try: () => prisma.activity.create({ data, include: { exercise: true } }),
       catch: (error) => handlePrismaErrors(error),
     });
   };
@@ -42,7 +42,7 @@ export const activityCrudService = () => {
 
   const update = ({ id, data }: UpdateArgs): UpdateReturn => {
     return Effect.tryPromise({
-      try: () => prisma.activity.update({ where: { id }, data }),
+      try: () => prisma.activity.update({ where: { id }, data, include: { exercise: true } }),
       catch: (error) => handlePrismaErrors(error),
     });
   };
@@ -53,7 +53,7 @@ export const activityCrudService = () => {
 
   const remove = ({ id }: RemoveArgs): RemoveReturn => {
     return Effect.tryPromise({
-      try: () => prisma.activity.delete({ where: { id } }),
+      try: () => prisma.activity.delete({ where: { id }, include: { exercise: true } }),
       catch: (error) => handlePrismaErrors(error),
     });
   };

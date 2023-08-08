@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { HttpStatus } from '../../../src/consts';
-import { UNEXISTENT_ID, createUser, deleteUser, isErrorResponse } from '../helpers';
+import { UNEXISTENT_ID, cleanDatabase, createUser, deleteUser, isErrorResponse } from '../helpers';
 import {
   BASE_WORKOUT_PATH,
   WorkoutResponse,
@@ -10,6 +10,10 @@ import {
   isValidWorkoutResponse,
 } from '../helpers/workout';
 import app from '../../../src/app';
+
+beforeAll(async () => {
+  await cleanDatabase();
+});
 
 describe('WORKOUTS', () => {
   describe('GET /:id', () => {
@@ -81,8 +85,8 @@ describe('WORKOUTS', () => {
       expect(isValidWorkoutResponse(body)).toBeTruthy();
 
       const { id } = body as WorkoutResponse;
-      expect(body).toMatchObject({ ...createWorkoutPayload });
       expect(id).toBeDefined();
+      expect(body).toMatchObject({ id, ...createWorkoutPayload });
 
       await deleteWorkout(id);
       await deleteUser(userId);

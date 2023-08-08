@@ -1,5 +1,5 @@
 export const RoutesConstants = {
-  EXERCISES: '/exercises',
+  ACTIVITIES: '/activities',
   USERS: '/users',
   WORKOUTS: '/workouts',
 };
