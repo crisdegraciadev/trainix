@@ -8,40 +8,37 @@ datasource db {
 }
 
 model Exercise {
-  id          Int       @id @default(autoincrement()) 
-  name        String    @unique
-  description String 
-  activity    Activity[]  
+  id          Int        @id @default(autoincrement())
+  name        String     @unique
+  description String
+  activity    Activity[]
 }
 
-
-
 model Activity {
-  id            Int                       @id @default(autoincrement()) 
-  exercise      Exercise                  @relation(fields: [exerciseId], references: [id])
-  exerciseId    Int 
-  sets          Int
-  reps          Int
-  workouts      ActivitiesOnWorkouts[]
+  id         Int                    @id @default(autoincrement())
+  exercise   Exercise               @relation(fields: [exerciseId], references: [id])
+  exerciseId Int
+  sets       Int
+  reps       Int
+  workouts   ActivitiesOnWorkouts[]
 }
 
 model ActivitiesOnWorkouts {
-  acitivity   Activity @relation(fields: [activityId], references: [id])
-  activityId  Int
-  workout     Workout   @relation(fields: [workoutId], references: [id])
-  workoutId   Int
+  acitivity  Activity @relation(fields: [activityId], references: [id])
+  activityId Int
+  workout    Workout  @relation(fields: [workoutId], references: [id])
+  workoutId  Int
 
   @@id([activityId, workoutId])
 }
 
 model Workout {
-  id          Int        @id @default(autoincrement()) 
-  name        String     @unique
-  user        User       @relation(fields: [userId], references: [id])
-  userId      Int 
-  activities  ActivitiesOnWorkouts[] 
+  id         Int                    @id @default(autoincrement())
+  name       String                 @unique
+  user       User                   @relation(fields: [userId], references: [id])
+  userId     Int
+  activities ActivitiesOnWorkouts[]
 }
-
 
 model User {
   id       Int       @id @default(autoincrement())

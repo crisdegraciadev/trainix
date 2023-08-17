@@ -44,7 +44,6 @@ export default function WorkoutsPage() {
           </div>
         </section>
       </CardContent>
-      <CardFooter></CardFooter>
     </Card>
   )
 }

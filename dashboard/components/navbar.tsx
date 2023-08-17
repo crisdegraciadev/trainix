@@ -1,4 +1,5 @@
 'use client'
+
 import Link from 'next/link'
 import {
   NavigationMenu,
@@ -24,22 +25,17 @@ import {
   DropdownMenuTrigger,
 } from './ui/dropdown-menu'
 import {
-  Cloud,
   CreditCard,
-  Github,
-  Keyboard,
   LifeBuoy,
   LogOut,
   Mail,
   MessageSquare,
-  Plus,
   PlusCircle,
   Settings,
   User,
   UserPlus,
   Users,
 } from 'lucide-react'
-import { Button } from './ui/button'
 
 const NAV_ITEMS = [
   { transKey: 'Dashboard', path: '/' },

@@ -21,7 +21,7 @@ export const workoutController = () => {
     );
 
     Exit.match(findByIdResult, {
-      onSuccess: (workout: Workout) => res.status(HttpStatus.OK).send(workout),
+      onSuccess: (workout: Workout) => workout,
       onFailure: (cause) => handleFailureCauses(cause, res),
     });
   };

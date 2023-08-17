@@ -5,7 +5,7 @@
   "main": "src/index.ts",
   "scripts": {
     "start": "cp .env.dev .env && ts-node src/index.ts",
-    "dev": "cp .env.dev .env && nodemon src/index.ts",
+    "dev": "cp .env.dev .env && pnpm prisma:update:dev && nodemon src/index.ts",
     "build": "tsc",
     "lint": "eslint --fix src test",
     "set:env:dev": "cp .env.dev .env",
