@@ -4,7 +4,7 @@ import app from '../../../src/app';
 import { HttpStatus } from '../../../src/consts';
 import {
   BASE_USER_PATH,
-  UNEXISTENT_ID,
+  INEXISTENT_ID,
   UserResponse,
   cleanDatabase,
   createUser,
@@ -15,6 +15,10 @@ import {
 } from '../helpers';
 
 beforeAll(async () => {
+  await cleanDatabase();
+});
+
+afterAll(async () => {
   await cleanDatabase();
 });
 
@@ -33,7 +37,7 @@ describe('USERS', () => {
     });
 
     it('not found', async () => {
-      const { statusCode, body } = await request(app).get(`${BASE_USER_PATH}/${UNEXISTENT_ID}`).send();
+      const { statusCode, body } = await request(app).get(`${BASE_USER_PATH}/${INEXISTENT_ID}`).send();
       expect(statusCode).toBe(HttpStatus.NOT_FOUND);
       expect(isErrorResponse(body)).toBeTruthy();
     });
@@ -41,7 +45,7 @@ describe('USERS', () => {
 
   describe('GET /', () => {
     it('list with 3 elements', async () => {
-      const createUserPayloads = [{ username: 'cris' }, { username: 'ana' }, { username: 'alber' }];
+      const createUserPayloads = [{ username: 'cris' }, { username: 'ana' }, { username: 'alberto' }];
       const createdUsers = await Promise.all(createUserPayloads.map(async (payload) => createUser(payload)));
 
       const { statusCode, body } = await request(app).get(`${BASE_USER_PATH}/`).send();
@@ -141,7 +145,7 @@ describe('USERS', () => {
 
     it('not found', async () => {
       const updateUserPayload = { username: 'cris' };
-      const { statusCode, body } = await request(app).put(`${BASE_USER_PATH}/${UNEXISTENT_ID}`).send(updateUserPayload);
+      const { statusCode, body } = await request(app).put(`${BASE_USER_PATH}/${INEXISTENT_ID}`).send(updateUserPayload);
 
       expect(statusCode).toBe(HttpStatus.NOT_FOUND);
       expect(isErrorResponse(body)).toBeTruthy();
@@ -179,7 +183,7 @@ describe('USERS', () => {
     });
 
     it('not found', async () => {
-      const { statusCode } = await request(app).delete(`${BASE_USER_PATH}/${UNEXISTENT_ID}`).send();
+      const { statusCode } = await request(app).delete(`${BASE_USER_PATH}/${INEXISTENT_ID}`).send();
       expect(statusCode).toBe(HttpStatus.NOT_FOUND);
     });
   });

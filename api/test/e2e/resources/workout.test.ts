@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { HttpStatus } from '../../../src/consts';
-import { UNEXISTENT_ID, cleanDatabase, createUser, deleteUser, isErrorResponse } from '../helpers';
+import { INEXISTENT_ID, cleanDatabase, createUser, deleteUser, isErrorResponse } from '../helpers';
 import {
   BASE_WORKOUT_PATH,
   WorkoutResponse,
@@ -12,6 +12,10 @@ import {
 import app from '../../../src/app';
 
 beforeAll(async () => {
+  await cleanDatabase();
+});
+
+afterAll(async () => {
   await cleanDatabase();
 });
 
@@ -34,7 +38,7 @@ describe('WORKOUTS', () => {
     });
 
     it('not found', async () => {
-      const { statusCode, body } = await request(app).get(`${BASE_WORKOUT_PATH}/${UNEXISTENT_ID}`).send();
+      const { statusCode, body } = await request(app).get(`${BASE_WORKOUT_PATH}/${INEXISTENT_ID}`).send();
       expect(statusCode).toBe(HttpStatus.NOT_FOUND);
       expect(isErrorResponse(body)).toBeTruthy();
     });
@@ -175,9 +179,9 @@ describe('WORKOUTS', () => {
     });
 
     it('not found', async () => {
-      const updateWorkoutPayload = { name: 'Upper - Muscle Up', userId: UNEXISTENT_ID };
+      const updateWorkoutPayload = { name: 'Upper - Muscle Up', userId: INEXISTENT_ID };
       const { statusCode, body } = await request(app)
-        .put(`${BASE_WORKOUT_PATH}/${UNEXISTENT_ID}`)
+        .put(`${BASE_WORKOUT_PATH}/${INEXISTENT_ID}`)
         .send(updateWorkoutPayload);
 
       expect(statusCode).toBe(HttpStatus.NOT_FOUND);
@@ -227,7 +231,7 @@ describe('WORKOUTS', () => {
     });
 
     it('not found', async () => {
-      const { statusCode } = await request(app).delete(`${BASE_WORKOUT_PATH}/${UNEXISTENT_ID}`).send();
+      const { statusCode } = await request(app).delete(`${BASE_WORKOUT_PATH}/${INEXISTENT_ID}`).send();
       expect(statusCode).toBe(HttpStatus.NOT_FOUND);
     });
   });

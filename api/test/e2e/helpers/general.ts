@@ -1,6 +1,6 @@
 import prisma from '../../../src/config/prisma';
 
-export const UNEXISTENT_ID = 987654321;
+export const INEXISTENT_ID = 987654321;
 
 export const cleanDatabase = async () => {
   const deleteActivities = prisma.activity.deleteMany();

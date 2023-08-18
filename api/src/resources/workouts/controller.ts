@@ -21,7 +21,7 @@ export const workoutController = () => {
     );
 
     Exit.match(findByIdResult, {
-      onSuccess: (workout: Workout) => workout,
+      onSuccess: (workout: Workout) => res.status(HttpStatus.OK).send(workout),
       onFailure: (cause) => handleFailureCauses(cause, res),
     });
   };
@@ -30,7 +30,7 @@ export const workoutController = () => {
     const findByFieldsResult = await Effect.runPromiseExit(findByFields({}));
 
     Exit.match(findByFieldsResult, {
-      onSuccess: (users: Workout[]) => res.status(HttpStatus.OK).send(users),
+      onSuccess: (workouts: Workout[]) => res.status(HttpStatus.OK).send(workouts),
       onFailure: ({ _tag, ...error }) => res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({ ...error }),
     });
   };

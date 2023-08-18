@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import { userCrudService } from './services';
 import { HttpStatus } from '../../consts';
 import { Effect, Exit, pipe } from 'effect';
 import { User } from '@prisma/client';
@@ -7,16 +6,15 @@ import { isValidCreateUserDto, isValidUpdateUserDto } from './utils';
 import { mapIdToNumber } from '../../utils';
 import { UpdateUserDto, UserRequestParams } from './types';
 import { handleFailureCauses } from '../../errors/handlers';
+import { create, findUserById, findUsersByFields, remove, update } from './services';
 
 export const userController = () => {
-  const { findById, findByFields, create, update, remove } = userCrudService();
-
   const findUser = async (req: Request<UserRequestParams>, res: Response) => {
     const { id } = req.params;
 
     const findByIdResult = await pipe(
       Effect.all([mapIdToNumber(id)]),
-      Effect.flatMap(([id]) => findById({ id })),
+      Effect.flatMap(([id]) => findUserById({ id })),
       Effect.runPromiseExit
     );
 
@@ -27,7 +25,7 @@ export const userController = () => {
   };
 
   const findAllUsers = async (_req: Request, res: Response) => {
-    const findByFieldsResult = await Effect.runPromiseExit(findByFields({}));
+    const findByFieldsResult = await Effect.runPromiseExit(findUsersByFields({}));
 
     Exit.match(findByFieldsResult, {
       onSuccess: (users: User[]) => res.status(HttpStatus.OK).send(users),

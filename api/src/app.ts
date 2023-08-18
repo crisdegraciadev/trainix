@@ -2,7 +2,7 @@ import express from 'express';
 import morgan from 'morgan';
 import helmet from 'helmet';
 import cors from 'cors';
-import { activitiesRouter, userRouter, workoutRouter } from './resources';
+import { activitiesRouter, authRouter, userRouter, workoutRouter } from './resources';
 import { RoutesConstants } from './consts';
 import { Global } from './consts/global';
 
@@ -21,5 +21,6 @@ app.use(express.json());
 app.use(RoutesConstants.USERS, userRouter);
 app.use(RoutesConstants.WORKOUTS, workoutRouter);
 app.use(RoutesConstants.ACTIVITIES, activitiesRouter);
+app.use(RoutesConstants.AUTH, authRouter);
 
 export default app;

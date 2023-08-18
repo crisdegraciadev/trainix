@@ -2,7 +2,7 @@ import request from 'supertest';
 
 import app from '../../../src/app';
 
-import { UNEXISTENT_ID, cleanDatabase, isErrorResponse } from '../helpers';
+import { INEXISTENT_ID, cleanDatabase, isErrorResponse } from '../helpers';
 import {
   ActivityResponse,
   BASE_ACTIVITY_PATH,
@@ -14,6 +14,10 @@ import {
 import { HttpStatus } from '../../../src/consts';
 
 beforeAll(async () => {
+  await cleanDatabase();
+});
+
+afterAll(async () => {
   await cleanDatabase();
 });
 
@@ -32,7 +36,7 @@ describe('ACTIVITIES', () => {
     });
 
     it('not found', async () => {
-      const { statusCode, body } = await request(app).get(`${BASE_ACTIVITY_PATH}/${UNEXISTENT_ID}`).send();
+      const { statusCode, body } = await request(app).get(`${BASE_ACTIVITY_PATH}/${INEXISTENT_ID}`).send();
       expect(statusCode).toBe(HttpStatus.NOT_FOUND);
       expect(isErrorResponse(body)).toBeTruthy();
     });
@@ -102,7 +106,7 @@ describe('ACTIVITIES', () => {
     });
 
     it('invalid relation', async () => {
-      const createActivityPayload = { reps: 8, sets: 4, exerciseId: UNEXISTENT_ID };
+      const createActivityPayload = { reps: 8, sets: 4, exerciseId: INEXISTENT_ID };
 
       const { statusCode, body } = await request(app).post(`${BASE_ACTIVITY_PATH}/`).send(createActivityPayload);
 
@@ -151,7 +155,7 @@ describe('ACTIVITIES', () => {
       const updateActivityPayload = { reps: 8, sets: 4, exerciseId: 1 };
 
       const { statusCode, body } = await request(app)
-        .put(`${BASE_ACTIVITY_PATH}/${UNEXISTENT_ID}`)
+        .put(`${BASE_ACTIVITY_PATH}/${INEXISTENT_ID}`)
         .send(updateActivityPayload);
 
       expect(statusCode).toBe(HttpStatus.NOT_FOUND);
@@ -162,7 +166,7 @@ describe('ACTIVITIES', () => {
       const createActivityPayload = { reps: 8, sets: 4, exerciseId: 1 };
       const { id: activityId } = await createActivity(createActivityPayload);
 
-      const updateActivityPayload = { reps: 8, sets: 3, exerciseId: UNEXISTENT_ID };
+      const updateActivityPayload = { reps: 8, sets: 3, exerciseId: INEXISTENT_ID };
 
       const { statusCode, body } = await request(app)
         .put(`${BASE_ACTIVITY_PATH}/${activityId}`)
@@ -188,7 +192,7 @@ describe('ACTIVITIES', () => {
     });
 
     it('not found', async () => {
-      const { statusCode } = await request(app).delete(`${BASE_ACTIVITY_PATH}/${UNEXISTENT_ID}`).send();
+      const { statusCode } = await request(app).delete(`${BASE_ACTIVITY_PATH}/${INEXISTENT_ID}`).send();
       expect(statusCode).toBe(HttpStatus.NOT_FOUND);
     });
   });

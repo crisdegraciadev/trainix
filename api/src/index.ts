@@ -1,6 +1,7 @@
 import app from './app';
+import { Global } from './consts/global';
 
-const port = process.env.PORT || 5000;
+const port = Global.PORT || 5000;
 
 app.listen(port, () => {
   console.log(`Listening: http://localhost:${port}`);
