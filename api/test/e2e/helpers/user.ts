@@ -1,6 +1,10 @@
+import request from 'supertest';
+
+import app from '../../../src/app';
 import { User } from '@prisma/client';
 import prisma from '../../../src/config/prisma';
 import { CreateUserDto } from '../../../src/resources/users/types';
+import { HttpStatus } from '../../../src/consts';
 
 export type UserResponse = {
   id: number;
@@ -18,8 +22,13 @@ export const findUserById = async (id: number): Promise<User | null> => {
   return prisma.user.findFirst({ where: { id } });
 };
 
-export const createUser = async (data: CreateUserDto): Promise<User> => {
-  return prisma.user.create({ data });
+export const createUser = async (dto: CreateUserDto): Promise<UserResponse> => {
+  const { statusCode, body } = await request(app).post(`${BASE_USER_PATH}/`).send(dto);
+
+  expect(statusCode).toBe(HttpStatus.CREATED);
+  expect(isValidUserResponse(body)).toBeTruthy();
+
+  return body;
 };
 
 export const deleteUser = async (id: number): Promise<User> => {

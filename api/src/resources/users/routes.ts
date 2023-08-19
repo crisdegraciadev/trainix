@@ -1,12 +1,11 @@
 import express from 'express';
-import { userController } from './controller';
-
-const { findUser, findAllUsers, createUser, updateUser, deleteUser } = userController();
+import { authenticateToken } from '../../middleware/auth-token';
+import { postUser, deleteUser, getUsersByFields, getUserById, putUser } from './controller';
 
 export const userRouter = express.Router();
 
-userRouter.get('/:id', findUser);
-userRouter.get('/', findAllUsers);
-userRouter.post('/', createUser);
-userRouter.put('/:id', updateUser);
+userRouter.get('/:id', getUserById);
+userRouter.get('/', getUsersByFields);
+userRouter.post('/', postUser);
+userRouter.put('/:id', putUser);
 userRouter.delete('/:id', deleteUser);

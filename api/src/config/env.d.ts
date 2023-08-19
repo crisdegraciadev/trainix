@@ -5,6 +5,7 @@ declare global {
       PORT: number;
       ACCESS_TOKEN_SECRET: string;
       REFRESH_TOKEN_SECRET: string;
+      SALT_ROUNDS: number;
     }
   }
 }

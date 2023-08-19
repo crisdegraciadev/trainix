@@ -1,15 +1,32 @@
-import { Effect } from 'effect';
-import { DuplicateError } from '../../../errors/types';
+import { Effect, pipe } from 'effect';
+import { DuplicateError, InvalidDtoError } from '../../../errors/types';
 import { CreateUserDto } from '../types';
 import { handlePrismaErrors } from '../../../errors/handlers';
 import prisma from '../../../config/prisma';
 import { User } from '@prisma/client';
+import { hashPassword } from '../../../lib/bcrypt';
 
-type CreateArgs = { data: CreateUserDto };
+type CreateArgs = { dto: CreateUserDto };
 type CreateErrors = DuplicateError;
 type CreateReturn = Effect.Effect<never, CreateErrors, User>;
 
-export const create = ({ data }: CreateArgs): CreateReturn => {
+export const create = ({ dto }: CreateArgs): CreateReturn => {
+  return pipe(
+    Effect.all([buildUserData(dto)]),
+    Effect.flatMap(([data]) => saveUserData(data))
+  );
+};
+
+const buildUserData = (dto: CreateUserDto): Effect.Effect<never, InvalidDtoError, Omit<User, 'id'>> => {
+  const { username, password } = dto;
+
+  return pipe(
+    Effect.all([hashPassword({ password })]),
+    Effect.map(([passwordHash]) => ({ username, passwordHash }))
+  );
+};
+
+const saveUserData = (data: Omit<User, 'id'>): Effect.Effect<never, DuplicateError, User> => {
   return Effect.tryPromise({
     try: () => prisma.user.create({ data }),
     catch: (error) => handlePrismaErrors(error),

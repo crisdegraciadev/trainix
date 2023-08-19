@@ -20,4 +20,5 @@ export const login = async (req: Request, res: Response) => {
   });
 };
 
+// TODO implement logout
 export const logout = (req: Request, res: Response) => {};

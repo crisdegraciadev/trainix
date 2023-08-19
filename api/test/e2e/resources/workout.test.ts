@@ -22,7 +22,7 @@ afterAll(async () => {
 describe('WORKOUTS', () => {
   describe('GET /:id', () => {
     it('find by id', async () => {
-      const createUserPayload = { username: 'cris' };
+      const createUserPayload = { username: 'cris', password: '1234', repeatedPassword: '1234' };
       const { id: userId } = await createUser(createUserPayload);
 
       const createWorkoutPayload = { name: 'Upper - Muscle Up', userId };
@@ -46,7 +46,7 @@ describe('WORKOUTS', () => {
 
   describe('GET /', () => {
     it('list with 3 elements', async () => {
-      const createUserPayload = { username: 'cris' };
+      const createUserPayload = { username: 'cris', password: '1234', repeatedPassword: '1234' };
       const { id: userId } = await createUser(createUserPayload);
 
       const createWorkoutPayloads = [
@@ -79,7 +79,7 @@ describe('WORKOUTS', () => {
 
   describe('POST /', () => {
     it('create', async () => {
-      const createUserPayload = { username: 'cris' };
+      const createUserPayload = { username: 'cris', password: '1234', repeatedPassword: '1234' };
       const { id: userId } = await createUser(createUserPayload);
 
       const createWorkoutPayload = { name: 'Upper - Muscle Up', userId };
@@ -97,7 +97,7 @@ describe('WORKOUTS', () => {
     });
 
     it('invalid dto', async () => {
-      const createUserPayload = { username: 'cris' };
+      const createUserPayload = { username: 'cris', password: '1234', repeatedPassword: '1234' };
       const { id: userId } = await createUser(createUserPayload);
 
       const createWorkoutPayload = { userId };
@@ -111,7 +111,7 @@ describe('WORKOUTS', () => {
     });
 
     it('duplicate name', async () => {
-      const createUserPayload = { username: 'cris' };
+      const createUserPayload = { username: 'cris', password: '1234', repeatedPassword: '1234' };
       const { id: userId } = await createUser(createUserPayload);
 
       const createWorkoutPayload = { name: 'Upper - Muscle Up', userId };
@@ -137,7 +137,7 @@ describe('WORKOUTS', () => {
 
   describe('PUT /:id', () => {
     it('update', async () => {
-      const createUserPayload = { username: 'cris' };
+      const createUserPayload = { username: 'cris', password: '1234', repeatedPassword: '1234' };
       const { id: userId } = await createUser(createUserPayload);
 
       const createWorkoutPayload = { name: 'Upper - Muscle Up', userId };
@@ -159,7 +159,7 @@ describe('WORKOUTS', () => {
     });
 
     it('invalid dto', async () => {
-      const createUserPayload = { username: 'cris' };
+      const createUserPayload = { username: 'cris', password: '1234', repeatedPassword: '1234' };
       const { id: userId } = await createUser(createUserPayload);
 
       const createWorkoutPayload = { name: 'Upper - Muscle Up', userId };
@@ -189,7 +189,7 @@ describe('WORKOUTS', () => {
     });
 
     it('duplicate', async () => {
-      const createUserPayload = { username: 'cris' };
+      const createUserPayload = { username: 'cris', password: '1234', repeatedPassword: '1234' };
       const { id: userId } = await createUser(createUserPayload);
 
       const createWorkoutPayload1 = { name: 'Upper - Muscle Up', userId };
@@ -213,7 +213,7 @@ describe('WORKOUTS', () => {
 
   describe('DELETE /:id', () => {
     it('delete', async () => {
-      const createUserPayload = { username: 'cris' };
+      const createUserPayload = { username: 'cris', password: '1234', repeatedPassword: '1234' };
       const { id: userId } = await createUser(createUserPayload);
 
       const createWorkoutPayload = { name: 'Upper - Muscle Up', userId };
