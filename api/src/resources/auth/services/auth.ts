@@ -1,12 +1,12 @@
 import { Effect, pipe } from 'effect';
 import { createToken } from '../../../lib/jwt';
 import { LoginDto } from '../types';
-import { Global } from '../../../consts/global';
 import { Filters } from '../../../utils';
 import { User } from '@prisma/client';
 import { findUsersByFields } from '../../users/services';
-import { UnauthorizedError } from '../../../errors/types/unauthorized';
 import { hasSameHash } from '../../../lib/bcrypt';
+import { Auth } from '../../../consts';
+import { UnauthorizedError } from '../../../errors/types';
 
 type CreateAccessTokenArgs = {
   dto: LoginDto;
@@ -16,7 +16,7 @@ export const createAccessToken = ({ dto }: CreateAccessTokenArgs): Effect.Effect
   return pipe(
     Effect.all([checkIfUserExist(dto)]),
     Effect.flatMap(([user]) => checkUserCredentials(user, dto)),
-    Effect.flatMap((payload) => createToken({ payload, secret: Global.ACCESS_TOKEN_SECRET }))
+    Effect.flatMap((payload) => createToken({ payload, secret: Auth.ACCESS_TOKEN_SECRET }))
   );
 };
 

@@ -1,9 +1,10 @@
 import request from 'supertest';
 
 import app from '../../../src/app';
-import { cleanDatabase, createUser, deleteUser } from '../helpers';
 import { BASE_AUTH_PATH } from '../helpers/auth';
 import { HttpStatus } from '../../../src/consts';
+import { cleanDatabase } from '../helpers/general';
+import { createUser, deleteUser } from '../helpers/user';
 
 beforeAll(async () => {
   await cleanDatabase();

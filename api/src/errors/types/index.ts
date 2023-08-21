@@ -9,3 +9,5 @@ export * from './invalid-request-id';
 export * from './not-found';
 export * from './relation';
 export * from './unknown-error';
+export * from './unauthorized';
+export * from './forbidden';

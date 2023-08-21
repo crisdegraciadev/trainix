@@ -1,6 +1,5 @@
 import request from 'supertest';
 import { HttpStatus } from '../../../src/consts';
-import { INEXISTENT_ID, cleanDatabase, createUser, deleteUser, isErrorResponse } from '../helpers';
 import {
   BASE_WORKOUT_PATH,
   WorkoutResponse,
@@ -10,6 +9,9 @@ import {
   isValidWorkoutResponse,
 } from '../helpers/workout';
 import app from '../../../src/app';
+import { isErrorResponse } from '../helpers/error';
+import { cleanDatabase, INEXISTENT_ID } from '../helpers/general';
+import { createUser, deleteUser } from '../helpers/user';
 
 beforeAll(async () => {
   await cleanDatabase();

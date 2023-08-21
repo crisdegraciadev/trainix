@@ -1,13 +1,13 @@
 import bcrypt from 'bcrypt';
-import { Global } from '../consts/global';
 import { Effect } from 'effect';
 import { InvalidDtoError } from '../errors/types';
+import { Auth } from '../consts';
 
 type HashPasswordArgs = {
   password: string;
 };
 
-const SALT = bcrypt.genSaltSync(Global.SALT_ROUNDS);
+const SALT = bcrypt.genSaltSync(Auth.SALT_ROUNDS);
 
 export const hashPassword = ({ password }: HashPasswordArgs): Effect.Effect<never, InvalidDtoError, string> => {
   return Effect.try({

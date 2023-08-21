@@ -1,5 +1,8 @@
 import { Exercise, PrismaClient } from '@prisma/client';
-import { TranslationKeys } from '../src/consts/translation.keys';
+import { TranslationKeys } from '../src/consts/translation-keys';
+import { Global } from '../src/consts';
+import { hashPassword } from '../src/lib/bcrypt';
+import { Effect } from 'effect';
 
 const prisma = new PrismaClient();
 
@@ -14,6 +17,18 @@ async function main() {
     try {
       await prisma.exercise.create({ data: exercise }).then();
     } catch (error) {}
+  }
+
+  console.log({ Global });
+
+  if (Global.ENV === 'test') {
+    prisma.user.create({
+      data: {
+        username: 'admin',
+        passwordHash: Effect.runSync(hashPassword({ password: 'admin' })),
+        role: 'ADMIN',
+      },
+    });
   }
 }
 main()

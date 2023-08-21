@@ -1,4 +1,6 @@
+import { Effect } from 'effect';
 import prisma from '../../../src/config/prisma';
+import { hashPassword } from '../../../src/lib/bcrypt';
 
 export const INEXISTENT_ID = 987654321;
 

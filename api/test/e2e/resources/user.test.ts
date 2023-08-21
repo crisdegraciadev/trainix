@@ -2,17 +2,16 @@ import request from 'supertest';
 
 import app from '../../../src/app';
 import { HttpStatus } from '../../../src/consts';
+import { isErrorResponse } from '../helpers/error';
+import { cleanDatabase, INEXISTENT_ID } from '../helpers/general';
 import {
-  BASE_USER_PATH,
-  INEXISTENT_ID,
-  UserResponse,
-  cleanDatabase,
   createUser,
-  deleteUser,
-  findUserById,
-  isErrorResponse,
+  BASE_USER_PATH,
   isValidUserResponse,
-} from '../helpers';
+  deleteUser,
+  UserResponse,
+  findUserById,
+} from '../helpers/user';
 
 beforeAll(async () => {
   await cleanDatabase();

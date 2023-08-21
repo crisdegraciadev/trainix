@@ -45,4 +45,10 @@ model User {
   username     String    @unique
   passwordHash String
   workouts     Workout[]
+  role         Role      @default(USER)
+}
+
+enum Role {
+  USER
+  ADMIN
 }

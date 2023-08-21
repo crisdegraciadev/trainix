@@ -2,7 +2,6 @@ import request from 'supertest';
 
 import app from '../../../src/app';
 
-import { INEXISTENT_ID, cleanDatabase, isErrorResponse } from '../helpers';
 import {
   ActivityResponse,
   BASE_ACTIVITY_PATH,
@@ -12,6 +11,9 @@ import {
   isValidActivityResponse,
 } from '../helpers/activity';
 import { HttpStatus } from '../../../src/consts';
+import { isErrorResponse } from '../helpers/error';
+
+import { cleanDatabase, INEXISTENT_ID } from '../helpers/general';
 
 beforeAll(async () => {
   await cleanDatabase();

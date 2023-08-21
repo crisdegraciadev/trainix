@@ -1,7 +1,7 @@
 import { pipe, Match } from 'effect';
-import { Errors } from '../../consts';
 import { DuplicateError, NotFoundError, RelationError, UnknownError } from '../types';
 import { Prisma } from '@prisma/client';
+import { Errors } from '../../consts';
 
 const { Codes } = Errors.Prisma;
 

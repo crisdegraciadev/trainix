@@ -8,4 +8,4 @@ export type CreateUserDto = {
 
 export type UpdateUserDto = Partial<CreateUserDto>;
 
-export type ResponseUserDto = Omit<User, 'passwordHash'>;
+export type ResponseUserDto = Omit<User, 'passwordHash' | 'role'>;

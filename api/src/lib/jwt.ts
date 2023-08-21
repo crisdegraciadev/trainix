@@ -1,7 +1,7 @@
 import { User } from '@prisma/client';
 import { Effect } from 'effect';
-import jwt, { JwtPayload, VerifyCallback } from 'jsonwebtoken';
-import { UnauthorizedError } from '../errors/types/unauthorized';
+import jwt, { JwtPayload } from 'jsonwebtoken';
+import { UnauthorizedError } from '../errors/types';
 
 type CreateTokenArgs = {
   payload: Partial<User>;

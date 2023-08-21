@@ -5,6 +5,8 @@ import { User } from '@prisma/client';
 import prisma from '../../../src/config/prisma';
 import { CreateUserDto } from '../../../src/resources/users/types';
 import { HttpStatus } from '../../../src/consts';
+import { Effect } from 'effect';
+import { hashPassword } from '../../../src/lib/bcrypt';
 
 export type UserResponse = {
   id: number;
@@ -29,6 +31,16 @@ export const createUser = async (dto: CreateUserDto): Promise<UserResponse> => {
   expect(isValidUserResponse(body)).toBeTruthy();
 
   return body;
+};
+
+export const createAdminUser = async () => {
+  prisma.user.create({
+    data: {
+      username: 'admin',
+      passwordHash: Effect.runSync(hashPassword({ password: 'admin' })),
+      role: 'ADMIN',
+    },
+  });
 };
 
 export const deleteUser = async (id: number): Promise<User> => {

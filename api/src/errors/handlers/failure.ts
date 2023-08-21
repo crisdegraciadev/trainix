@@ -1,8 +1,8 @@
 import { Option, Cause, Match, pipe, Effect } from 'effect';
 import { Response } from 'express';
-import { HttpStatus } from '../../consts';
 import { DuplicateError, InvalidDtoError, InvalidRequestIdError, NotFoundError, RelationError } from '../types';
 import { UnauthorizedError } from '../types/unauthorized';
+import { HttpStatus } from '../../consts';
 
 export const handleFailureCauses = (cause: Cause.Cause<Error>, res: Response) => {
   const failureOption = Cause.failureOption(cause);

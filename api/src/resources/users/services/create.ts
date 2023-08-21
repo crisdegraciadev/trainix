@@ -17,7 +17,7 @@ export const create = ({ dto }: CreateArgs): CreateReturn => {
   );
 };
 
-const buildUserData = (dto: CreateUserDto): Effect.Effect<never, InvalidDtoError, Omit<User, 'id'>> => {
+const buildUserData = (dto: CreateUserDto): Effect.Effect<never, InvalidDtoError, Omit<User, 'id' | 'role'>> => {
   const { username, password } = dto;
 
   return pipe(
@@ -26,7 +26,7 @@ const buildUserData = (dto: CreateUserDto): Effect.Effect<never, InvalidDtoError
   );
 };
 
-const saveUserData = (data: Omit<User, 'id'>): Effect.Effect<never, DuplicateError, User> => {
+const saveUserData = (data: Omit<User, 'id' | 'role'>): Effect.Effect<never, DuplicateError, User> => {
   return Effect.tryPromise({
     try: () => prisma.user.create({ data }),
     catch: (error) => handlePrismaErrors(error),
