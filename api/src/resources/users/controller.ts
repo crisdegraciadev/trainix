@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import { HttpStatus } from '../../consts';
 import { Effect, Exit, pipe } from 'effect';
-import { User } from '@prisma/client';
 import { createResponseUserDto, isValidCreateUserDto, isValidUpdateUserDto } from './utils';
 import { mapIdToNumber } from '../../utils';
 import { ResponseUserDto, UpdateUserDto, UserRequestParams } from './types';

@@ -1,5 +1,5 @@
 import express from 'express';
-import { authenticateToken } from '../../middleware/auth-token';
+import { validateToken } from '../../middleware/auth-token';
 import { postUser, deleteUser, getUsersByFields, getUserById, putUser } from './controller';
 
 export const userRouter = express.Router();

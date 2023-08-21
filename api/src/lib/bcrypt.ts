@@ -12,9 +12,14 @@ const SALT = bcrypt.genSaltSync(Global.SALT_ROUNDS);
 export const hashPassword = ({ password }: HashPasswordArgs): Effect.Effect<never, InvalidDtoError, string> => {
   return Effect.try({
     try: () => bcrypt.hashSync(password, SALT),
-    catch: (error) => {
-      console.log(error);
-      return new InvalidDtoError({ message: 'The provided password is invalid' });
-    },
+    catch: () => new InvalidDtoError({ message: 'The provided password is invalid' }),
   });
+};
+
+type IsSameHashArgs = HashPasswordArgs & {
+  passwordHash: string;
+};
+
+export const hasSameHash = ({ password, passwordHash }: IsSameHashArgs): Effect.Effect<never, never, boolean> => {
+  return Effect.succeed(bcrypt.compareSync(password, passwordHash));
 };
