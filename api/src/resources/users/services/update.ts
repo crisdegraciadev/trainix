@@ -9,7 +9,7 @@ type UpdateArgs = { id: number; data: UpdateUserDto };
 type UpdateErrors = NotFoundError;
 type UpdateReturn = Effect.Effect<never, UpdateErrors, User>;
 
-export const update = ({ id, data }: UpdateArgs): UpdateReturn => {
+export const updateUser = ({ id, data }: UpdateArgs): UpdateReturn => {
   return Effect.tryPromise({
     try: () => prisma.user.update({ where: { id }, data }),
     catch: (error) => handlePrismaErrors(error),

@@ -1,7 +1,7 @@
 import express from 'express';
-import { login, logout } from './controller';
+import { handleLogin, handleLogout } from './controller';
 
 export const authRouter = express.Router();
 
-authRouter.post('/login', login);
-authRouter.post('/logout', logout);
+authRouter.post('/login', handleLogin);
+authRouter.post('/logout', handleLogout);

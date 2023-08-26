@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { ForbiddenError } from '../errors/types';
 import { HttpStatus } from '../consts';
 
-export const hasAdminRole = (req: Request, res: Response, next: NextFunction) => {
+export const hasAdminRole = (req: Request, res: Response, next: NextFunction): unknown => {
   const { authorizedUserRole } = req;
 
   if (!authorizedUserRole) {

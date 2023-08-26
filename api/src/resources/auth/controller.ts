@@ -5,7 +5,7 @@ import { createAccessToken } from './services/auth';
 import { handleFailureCauses } from '../../errors/handlers';
 import { HttpStatus } from '../../consts';
 
-export const login = async (req: Request, res: Response) => {
+export const handleLogin = async (req: Request, res: Response): Promise<void> => {
   const { body } = req;
 
   const accessTokenResult = await pipe(
@@ -21,4 +21,4 @@ export const login = async (req: Request, res: Response) => {
 };
 
 // TODO implement logout with Redis store
-export const logout = (req: Request, res: Response): void => {};
+export const handleLogout = async (_req: Request, _res: Response): Promise<void> => {};

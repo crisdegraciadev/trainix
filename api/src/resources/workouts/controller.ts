@@ -1,85 +1,79 @@
-import { Request, Response } from 'express';
-import { workoutCrudService } from './services';
-import { HttpStatus } from '../../consts';
-import { isValidCreateWorkoutDto, isValidUpdateWorkoutDto } from './utils';
-import { Effect, Exit, pipe } from 'effect';
 import { Workout } from '@prisma/client';
-import { mapIdToNumber } from '../../utils';
-import { WorkoutRequestParams } from './types';
+import { Effect, Exit, pipe } from 'effect';
+import { Request, Response } from 'express';
+import { HttpStatus } from '../../consts';
 import { handleFailureCauses } from '../../errors/handlers';
+import { mapIdToNumber } from '../../utils';
+import { createWorkout, deleteWorkout, findWorkoutByFields, findWorkoutById, update } from './services';
+import { WorkoutRequestParams } from './types';
+import { isValidCreateWorkoutDto, isValidUpdateWorkoutDto } from './utils';
 
-export const workoutController = () => {
-  const { findById, findByFields, create, update, remove } = workoutCrudService();
+export const handleFindWorkoutById = async (req: Request<WorkoutRequestParams>, res: Response): Promise<void> => {
+  const { id: workoutId } = req.params;
 
-  const findWorkout = async (req: Request<WorkoutRequestParams>, res: Response) => {
-    const { id } = req.params;
+  const findByIdResult = await pipe(
+    Effect.all([mapIdToNumber(workoutId)]),
+    Effect.flatMap(([id]) => findWorkoutById({ id })),
+    Effect.runPromiseExit
+  );
 
-    const findByIdResult = await pipe(
-      Effect.all([mapIdToNumber(id)]),
-      Effect.flatMap(([id]) => findById({ id })),
-      Effect.runPromiseExit,
-    );
+  Exit.match(findByIdResult, {
+    onSuccess: (workout: Workout) => res.status(HttpStatus.OK).send(workout),
+    onFailure: (cause) => handleFailureCauses(cause, res),
+  });
+};
 
-    Exit.match(findByIdResult, {
-      onSuccess: (workout: Workout) => res.status(HttpStatus.OK).send(workout),
-      onFailure: (cause) => handleFailureCauses(cause, res),
-    });
-  };
+export const handleFindWorkoutByFields = async (_req: Request, res: Response): Promise<void> => {
+  const findByFieldsResult = await Effect.runPromiseExit(findWorkoutByFields({}));
 
-  const findAllWorkouts = async (_req: Request, res: Response) => {
-    const findByFieldsResult = await Effect.runPromiseExit(findByFields({}));
+  Exit.match(findByFieldsResult, {
+    onSuccess: (workouts: Workout[]) => res.status(HttpStatus.OK).send(workouts),
+    onFailure: ({ _tag, ...error }) => res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({ ...error }),
+  });
+};
 
-    Exit.match(findByFieldsResult, {
-      onSuccess: (workouts: Workout[]) => res.status(HttpStatus.OK).send(workouts),
-      onFailure: ({ _tag, ...error }) => res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({ ...error }),
-    });
-  };
+export const handleCreateWorkout = async (req: Request, res: Response): Promise<void> => {
+  const { body } = req;
 
-  const createWorkout = async (req: Request, res: Response) => {
-    const { body } = req;
+  const createResult = await pipe(
+    Effect.all([isValidCreateWorkoutDto(body)]),
+    Effect.flatMap(([data]) => createWorkout({ data })),
+    Effect.runPromiseExit
+  );
 
-    const createResult = await pipe(
-      Effect.all([isValidCreateWorkoutDto(body)]),
-      Effect.flatMap(([data]) => create({ data })),
-      Effect.runPromiseExit,
-    );
+  Exit.match(createResult, {
+    onSuccess: (workout: Workout) => res.status(HttpStatus.CREATED).send(workout),
+    onFailure: (cause) => handleFailureCauses(cause, res),
+  });
+};
 
-    Exit.match(createResult, {
-      onSuccess: (workout: Workout) => res.status(HttpStatus.CREATED).send(workout),
-      onFailure: (cause) => handleFailureCauses(cause, res),
-    });
-  };
+export const handleUpdateWorkout = async (req: Request<WorkoutRequestParams>, res: Response): Promise<void> => {
+  const { body } = req;
+  const { id: workoutId } = req.params;
 
-  const updateWorkout = async (req: Request<WorkoutRequestParams>, res: Response) => {
-    const { body } = req;
-    const { id } = req.params;
+  const updateResult = await pipe(
+    Effect.all([mapIdToNumber(workoutId), isValidUpdateWorkoutDto(body)]),
+    Effect.flatMap(([id, data]) => update({ id, data })),
+    Effect.runPromiseExit
+  );
 
-    const updateResult = await pipe(
-      Effect.all([mapIdToNumber(id), isValidUpdateWorkoutDto(body)]),
-      Effect.flatMap(([id, data]) => update({ id, data })),
-      Effect.runPromiseExit,
-    );
+  Exit.match(updateResult, {
+    onSuccess: (workout: Workout) => res.status(HttpStatus.OK).send(workout),
+    onFailure: (cause) => handleFailureCauses(cause, res),
+  });
+};
 
-    Exit.match(updateResult, {
-      onSuccess: (workout: Workout) => res.status(HttpStatus.OK).send(workout),
-      onFailure: (cause) => handleFailureCauses(cause, res),
-    });
-  };
+export const handleDeleteWorkout = async (req: Request<WorkoutRequestParams>, res: Response): Promise<void> => {
+  const { id: workoutId } = req.params;
 
-  const deleteWorkout = async (req: Request<WorkoutRequestParams>, res: Response) => {
-    const { id } = req.params;
+  const removeResult = await pipe(
+    Effect.all([mapIdToNumber(workoutId)]),
+    Effect.flatMap(([id]) => deleteWorkout({ id })),
+    Effect.runPromiseExit
+  );
 
-    const removeResult = await pipe(
-      Effect.all([mapIdToNumber(id)]),
-      Effect.flatMap(([id]) => remove({ id })),
-      Effect.runPromiseExit,
-    );
-
-    Exit.match(removeResult, {
-      onSuccess: (workout: Workout) => res.status(HttpStatus.OK).send(workout),
-      onFailure: (cause) => handleFailureCauses(cause, res),
-    });
-  };
-
-  return { findWorkout, findAllWorkouts, createWorkout, updateWorkout, deleteWorkout };
+  Exit.match(removeResult, {
+    onSuccess: (workout: Workout) => res.status(HttpStatus.OK).send(workout),
+    onFailure: (cause) => handleFailureCauses(cause, res),
+  });
 };

@@ -3,6 +3,6 @@ import { Effect } from 'effect';
 import { ResponseUserDto } from '../types';
 
 export const createResponseUserDto = (user: User): Effect.Effect<never, never, ResponseUserDto> => {
-  const { id, username, ...rest } = user;
+  const { id, username } = user;
   return Effect.succeed({ id, username });
 };

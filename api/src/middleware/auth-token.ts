@@ -3,7 +3,7 @@ import { verifyToken } from '../lib/jwt';
 import { Auth, HttpStatus } from '../consts';
 import { UnauthorizedError } from '../errors/types';
 
-export const validateToken = (req: Request, res: Response, next: NextFunction) => {
+export const validateToken = (req: Request, res: Response, next: NextFunction): unknown => {
   const { authorization } = req.headers;
 
   if (!authorization) {

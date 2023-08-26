@@ -1,10 +1,10 @@
-import { Option, Cause, Match, pipe, Effect } from 'effect';
+import { Option, Cause, Match, pipe } from 'effect';
 import { Response } from 'express';
 import { DuplicateError, InvalidDtoError, InvalidRequestIdError, NotFoundError, RelationError } from '../types';
 import { UnauthorizedError } from '../types/unauthorized';
 import { HttpStatus } from '../../consts';
 
-export const handleFailureCauses = (cause: Cause.Cause<Error>, res: Response) => {
+export const handleFailureCauses = (cause: Cause.Cause<Error>, res: Response): void => {
   const failureOption = Cause.failureOption(cause);
 
   const getStatusCode = pipe(
@@ -15,7 +15,7 @@ export const handleFailureCauses = (cause: Cause.Cause<Error>, res: Response) =>
     Match.when({ error: (error) => error instanceof UnauthorizedError }, () => HttpStatus.UNAUTHORIZED),
     Match.when({ error: (error) => error instanceof DuplicateError }, () => HttpStatus.CONFLICT),
     Match.when({ error: (error) => error instanceof RelationError }, () => HttpStatus.CONFLICT),
-    Match.orElse(() => HttpStatus.INTERNAL_SERVER_ERROR),
+    Match.orElse(() => HttpStatus.INTERNAL_SERVER_ERROR)
   );
 
   Option.match(failureOption, {

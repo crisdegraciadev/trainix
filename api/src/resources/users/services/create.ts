@@ -10,10 +10,10 @@ type CreateArgs = { dto: CreateUserDto };
 type CreateErrors = DuplicateError;
 type CreateReturn = Effect.Effect<never, CreateErrors, User>;
 
-export const create = ({ dto }: CreateArgs): CreateReturn => {
+export const createUser = ({ dto }: CreateArgs): CreateReturn => {
   return pipe(
     Effect.all([buildUserData(dto)]),
-    Effect.flatMap(([data]) => saveUserData(data)),
+    Effect.flatMap(([data]) => saveUserData(data))
   );
 };
 
@@ -22,7 +22,7 @@ const buildUserData = (dto: CreateUserDto): Effect.Effect<never, InvalidDtoError
 
   return pipe(
     Effect.all([hashPassword({ password })]),
-    Effect.map(([passwordHash]) => ({ username, passwordHash })),
+    Effect.map(([passwordHash]) => ({ username, passwordHash }))
   );
 };
 

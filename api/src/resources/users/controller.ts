@@ -5,16 +5,19 @@ import { createResponseUserDto, isValidCreateUserDto, isValidUpdateUserDto } fro
 import { mapIdToNumber } from '../../utils';
 import { ResponseUserDto, UpdateUserDto, UserRequestParams } from './types';
 import { handleFailureCauses } from '../../errors/handlers';
-import { create, findUserById, findUsersByFields, remove, update } from './services';
+import { createUser, findUserById, findUsersByFields, deleteUser, updateUser } from './services';
 
-export const getUserById = async (req: Request<UserRequestParams>, res: Response<ResponseUserDto>) => {
-  const { id } = req.params;
+export const handleFindUserById = async (
+  req: Request<UserRequestParams>,
+  res: Response<ResponseUserDto>
+): Promise<void> => {
+  const { id: userId } = req.params;
 
   const findByIdResult = await pipe(
-    Effect.all([mapIdToNumber(id)]),
+    Effect.all([mapIdToNumber(userId)]),
     Effect.flatMap(([id]) => findUserById({ id })),
     Effect.flatMap((user) => createResponseUserDto(user)),
-    Effect.runPromiseExit,
+    Effect.runPromiseExit
   );
 
   Exit.match(findByIdResult, {
@@ -23,11 +26,11 @@ export const getUserById = async (req: Request<UserRequestParams>, res: Response
   });
 };
 
-export const getUsersByFields = async (_req: Request, res: Response<ResponseUserDto[]>) => {
+export const handleFindUserByFields = async (_req: Request, res: Response<ResponseUserDto[]>): Promise<void> => {
   const findByFieldsResult = await pipe(
     Effect.all([findUsersByFields({})]),
     Effect.map(([users]) => users.map((user) => Effect.runSync(createResponseUserDto(user)))),
-    Effect.runPromiseExit,
+    Effect.runPromiseExit
   );
 
   Exit.match(findByFieldsResult, {
@@ -36,14 +39,14 @@ export const getUsersByFields = async (_req: Request, res: Response<ResponseUser
   });
 };
 
-export const postUser = async (req: Request, res: Response<ResponseUserDto>) => {
+export const handleCreateUser = async (req: Request, res: Response<ResponseUserDto>): Promise<void> => {
   const { body } = req;
 
   const createResult = await pipe(
     Effect.all([isValidCreateUserDto(body)]),
-    Effect.flatMap(([data]) => create({ dto: data })),
+    Effect.flatMap(([data]) => createUser({ dto: data })),
     Effect.flatMap((user) => createResponseUserDto(user)),
-    Effect.runPromiseExit,
+    Effect.runPromiseExit
   );
 
   Exit.match(createResult, {
@@ -52,18 +55,18 @@ export const postUser = async (req: Request, res: Response<ResponseUserDto>) => 
   });
 };
 
-export const putUser = async (
+export const handleUpdateUser = async (
   req: Request<UserRequestParams, unknown, UpdateUserDto>,
-  res: Response<ResponseUserDto>,
-) => {
+  res: Response<ResponseUserDto>
+): Promise<void> => {
   const { body } = req;
-  const { id } = req.params;
+  const { id: userId } = req.params;
 
   const updateResult = await pipe(
-    Effect.all([mapIdToNumber(id), isValidUpdateUserDto(body)]),
-    Effect.flatMap(([id, data]) => update({ id, data })),
+    Effect.all([mapIdToNumber(userId), isValidUpdateUserDto(body)]),
+    Effect.flatMap(([id, data]) => updateUser({ id, data })),
     Effect.flatMap((user) => createResponseUserDto(user)),
-    Effect.runPromiseExit,
+    Effect.runPromiseExit
   );
 
   Exit.match(updateResult, {
@@ -72,14 +75,14 @@ export const putUser = async (
   });
 };
 
-export const deleteUser = async (req: Request<UserRequestParams>, res: Response) => {
-  const { id } = req.params;
+export const handleDeleteUser = async (req: Request<UserRequestParams>, res: Response): Promise<void> => {
+  const { id: userId } = req.params;
 
   const removeResult = await pipe(
-    Effect.all([mapIdToNumber(id)]),
-    Effect.flatMap(([id]) => remove({ id })),
+    Effect.all([mapIdToNumber(userId)]),
+    Effect.flatMap(([id]) => deleteUser({ id })),
     Effect.flatMap((user) => createResponseUserDto(user)),
-    Effect.runPromiseExit,
+    Effect.runPromiseExit
   );
 
   Exit.match(removeResult, {

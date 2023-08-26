@@ -27,7 +27,7 @@ export const deleteWorkout = async (id: number): Promise<Workout> => {
   return prisma.workout.delete({ where: { id } });
 };
 
-export const deleteAllWorkouts = async () => {
+export const deleteAllWorkouts = async (): Promise<void> => {
   const deleteWorkouts = prisma.workout.deleteMany();
   await prisma.$transaction([deleteWorkouts]);
 };
