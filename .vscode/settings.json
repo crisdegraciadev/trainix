@@ -1,3 +1,11 @@
 {
-  "eslint.workingDirectories": ["api", "dashboard"]
+  "eslint.workingDirectories": ["api", "dashboard"],
+  "cSpell.words": [
+    "clsx",
+    "hookform",
+    "lucide",
+    "shadcn",
+    "tailwindcss",
+    "tanstack"
+  ]
 }
