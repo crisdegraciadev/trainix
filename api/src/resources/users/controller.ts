@@ -14,7 +14,7 @@ export const getUserById = async (req: Request<UserRequestParams>, res: Response
     Effect.all([mapIdToNumber(id)]),
     Effect.flatMap(([id]) => findUserById({ id })),
     Effect.flatMap((user) => createResponseUserDto(user)),
-    Effect.runPromiseExit
+    Effect.runPromiseExit,
   );
 
   Exit.match(findByIdResult, {
@@ -27,7 +27,7 @@ export const getUsersByFields = async (_req: Request, res: Response<ResponseUser
   const findByFieldsResult = await pipe(
     Effect.all([findUsersByFields({})]),
     Effect.map(([users]) => users.map((user) => Effect.runSync(createResponseUserDto(user)))),
-    Effect.runPromiseExit
+    Effect.runPromiseExit,
   );
 
   Exit.match(findByFieldsResult, {
@@ -43,7 +43,7 @@ export const postUser = async (req: Request, res: Response<ResponseUserDto>) => 
     Effect.all([isValidCreateUserDto(body)]),
     Effect.flatMap(([data]) => create({ dto: data })),
     Effect.flatMap((user) => createResponseUserDto(user)),
-    Effect.runPromiseExit
+    Effect.runPromiseExit,
   );
 
   Exit.match(createResult, {
@@ -54,7 +54,7 @@ export const postUser = async (req: Request, res: Response<ResponseUserDto>) => 
 
 export const putUser = async (
   req: Request<UserRequestParams, unknown, UpdateUserDto>,
-  res: Response<ResponseUserDto>
+  res: Response<ResponseUserDto>,
 ) => {
   const { body } = req;
   const { id } = req.params;
@@ -63,7 +63,7 @@ export const putUser = async (
     Effect.all([mapIdToNumber(id), isValidUpdateUserDto(body)]),
     Effect.flatMap(([id, data]) => update({ id, data })),
     Effect.flatMap((user) => createResponseUserDto(user)),
-    Effect.runPromiseExit
+    Effect.runPromiseExit,
   );
 
   Exit.match(updateResult, {
@@ -79,7 +79,7 @@ export const deleteUser = async (req: Request<UserRequestParams>, res: Response)
     Effect.all([mapIdToNumber(id)]),
     Effect.flatMap(([id]) => remove({ id })),
     Effect.flatMap((user) => createResponseUserDto(user)),
-    Effect.runPromiseExit
+    Effect.runPromiseExit,
   );
 
   Exit.match(removeResult, {

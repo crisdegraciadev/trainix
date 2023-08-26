@@ -33,7 +33,7 @@ export const createUser = async (dto: CreateUserDto): Promise<UserResponse> => {
   return body;
 };
 
-export const createAdminUser = async () => {
+export const createAdminUser = async (): Promise<void> => {
   prisma.user.create({
     data: {
       username: 'admin',
@@ -47,7 +47,7 @@ export const deleteUser = async (id: number): Promise<User> => {
   return prisma.user.delete({ where: { id } });
 };
 
-export const deleteAllUsers = async () => {
+export const deleteAllUsers = async (): Promise<void> => {
   const deleteUsers = prisma.user.deleteMany();
   await prisma.$transaction([deleteUsers]);
 };

@@ -11,7 +11,7 @@ export const login = async (req: Request, res: Response) => {
   const accessTokenResult = await pipe(
     Effect.all([isValidLoginDto(body)]),
     Effect.flatMap(([dto]) => createAccessToken({ dto })),
-    Effect.runPromiseExit
+    Effect.runPromiseExit,
   );
 
   Exit.match(accessTokenResult, {

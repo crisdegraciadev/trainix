@@ -2,6 +2,7 @@ import { ErrorParams } from '.';
 
 export class InvalidDtoError extends Error {
   public type = InvalidDtoError.name;
+
   public meta?: Record<string, unknown>;
 
   constructor({ message, meta }: ErrorParams) {

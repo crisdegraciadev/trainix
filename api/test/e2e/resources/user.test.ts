@@ -1,9 +1,5 @@
-import request from 'supertest';
-
-import app from '../../../src/app';
 import { HttpStatus } from '../../../src/consts';
 import { isErrorResponse } from '../helpers/error';
-import { cleanDatabase, INEXISTENT_ID } from '../helpers/general';
 import {
   createUser,
   BASE_USER_PATH,
@@ -12,13 +8,17 @@ import {
   UserResponse,
   findUserById,
 } from '../helpers/user';
+import { loginUser } from '../helpers/auth';
+import { createAdmin, cleanDatabase } from '../helpers/db';
+import { deleteRequest, getRequest, INEXISTENT_ID, postRequest, putRequest } from '../helpers/request';
 
 beforeAll(async () => {
-  await cleanDatabase();
+  await createAdmin();
+  await cleanDatabase({ all: false });
 });
 
 afterAll(async () => {
-  await cleanDatabase();
+  await cleanDatabase({ all: true });
 });
 
 describe('USERS', () => {
@@ -27,7 +27,12 @@ describe('USERS', () => {
       const createUserPayload = { username: 'cris', password: '1234', repeatedPassword: '1234' };
       const { id: userId } = await createUser(createUserPayload);
 
-      const { statusCode, body } = await request(app).get(`${BASE_USER_PATH}/${userId}`).send();
+      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+
+      const { statusCode, body } = await getRequest({
+        url: `${BASE_USER_PATH}/${userId}`,
+        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+      });
 
       expect(statusCode).toBe(HttpStatus.OK);
       expect(isValidUserResponse(body)).toBeTruthy();
@@ -36,7 +41,13 @@ describe('USERS', () => {
     });
 
     it('not found', async () => {
-      const { statusCode, body } = await request(app).get(`${BASE_USER_PATH}/${INEXISTENT_ID}`).send();
+      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+
+      const { statusCode, body } = await getRequest({
+        url: `${BASE_USER_PATH}/${INEXISTENT_ID}`,
+        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+      });
+
       expect(statusCode).toBe(HttpStatus.NOT_FOUND);
       expect(isErrorResponse(body)).toBeTruthy();
     });
@@ -45,7 +56,12 @@ describe('USERS', () => {
       const createUserPayload = { username: 'cris', password: '1234', repeatedPassword: '1234' };
       const { id: userId } = await createUser(createUserPayload);
 
-      const { statusCode, body } = await request(app).get(`${BASE_USER_PATH}/${userId}`).send();
+      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+
+      const { statusCode, body } = await getRequest({
+        url: `${BASE_USER_PATH}/${userId}`,
+        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+      });
 
       expect(statusCode).toBe(HttpStatus.OK);
 
@@ -65,10 +81,15 @@ describe('USERS', () => {
 
       const createdUsers = await Promise.all(createUserPayloads.map(async (payload) => createUser(payload)));
 
-      const { statusCode, body } = await request(app).get(`${BASE_USER_PATH}/`).send();
+      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+
+      const { statusCode, body } = await getRequest({
+        url: `${BASE_USER_PATH}/`,
+        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+      });
 
       expect(statusCode).toBe(HttpStatus.OK);
-      expect(body.length).toBe(3);
+      expect(body.length).toBe(4);
 
       const users = body as UserResponse[];
       users.forEach((user) => expect(isValidUserResponse(user)).toBeTruthy());
@@ -77,10 +98,15 @@ describe('USERS', () => {
     });
 
     it('empty list', async () => {
-      const { statusCode, body } = await request(app).get(`${BASE_USER_PATH}/`).send();
+      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+
+      const { statusCode, body } = await getRequest({
+        url: `${BASE_USER_PATH}/`,
+        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+      });
 
       expect(statusCode).toBe(HttpStatus.OK);
-      expect(body.length).toBe(0);
+      expect(body.length).toBe(1);
     });
 
     it('password hash not returned', async () => {
@@ -92,10 +118,15 @@ describe('USERS', () => {
 
       const createdUsers = await Promise.all(createUserPayloads.map(async (payload) => createUser(payload)));
 
-      const { statusCode, body } = await request(app).get(`${BASE_USER_PATH}/`).send();
+      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+
+      const { statusCode, body } = await getRequest({
+        url: `${BASE_USER_PATH}/`,
+        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+      });
 
       expect(statusCode).toBe(HttpStatus.OK);
-      expect(body.length).toBe(3);
+      expect(body.length).toBe(4);
 
       body.forEach((user: Record<string, unknown>) => expect(user.passwordHash).toBeUndefined());
 
@@ -106,7 +137,11 @@ describe('USERS', () => {
   describe('POST /', () => {
     it('create', async () => {
       const createUserPayload = { username: 'cris', password: '1234', repeatedPassword: '1234' };
-      const { statusCode, body } = await request(app).post(`${BASE_USER_PATH}/`).send(createUserPayload);
+
+      const { statusCode, body } = await postRequest({
+        url: `${BASE_USER_PATH}/`,
+        dto: createUserPayload,
+      });
 
       expect(statusCode).toBe(HttpStatus.CREATED);
       expect(isValidUserResponse(body)).toBeTruthy();
@@ -123,7 +158,10 @@ describe('USERS', () => {
     it('invalid dto', async () => {
       const createUserPayload = { user: 'cris' };
 
-      const { statusCode, body } = await request(app).post(`${BASE_USER_PATH}/`).send(createUserPayload);
+      const { statusCode, body } = await postRequest({
+        url: `${BASE_USER_PATH}/`,
+        dto: createUserPayload,
+      });
 
       expect(statusCode).toBe(HttpStatus.BAD_REQUEST);
       expect(isErrorResponse(body)).toBeTruthy();
@@ -132,16 +170,18 @@ describe('USERS', () => {
     it('duplicate username', async () => {
       const createUserPayload = { username: 'cris', password: '1234', repeatedPassword: '1234' };
 
-      const { statusCode: statusCode1, body: body1 } = await request(app)
-        .post(`${BASE_USER_PATH}/`)
-        .send(createUserPayload);
+      const { statusCode: statusCode1, body: body1 } = await postRequest({
+        url: `${BASE_USER_PATH}/`,
+        dto: createUserPayload,
+      });
 
       expect(statusCode1).toBe(HttpStatus.CREATED);
       expect(isValidUserResponse(body1)).toBeTruthy();
 
-      const { statusCode: statusCode2, body: body2 } = await request(app)
-        .post(`${BASE_USER_PATH}/`)
-        .send(createUserPayload);
+      const { statusCode: statusCode2, body: body2 } = await postRequest({
+        url: `${BASE_USER_PATH}/`,
+        dto: createUserPayload,
+      });
 
       expect(statusCode2).toBe(HttpStatus.CONFLICT);
       expect(isErrorResponse(body2)).toBeTruthy();
@@ -151,7 +191,11 @@ describe('USERS', () => {
 
     it('password hash not returned', async () => {
       const createUserPayload = { username: 'cris', password: '1234', repeatedPassword: '1234' };
-      const { statusCode, body } = await request(app).post(`${BASE_USER_PATH}/`).send(createUserPayload);
+
+      const { statusCode, body } = await postRequest({
+        url: `${BASE_USER_PATH}/`,
+        dto: createUserPayload,
+      });
 
       expect(statusCode).toBe(HttpStatus.CREATED);
       expect(isValidUserResponse(body)).toBeTruthy();
@@ -175,7 +219,14 @@ describe('USERS', () => {
       expect(createdUser).toMatchObject({ id: userId, username });
 
       const updateUserPayload = { username: 'cfres' };
-      const { statusCode, body } = await request(app).put(`${BASE_USER_PATH}/${userId}`).send(updateUserPayload);
+
+      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+
+      const { statusCode, body } = await putRequest({
+        url: `${BASE_USER_PATH}/${userId}`,
+        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        dto: updateUserPayload,
+      });
 
       expect(statusCode).toBe(HttpStatus.OK);
       expect(body).toMatchObject({ id: userId, ...updateUserPayload });
@@ -188,7 +239,14 @@ describe('USERS', () => {
       const { id: userId } = await createUser(createUserPayload);
 
       const updateUserPayload = { user: 'cfres' };
-      const { statusCode, body } = await request(app).put(`${BASE_USER_PATH}/${userId}`).send(updateUserPayload);
+
+      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+
+      const { statusCode, body } = await putRequest({
+        url: `${BASE_USER_PATH}/${userId}`,
+        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        dto: updateUserPayload,
+      });
 
       expect(statusCode).toBe(HttpStatus.BAD_REQUEST);
       expect(isErrorResponse(body)).toBeTruthy();
@@ -198,7 +256,14 @@ describe('USERS', () => {
 
     it('not found', async () => {
       const updateUserPayload = { username: 'cris', password: '1234', repeatedPassword: '1234' };
-      const { statusCode, body } = await request(app).put(`${BASE_USER_PATH}/${INEXISTENT_ID}`).send(updateUserPayload);
+
+      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+
+      const { statusCode, body } = await putRequest({
+        url: `${BASE_USER_PATH}/${INEXISTENT_ID}`,
+        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        dto: updateUserPayload,
+      });
 
       expect(statusCode).toBe(HttpStatus.NOT_FOUND);
       expect(isErrorResponse(body)).toBeTruthy();
@@ -211,7 +276,13 @@ describe('USERS', () => {
       const createUserPayload2 = { username: 'ana', password: '1234', repeatedPassword: '1234' };
       const { id: id2 } = await createUser(createUserPayload2);
 
-      const { statusCode, body } = await request(app).put(`${BASE_USER_PATH}/${id1}`).send(createUserPayload2);
+      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+
+      const { statusCode, body } = await putRequest({
+        url: `${BASE_USER_PATH}/${id1}`,
+        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        dto: createUserPayload2,
+      });
 
       expect(statusCode).toBe(HttpStatus.CONFLICT);
       expect(isErrorResponse(body)).toBeTruthy();
@@ -225,7 +296,14 @@ describe('USERS', () => {
       const { id: userId } = await createUser(createUserPayload);
 
       const updateUserPayload = { username: 'cfres' };
-      const { statusCode, body } = await request(app).put(`${BASE_USER_PATH}/${userId}`).send(updateUserPayload);
+
+      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+
+      const { statusCode, body } = await putRequest({
+        url: `${BASE_USER_PATH}/${userId}`,
+        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        dto: updateUserPayload,
+      });
 
       expect(statusCode).toBe(HttpStatus.OK);
       expect(body.passwordHash).toBeUndefined();
@@ -239,7 +317,12 @@ describe('USERS', () => {
       const createUserPayload = { username: 'cris', password: '1234', repeatedPassword: '1234' };
       const { id: userId } = await createUser(createUserPayload);
 
-      const { statusCode, body } = await request(app).delete(`${BASE_USER_PATH}/${userId}`).send();
+      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+
+      const { statusCode, body } = await deleteRequest({
+        url: `${BASE_USER_PATH}/${userId}`,
+        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+      });
 
       expect(statusCode).toBe(HttpStatus.OK);
 
@@ -251,7 +334,13 @@ describe('USERS', () => {
     });
 
     it('not found', async () => {
-      const { statusCode } = await request(app).delete(`${BASE_USER_PATH}/${INEXISTENT_ID}`).send();
+      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+
+      const { statusCode } = await deleteRequest({
+        url: `${BASE_USER_PATH}/${INEXISTENT_ID}`,
+        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+      });
+
       expect(statusCode).toBe(HttpStatus.NOT_FOUND);
     });
 
@@ -259,11 +348,15 @@ describe('USERS', () => {
       const createUserPayload = { username: 'cris', password: '1234', repeatedPassword: '1234' };
       const { id: userId } = await createUser(createUserPayload);
 
-      const { statusCode, body } = await request(app).delete(`${BASE_USER_PATH}/${userId}`).send();
+      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+
+      const { statusCode, body } = await deleteRequest({
+        url: `${BASE_USER_PATH}/${userId}`,
+        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+      });
 
       expect(statusCode).toBe(HttpStatus.OK);
 
-      const { username } = createUserPayload;
       expect(body.passwordHash).toBeUndefined();
 
       const user = await findUserById(userId);

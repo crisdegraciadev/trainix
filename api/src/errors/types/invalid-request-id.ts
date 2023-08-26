@@ -2,6 +2,7 @@ import { ErrorParams } from '.';
 
 export class InvalidRequestIdError extends Error {
   public type = InvalidRequestIdError.name;
+
   public meta?: Record<string, unknown>;
 
   constructor({ message, meta }: ErrorParams) {

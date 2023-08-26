@@ -15,7 +15,7 @@ export const handleFailureCauses = (cause: Cause.Cause<Error>, res: Response) =>
     Match.when({ error: (error) => error instanceof UnauthorizedError }, () => HttpStatus.UNAUTHORIZED),
     Match.when({ error: (error) => error instanceof DuplicateError }, () => HttpStatus.CONFLICT),
     Match.when({ error: (error) => error instanceof RelationError }, () => HttpStatus.CONFLICT),
-    Match.orElse(() => HttpStatus.INTERNAL_SERVER_ERROR)
+    Match.orElse(() => HttpStatus.INTERNAL_SERVER_ERROR),
   );
 
   Option.match(failureOption, {

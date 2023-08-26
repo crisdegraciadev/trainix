@@ -1,17 +1,17 @@
-import request from 'supertest';
-
-import app from '../../../src/app';
 import { BASE_AUTH_PATH } from '../helpers/auth';
 import { HttpStatus } from '../../../src/consts';
-import { cleanDatabase } from '../helpers/general';
 import { createUser, deleteUser } from '../helpers/user';
+import { createAdmin, cleanDatabase } from '../helpers/db';
+import { postRequest } from '../helpers/request';
+import { isErrorResponse } from '../helpers/error';
 
 beforeAll(async () => {
-  await cleanDatabase();
+  await createAdmin();
+  await cleanDatabase({ all: false });
 });
 
 afterAll(async () => {
-  await cleanDatabase();
+  await cleanDatabase({ all: true });
 });
 
 describe('AUTH', () => {
@@ -21,7 +21,10 @@ describe('AUTH', () => {
       const { username, password } = createUserPayload;
       const { id: userId } = await createUser(createUserPayload);
 
-      const { statusCode, body } = await request(app).post(`${BASE_AUTH_PATH}/login`).send({ username, password });
+      const { statusCode, body } = await postRequest({
+        url: `${BASE_AUTH_PATH}/login`,
+        dto: { username, password },
+      });
 
       expect(statusCode).toBe(HttpStatus.OK);
       expect(body).toHaveProperty('accessToken');
@@ -32,14 +35,16 @@ describe('AUTH', () => {
 
     it('invalid credentials', async () => {
       const createUserPayload = { username: 'cris', password: '1234', repeatedPassword: '1234' };
-      const { username, password } = createUserPayload;
+      const { username } = createUserPayload;
       const { id: userId } = await createUser(createUserPayload);
 
-      const { statusCode, body } = await request(app)
-        .post(`${BASE_AUTH_PATH}/login`)
-        .send({ username, password: 'b4d_p4ss' });
+      const { statusCode, body } = await postRequest({
+        url: `${BASE_AUTH_PATH}/login`,
+        dto: { username, password: 'b4d_p4ss' },
+      });
 
       expect(statusCode).toBe(HttpStatus.UNAUTHORIZED);
+      expect(isErrorResponse(body)).toBeTruthy();
 
       deleteUser(userId);
     });

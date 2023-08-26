@@ -6,7 +6,7 @@ import { Effect } from 'effect';
 
 const prisma = new PrismaClient();
 
-async function main() {
+async function main(): Promise<void> {
   const exercises: Omit<Exercise, 'id'>[] = [
     { name: TranslationKeys.PushUp.NAME, description: TranslationKeys.PushUp.DESCRIPTION },
     { name: TranslationKeys.PullUp.NAME, description: TranslationKeys.PullUp.DESCRIPTION },
@@ -17,18 +17,6 @@ async function main() {
     try {
       await prisma.exercise.create({ data: exercise }).then();
     } catch (error) {}
-  }
-
-  console.log({ Global });
-
-  if (Global.ENV === 'test') {
-    prisma.user.create({
-      data: {
-        username: 'admin',
-        passwordHash: Effect.runSync(hashPassword({ password: 'admin' })),
-        role: 'ADMIN',
-      },
-    });
   }
 }
 main()

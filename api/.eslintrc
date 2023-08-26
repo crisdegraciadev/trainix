@@ -7,10 +7,9 @@
   "parserOptions": {
     "project": ["./tsconfig.json"]
   },
-  "extends": "airbnb-typescript/base",
+  "extends": ["airbnb-typescript/base", "prettier"],
   "plugins": ["import", "@typescript-eslint"],
   "rules": {
-    "comma-dangle": ["never"],
     "no-underscore-dangle": 0,
     "no-param-reassign": 0,
     "no-return-assign": 0,
@@ -18,6 +17,7 @@
     "import/extensions": 0,
     "@typescript-eslint/no-redeclare": 0,
     "no-unused-vars": "off",
+    "@typescript-eslint/explicit-function-return-type": "error",
     "@typescript-eslint/no-use-before-define": "off",
     "@typescript-eslint/no-unused-vars": [
       "warn",

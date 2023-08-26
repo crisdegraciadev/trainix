@@ -17,7 +17,7 @@ export const workoutController = () => {
     const findByIdResult = await pipe(
       Effect.all([mapIdToNumber(id)]),
       Effect.flatMap(([id]) => findById({ id })),
-      Effect.runPromiseExit
+      Effect.runPromiseExit,
     );
 
     Exit.match(findByIdResult, {
@@ -41,7 +41,7 @@ export const workoutController = () => {
     const createResult = await pipe(
       Effect.all([isValidCreateWorkoutDto(body)]),
       Effect.flatMap(([data]) => create({ data })),
-      Effect.runPromiseExit
+      Effect.runPromiseExit,
     );
 
     Exit.match(createResult, {
@@ -57,7 +57,7 @@ export const workoutController = () => {
     const updateResult = await pipe(
       Effect.all([mapIdToNumber(id), isValidUpdateWorkoutDto(body)]),
       Effect.flatMap(([id, data]) => update({ id, data })),
-      Effect.runPromiseExit
+      Effect.runPromiseExit,
     );
 
     Exit.match(updateResult, {
@@ -72,7 +72,7 @@ export const workoutController = () => {
     const removeResult = await pipe(
       Effect.all([mapIdToNumber(id)]),
       Effect.flatMap(([id]) => remove({ id })),
-      Effect.runPromiseExit
+      Effect.runPromiseExit,
     );
 
     Exit.match(removeResult, {

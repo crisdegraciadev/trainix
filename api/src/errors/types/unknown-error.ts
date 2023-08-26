@@ -2,6 +2,7 @@ import { ErrorParams } from '.';
 
 export class UnknownError extends Error {
   public type = UnknownError.name;
+
   public meta?: Record<string, unknown>;
 
   constructor({ message, meta }: ErrorParams) {

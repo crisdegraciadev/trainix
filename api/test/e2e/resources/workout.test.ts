@@ -1,4 +1,3 @@
-import request from 'supertest';
 import { HttpStatus } from '../../../src/consts';
 import {
   BASE_WORKOUT_PATH,
@@ -8,17 +7,19 @@ import {
   findWorkoutById,
   isValidWorkoutResponse,
 } from '../helpers/workout';
-import app from '../../../src/app';
 import { isErrorResponse } from '../helpers/error';
-import { cleanDatabase, INEXISTENT_ID } from '../helpers/general';
 import { createUser, deleteUser } from '../helpers/user';
+import { createAdmin, cleanDatabase } from '../helpers/db';
+import { INEXISTENT_ID, deleteRequest, getRequest, postRequest, putRequest } from '../helpers/request';
+import { loginUser } from '../helpers/auth';
 
 beforeAll(async () => {
-  await cleanDatabase();
+  await createAdmin();
+  await cleanDatabase({ all: false });
 });
 
 afterAll(async () => {
-  await cleanDatabase();
+  await cleanDatabase({ all: true });
 });
 
 describe('WORKOUTS', () => {
@@ -30,7 +31,12 @@ describe('WORKOUTS', () => {
       const createWorkoutPayload = { name: 'Upper - Muscle Up', userId };
       const { id: workoutId } = await createWorkout(createWorkoutPayload);
 
-      const { statusCode, body } = await request(app).get(`${BASE_WORKOUT_PATH}/${workoutId}`).send();
+      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+
+      const { statusCode, body } = await getRequest({
+        url: `${BASE_WORKOUT_PATH}/${workoutId}`,
+        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+      });
 
       expect(statusCode).toBe(HttpStatus.OK);
       expect(isValidWorkoutResponse(body)).toBeTruthy();
@@ -40,7 +46,13 @@ describe('WORKOUTS', () => {
     });
 
     it('not found', async () => {
-      const { statusCode, body } = await request(app).get(`${BASE_WORKOUT_PATH}/${INEXISTENT_ID}`).send();
+      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+
+      const { statusCode, body } = await getRequest({
+        url: `${BASE_WORKOUT_PATH}/${INEXISTENT_ID}`,
+        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+      });
+
       expect(statusCode).toBe(HttpStatus.NOT_FOUND);
       expect(isErrorResponse(body)).toBeTruthy();
     });
@@ -59,7 +71,12 @@ describe('WORKOUTS', () => {
 
       const createdWorkouts = await Promise.all(createWorkoutPayloads.map(async (payload) => createWorkout(payload)));
 
-      const { statusCode, body } = await request(app).get(`${BASE_WORKOUT_PATH}/`).send();
+      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+
+      const { statusCode, body } = await getRequest({
+        url: `${BASE_WORKOUT_PATH}/`,
+        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+      });
 
       expect(statusCode).toBe(HttpStatus.OK);
       expect(body.length).toBe(3);
@@ -72,7 +89,12 @@ describe('WORKOUTS', () => {
     });
 
     it('empty list', async () => {
-      const { statusCode, body } = await request(app).get(`${BASE_WORKOUT_PATH}/`).send();
+      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+
+      const { statusCode, body } = await getRequest({
+        url: `${BASE_WORKOUT_PATH}/`,
+        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+      });
 
       expect(statusCode).toBe(HttpStatus.OK);
       expect(body.length).toBe(0);
@@ -85,7 +107,14 @@ describe('WORKOUTS', () => {
       const { id: userId } = await createUser(createUserPayload);
 
       const createWorkoutPayload = { name: 'Upper - Muscle Up', userId };
-      const { statusCode, body } = await request(app).post(`${BASE_WORKOUT_PATH}/`).send(createWorkoutPayload);
+
+      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+
+      const { statusCode, body } = await postRequest({
+        url: `${BASE_WORKOUT_PATH}/`,
+        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        dto: createWorkoutPayload,
+      });
 
       expect(statusCode).toBe(HttpStatus.CREATED);
       expect(isValidWorkoutResponse(body)).toBeTruthy();
@@ -104,7 +133,13 @@ describe('WORKOUTS', () => {
 
       const createWorkoutPayload = { userId };
 
-      const { statusCode, body } = await request(app).post(`${BASE_WORKOUT_PATH}/`).send(createWorkoutPayload);
+      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+
+      const { statusCode, body } = await postRequest({
+        url: `${BASE_WORKOUT_PATH}/`,
+        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        dto: createWorkoutPayload,
+      });
 
       expect(statusCode).toBe(HttpStatus.BAD_REQUEST);
       expect(isErrorResponse(body)).toBeTruthy();
@@ -118,16 +153,22 @@ describe('WORKOUTS', () => {
 
       const createWorkoutPayload = { name: 'Upper - Muscle Up', userId };
 
-      const { statusCode: statusCode1, body: body1 } = await request(app)
-        .post(`${BASE_WORKOUT_PATH}/`)
-        .send(createWorkoutPayload);
+      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+
+      const { statusCode: statusCode1, body: body1 } = await postRequest({
+        url: `${BASE_WORKOUT_PATH}/`,
+        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        dto: createWorkoutPayload,
+      });
 
       expect(statusCode1).toBe(HttpStatus.CREATED);
       expect(isValidWorkoutResponse(body1)).toBeTruthy();
 
-      const { statusCode: statusCode2, body: body2 } = await request(app)
-        .post(`${BASE_WORKOUT_PATH}/`)
-        .send(createWorkoutPayload);
+      const { statusCode: statusCode2, body: body2 } = await postRequest({
+        url: `${BASE_WORKOUT_PATH}/`,
+        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        dto: createWorkoutPayload,
+      });
 
       expect(statusCode2).toBe(HttpStatus.CONFLICT);
       expect(isErrorResponse(body2)).toBeTruthy();
@@ -149,9 +190,14 @@ describe('WORKOUTS', () => {
       expect(createdWorkout).toMatchObject({ id: workoutId, ...createWorkoutPayload });
 
       const updateWorkoutPayload = { name: 'Upper - Front' };
-      const { statusCode, body } = await request(app)
-        .put(`${BASE_WORKOUT_PATH}/${workoutId}`)
-        .send(updateWorkoutPayload);
+
+      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+
+      const { statusCode, body } = await putRequest({
+        url: `${BASE_WORKOUT_PATH}/${workoutId}`,
+        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        dto: updateWorkoutPayload,
+      });
 
       expect(statusCode).toBe(HttpStatus.OK);
       expect(body).toMatchObject({ id: workoutId, ...updateWorkoutPayload });
@@ -169,9 +215,13 @@ describe('WORKOUTS', () => {
 
       const updateWorkoutPayload = { username: 'Front' };
 
-      const { statusCode, body } = await request(app)
-        .put(`${BASE_WORKOUT_PATH}/${workoutId}`)
-        .send(updateWorkoutPayload);
+      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+
+      const { statusCode, body } = await putRequest({
+        url: `${BASE_WORKOUT_PATH}/${workoutId}`,
+        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        dto: updateWorkoutPayload,
+      });
 
       expect(statusCode).toBe(HttpStatus.BAD_REQUEST);
       expect(isErrorResponse(body)).toBeTruthy();
@@ -181,10 +231,15 @@ describe('WORKOUTS', () => {
     });
 
     it('not found', async () => {
-      const updateWorkoutPayload = { name: 'Upper - Muscle Up', userId: INEXISTENT_ID };
-      const { statusCode, body } = await request(app)
-        .put(`${BASE_WORKOUT_PATH}/${INEXISTENT_ID}`)
-        .send(updateWorkoutPayload);
+      const updateWorkoutPayload = { name: 'Upper - Muscle Up', userId: 99 };
+
+      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+
+      const { statusCode, body } = await putRequest({
+        url: `${BASE_WORKOUT_PATH}/${INEXISTENT_ID}`,
+        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        dto: updateWorkoutPayload,
+      });
 
       expect(statusCode).toBe(HttpStatus.NOT_FOUND);
       expect(isErrorResponse(body)).toBeTruthy();
@@ -200,9 +255,13 @@ describe('WORKOUTS', () => {
       const createWorkoutPayload2 = { name: 'Upper - Front', userId };
       const { id: workoutId2 } = await createWorkout(createWorkoutPayload2);
 
-      const { statusCode, body } = await request(app)
-        .put(`${BASE_WORKOUT_PATH}/${workoutId1}`)
-        .send(createWorkoutPayload2);
+      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+
+      const { statusCode, body } = await putRequest({
+        url: `${BASE_WORKOUT_PATH}/${workoutId1}`,
+        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        dto: createWorkoutPayload2,
+      });
 
       expect(statusCode).toBe(HttpStatus.CONFLICT);
       expect(isErrorResponse(body)).toBeTruthy();
@@ -221,7 +280,12 @@ describe('WORKOUTS', () => {
       const createWorkoutPayload = { name: 'Upper - Muscle Up', userId };
       const { id: workoutId } = await createWorkout(createWorkoutPayload);
 
-      const { statusCode, body } = await request(app).delete(`${BASE_WORKOUT_PATH}/${workoutId}`).send();
+      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+
+      const { statusCode, body } = await deleteRequest({
+        url: `${BASE_WORKOUT_PATH}/${workoutId}`,
+        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+      });
 
       expect(statusCode).toBe(HttpStatus.OK);
       expect(body).toMatchObject({ id: workoutId, ...createWorkoutPayload });
@@ -233,8 +297,15 @@ describe('WORKOUTS', () => {
     });
 
     it('not found', async () => {
-      const { statusCode } = await request(app).delete(`${BASE_WORKOUT_PATH}/${INEXISTENT_ID}`).send();
+      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+
+      const { statusCode, body } = await deleteRequest({
+        url: `${BASE_WORKOUT_PATH}/${INEXISTENT_ID}`,
+        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+      });
+
       expect(statusCode).toBe(HttpStatus.NOT_FOUND);
+      expect(isErrorResponse(body)).toBeTruthy();
     });
   });
 });

@@ -1,7 +1,3 @@
-import request from 'supertest';
-
-import app from '../../../src/app';
-
 import {
   ActivityResponse,
   BASE_ACTIVITY_PATH,
@@ -12,15 +8,17 @@ import {
 } from '../helpers/activity';
 import { HttpStatus } from '../../../src/consts';
 import { isErrorResponse } from '../helpers/error';
-
-import { cleanDatabase, INEXISTENT_ID } from '../helpers/general';
+import { cleanDatabase, createAdmin } from '../helpers/db';
+import { INEXISTENT_ID, deleteRequest, getRequest, postRequest, putRequest } from '../helpers/request';
+import { loginUser } from '../helpers/auth';
 
 beforeAll(async () => {
-  await cleanDatabase();
+  await createAdmin();
+  await cleanDatabase({ all: false });
 });
 
 afterAll(async () => {
-  await cleanDatabase();
+  await cleanDatabase({ all: true });
 });
 
 describe('ACTIVITIES', () => {
@@ -29,7 +27,12 @@ describe('ACTIVITIES', () => {
       const createActivityPayload = { reps: 8, sets: 4, exerciseId: 1 };
       const { id: activityId } = await createActivity(createActivityPayload);
 
-      const { statusCode, body } = await request(app).get(`${BASE_ACTIVITY_PATH}/${activityId}`).send();
+      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+
+      const { statusCode, body } = await getRequest({
+        url: `${BASE_ACTIVITY_PATH}/${activityId}`,
+        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+      });
 
       expect(statusCode).toBe(HttpStatus.OK);
       expect(isValidActivityResponse(body)).toBeTruthy();
@@ -38,7 +41,13 @@ describe('ACTIVITIES', () => {
     });
 
     it('not found', async () => {
-      const { statusCode, body } = await request(app).get(`${BASE_ACTIVITY_PATH}/${INEXISTENT_ID}`).send();
+      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+
+      const { statusCode, body } = await getRequest({
+        url: `${BASE_ACTIVITY_PATH}/${INEXISTENT_ID}`,
+        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+      });
+
       expect(statusCode).toBe(HttpStatus.NOT_FOUND);
       expect(isErrorResponse(body)).toBeTruthy();
     });
@@ -56,7 +65,12 @@ describe('ACTIVITIES', () => {
         createActivityPayloads.map(async (payload) => createActivity(payload))
       );
 
-      const { statusCode, body } = await request(app).get(`${BASE_ACTIVITY_PATH}/`).send();
+      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+
+      const { statusCode, body } = await getRequest({
+        url: `${BASE_ACTIVITY_PATH}/`,
+        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+      });
 
       expect(statusCode).toBe(HttpStatus.OK);
       expect(body.length).toBe(3);
@@ -68,7 +82,12 @@ describe('ACTIVITIES', () => {
     });
 
     it('empty list', async () => {
-      const { statusCode, body } = await request(app).get(`${BASE_ACTIVITY_PATH}/`).send();
+      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+
+      const { statusCode, body } = await getRequest({
+        url: `${BASE_ACTIVITY_PATH}/`,
+        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+      });
 
       expect(statusCode).toBe(HttpStatus.OK);
       expect(body.length).toBe(0);
@@ -79,7 +98,13 @@ describe('ACTIVITIES', () => {
     it('create', async () => {
       const createActivityPayload = { reps: 8, sets: 4, exerciseId: 1 };
 
-      const { statusCode, body } = await request(app).post(`${BASE_ACTIVITY_PATH}/`).send(createActivityPayload);
+      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+
+      const { statusCode, body } = await postRequest({
+        url: `${BASE_ACTIVITY_PATH}/`,
+        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        dto: createActivityPayload,
+      });
 
       expect(statusCode).toBe(HttpStatus.CREATED);
       expect(isValidActivityResponse(body)).toBeTruthy();
@@ -101,7 +126,13 @@ describe('ACTIVITIES', () => {
     it('invalid dto', async () => {
       const createActivityPayload = { rep: 8, sets: 4 };
 
-      const { statusCode, body } = await request(app).post(`${BASE_ACTIVITY_PATH}/`).send(createActivityPayload);
+      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+
+      const { statusCode, body } = await postRequest({
+        url: `${BASE_ACTIVITY_PATH}/`,
+        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        dto: createActivityPayload,
+      });
 
       expect(statusCode).toBe(HttpStatus.BAD_REQUEST);
       expect(isErrorResponse(body)).toBeTruthy();
@@ -110,7 +141,13 @@ describe('ACTIVITIES', () => {
     it('invalid relation', async () => {
       const createActivityPayload = { reps: 8, sets: 4, exerciseId: INEXISTENT_ID };
 
-      const { statusCode, body } = await request(app).post(`${BASE_ACTIVITY_PATH}/`).send(createActivityPayload);
+      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+
+      const { statusCode, body } = await postRequest({
+        url: `${BASE_ACTIVITY_PATH}/`,
+        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        dto: createActivityPayload,
+      });
 
       expect(statusCode).toBe(HttpStatus.CONFLICT);
       expect(isErrorResponse(body)).toBeTruthy();
@@ -127,9 +164,13 @@ describe('ACTIVITIES', () => {
 
       const updateActivityPayload = { reps: 1, sets: 9, exerciseId: 2 };
 
-      const { statusCode, body } = await request(app)
-        .put(`${BASE_ACTIVITY_PATH}/${activityId}`)
-        .send(updateActivityPayload);
+      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+
+      const { statusCode, body } = await putRequest({
+        url: `${BASE_ACTIVITY_PATH}/${activityId}`,
+        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        dto: updateActivityPayload,
+      });
 
       expect(statusCode).toBe(HttpStatus.OK);
       expect(body).toMatchObject({ id: activityId, ...updateActivityPayload });
@@ -143,9 +184,13 @@ describe('ACTIVITIES', () => {
 
       const updateActivityPayload = { rep: 4, set: 4 };
 
-      const { statusCode, body } = await request(app)
-        .put(`${BASE_ACTIVITY_PATH}/${activityId}`)
-        .send(updateActivityPayload);
+      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+
+      const { statusCode, body } = await putRequest({
+        url: `${BASE_ACTIVITY_PATH}/${activityId}`,
+        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        dto: updateActivityPayload,
+      });
 
       expect(statusCode).toBe(HttpStatus.BAD_REQUEST);
       expect(isErrorResponse(body)).toBeTruthy();
@@ -156,9 +201,13 @@ describe('ACTIVITIES', () => {
     it('not found', async () => {
       const updateActivityPayload = { reps: 8, sets: 4, exerciseId: 1 };
 
-      const { statusCode, body } = await request(app)
-        .put(`${BASE_ACTIVITY_PATH}/${INEXISTENT_ID}`)
-        .send(updateActivityPayload);
+      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+
+      const { statusCode, body } = await putRequest({
+        url: `${BASE_ACTIVITY_PATH}/${INEXISTENT_ID}`,
+        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        dto: updateActivityPayload,
+      });
 
       expect(statusCode).toBe(HttpStatus.NOT_FOUND);
       expect(isErrorResponse(body)).toBeTruthy();
@@ -170,9 +219,13 @@ describe('ACTIVITIES', () => {
 
       const updateActivityPayload = { reps: 8, sets: 3, exerciseId: INEXISTENT_ID };
 
-      const { statusCode, body } = await request(app)
-        .put(`${BASE_ACTIVITY_PATH}/${activityId}`)
-        .send(updateActivityPayload);
+      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+
+      const { statusCode, body } = await putRequest({
+        url: `${BASE_ACTIVITY_PATH}/${activityId}`,
+        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        dto: updateActivityPayload,
+      });
 
       expect(statusCode).toBe(HttpStatus.CONFLICT);
       expect(isErrorResponse(body)).toBeTruthy();
@@ -184,7 +237,12 @@ describe('ACTIVITIES', () => {
       const createActivityPayload = { reps: 8, sets: 4, exerciseId: 1 };
       const { id: activityId } = await createActivity(createActivityPayload);
 
-      const { statusCode, body } = await request(app).delete(`${BASE_ACTIVITY_PATH}/${activityId}`).send();
+      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+
+      const { statusCode, body } = await deleteRequest({
+        url: `${BASE_ACTIVITY_PATH}/${activityId}`,
+        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+      });
 
       expect(statusCode).toBe(HttpStatus.OK);
       expect(body).toMatchObject({ id: activityId, ...createActivityPayload });
@@ -194,8 +252,15 @@ describe('ACTIVITIES', () => {
     });
 
     it('not found', async () => {
-      const { statusCode } = await request(app).delete(`${BASE_ACTIVITY_PATH}/${INEXISTENT_ID}`).send();
+      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+
+      const { statusCode, body } = await deleteRequest({
+        url: `${BASE_ACTIVITY_PATH}/${INEXISTENT_ID}`,
+        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+      });
+
       expect(statusCode).toBe(HttpStatus.NOT_FOUND);
+      expect(isErrorResponse(body)).toBeTruthy();
     });
   });
 });

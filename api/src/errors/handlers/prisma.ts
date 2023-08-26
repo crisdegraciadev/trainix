@@ -13,7 +13,7 @@ export const handlePrismaErrors = (error: unknown) => {
       Match.when(Codes.P2002, () => new DuplicateError({ meta })),
       Match.when(Codes.P2003, () => new RelationError({ meta })),
       Match.when(Codes.P2025, () => new NotFoundError({ meta })),
-      Match.orElse(() => new UnknownError({ meta }))
+      Match.orElse(() => new UnknownError({ meta })),
     );
   }
 
