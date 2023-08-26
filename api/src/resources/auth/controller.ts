@@ -11,7 +11,7 @@ export const login = async (req: Request, res: Response) => {
   const accessTokenResult = await pipe(
     Effect.all([isValidLoginDto(body)]),
     Effect.flatMap(([dto]) => createAccessToken({ dto })),
-    Effect.runPromiseExit,
+    Effect.runPromiseExit
   );
 
   Exit.match(accessTokenResult, {
@@ -21,4 +21,4 @@ export const login = async (req: Request, res: Response) => {
 };
 
 // TODO implement logout with Redis store
-export const logout = (req: Request, res: Response) => {};
+export const logout = (req: Request, res: Response): void => {};
