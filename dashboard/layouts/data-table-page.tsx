@@ -17,7 +17,7 @@ export default function DataTablePageLayout({
         <h2 className="text-2xl font-semibold">{title}</h2>
         <h3 className="text-sm text-muted-foreground">{subtitle}</h3>
       </header>
-      <main>{children}</main>
+      <main className="mt-4">{children}</main>
     </>
   );
 }

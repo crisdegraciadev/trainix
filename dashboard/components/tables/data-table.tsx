@@ -5,7 +5,7 @@ import {
   flexRender,
   getCoreRowModel,
   useReactTable,
-  Table as TanstackTable,
+  Table as ReactTable,
 } from "@tanstack/react-table";
 
 import {
@@ -17,20 +17,16 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-type DataTableProps<TData, TValue> = {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+type DataTableProps<T, K> = {
+  columns: ColumnDef<T, K>[];
+  data?: T[];
 };
 
-type DataTableHeaderProps<TData> = {
-  table: TanstackTable<TData>;
+type DataTableHeaderProps<T> = {
+  table: ReactTable<T>;
 };
 
-type DataTableBodyProps<TData, TValue> = DataTableHeaderProps<TData> & {
-  columns: ColumnDef<TData, TValue>[];
-};
-
-function DataTableHeader<TData>({ table }: DataTableHeaderProps<TData>) {
+function DataTableHeader<T>({ table }: DataTableHeaderProps<T>) {
   return (
     <TableHeader>
       {table.getHeaderGroups().map((headerGroup) => (
@@ -53,10 +49,12 @@ function DataTableHeader<TData>({ table }: DataTableHeaderProps<TData>) {
   );
 }
 
-function DataTableBody<TData, TValue>({
-  table,
-  columns,
-}: DataTableBodyProps<TData, TValue>) {
+type DataTableBodyProps<T, K> = {
+  table: ReactTable<T>;
+  columns: ColumnDef<T, K>[];
+};
+
+function DataTableBody<T, K>({ table, columns }: DataTableBodyProps<T, K>) {
   return (
     <TableBody>
       {table.getRowModel().rows?.length ? (
@@ -80,10 +78,7 @@ function DataTableBody<TData, TValue>({
   );
 }
 
-export function DataTable<TData, TValue>({
-  columns,
-  data,
-}: DataTableProps<TData, TValue>) {
+export function DataTable<T, K>({ columns, data = [] }: DataTableProps<T, K>) {
   const table = useReactTable({
     data,
     columns,

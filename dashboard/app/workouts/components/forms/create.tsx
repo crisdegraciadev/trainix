@@ -1,6 +1,6 @@
-'use client'
+"use client";
 
-import { Button } from '@/components/ui/button'
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -9,14 +9,17 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { PlusCircleIcon } from "lucide-react";
 export function WorkoutCreateForm() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button>Create</Button>
+        <Button variant="outline">
+          <PlusCircleIcon className="mr-2 h-4 w-4" /> Create
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
@@ -44,5 +47,5 @@ export function WorkoutCreateForm() {
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

@@ -1,37 +1,29 @@
 "use client";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { nanoid } from "nanoid";
-
-import { WorkoutCard } from "./components/card";
+import { DataTable } from "@/components/tables/data-table";
 import { WorkoutFilters } from "./components/filters";
 import { WorkoutCreateForm } from "./components/forms/create";
-
-const numberOfWorkouts = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+import SearchBar from "@/components/ui/search-bar";
+import { useFetchWorkouts } from "./hooks/useFetchWorkouts";
+import { WORKOUT_COLUMNS } from "./components/tables/columns";
 
 export default function WorkoutsPage() {
+  const { data } = useFetchWorkouts();
+
   return (
     <>
       <nav className="flex justify-between py-2">
         <div className="flex gap-2">
-          <input
-            placeholder="Search..."
-            className="flex h-10 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 lg:w-[300px]"
-          />
+          <SearchBar />
           <WorkoutFilters />
         </div>
         <div className="flex gap-2">
           <WorkoutCreateForm />
         </div>
       </nav>
-      <section></section>
+      <section className="mt-1">
+        <DataTable columns={WORKOUT_COLUMNS} data={data} />
+      </section>
     </>
   );
 }

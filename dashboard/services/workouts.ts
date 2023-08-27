@@ -1,3 +1,86 @@
-export async function getWorkouts() {
-  const response = await fetch("https://");
+import { Workout } from "@/types/workout";
+
+export async function fetchWorkouts(): Promise<Workout[]> {
+  return [
+    {
+      id: "1",
+      description: "A challenge for building upper body strength.",
+      name: "Push-up Challenge",
+      difficulty: "medium",
+      category: "upper",
+      muscleGroups: ["chest", "shoulders", "triceps"],
+    },
+    {
+      id: "2",
+      description: "A high-intensity leg workout circuit.",
+      name: "Squat Circuit",
+      difficulty: "hard",
+      category: "lower",
+      muscleGroups: ["quads", "hamstrings", "gluteus"],
+    },
+    {
+      id: "3",
+      description: "A core-focused workout routine.",
+      name: "Core Blast",
+      difficulty: "easy",
+      category: "abs",
+      muscleGroups: ["core"],
+    },
+    {
+      id: "4",
+      description: "A routine to build upper body strength and endurance.",
+      name: "Pull-up Routine",
+      difficulty: "hard",
+      category: "upper",
+      muscleGroups: ["back", "biceps"],
+    },
+    {
+      id: "5",
+      description: "A leg workout to target major leg muscle groups.",
+      name: "Leg Day",
+      difficulty: "medium",
+      category: "lower",
+      muscleGroups: ["quads", "hamstrings", "calves"],
+    },
+    {
+      id: "6",
+      description: "A full-body workout for beginners.",
+      name: "Beginner's Workout",
+      difficulty: "easy",
+      category: "full-body",
+      muscleGroups: ["chest", "back", "legs", "arms"],
+    },
+    {
+      id: "7",
+      description: "A core-strengthening routine with planks and crunches.",
+      name: "Core Strengthening",
+      difficulty: "medium",
+      category: "abs",
+      muscleGroups: ["core"],
+    },
+    {
+      id: "8",
+      description: "A cardio-focused workout to burn calories.",
+      name: "Cardio Blast",
+      difficulty: "medium",
+      category: "cardio",
+      muscleGroups: ["heart", "legs", "arms"],
+    },
+    {
+      id: "9",
+      description: "An intense lower body workout with squats and lunges.",
+      name: "Lower Body Burn",
+      difficulty: "hard",
+      category: "lower",
+      muscleGroups: ["quads", "hamstrings", "gluteus"],
+    },
+    {
+      id: "10",
+      description: "A quick and easy workout for busy schedules.",
+      name: "Quick Workout",
+      difficulty: "easy",
+      category: "full-body",
+      muscleGroups: ["chest", "back", "legs", "arms"],
+    },
+  ];
 }
