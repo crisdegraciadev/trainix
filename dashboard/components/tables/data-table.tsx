@@ -2,10 +2,15 @@
 
 import {
   ColumnDef,
+  ColumnFiltersState,
+  Table as ReactTable,
+  SortingState,
   flexRender,
   getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
   useReactTable,
-  Table as ReactTable,
 } from "@tanstack/react-table";
 
 import {
@@ -17,10 +22,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-type DataTableProps<T, K> = {
-  columns: ColumnDef<T, K>[];
-  data?: T[];
-};
+import { useState } from "react";
+import { DataTableFacetedFilter } from "./data-table-faceted-filter";
+import { DataTablePagination } from "./data-table-pagination";
 
 type DataTableHeaderProps<T> = {
   table: ReactTable<T>;
@@ -78,19 +82,52 @@ function DataTableBody<T, K>({ table, columns }: DataTableBodyProps<T, K>) {
   );
 }
 
+type DataTableProps<T, K> = {
+  columns: ColumnDef<T, K>[];
+  data?: T[];
+};
+
 export function DataTable<T, K>({ columns, data = [] }: DataTableProps<T, K>) {
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+
+  console.log({ columnFilters });
+
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    onSortingChange: setSorting,
+    getSortedRowModel: getSortedRowModel(),
+    onColumnFiltersChange: setColumnFilters,
+    getFilteredRowModel: getFilteredRowModel(),
+    state: {
+      sorting,
+      columnFilters,
+    },
   });
 
   return (
-    <div className="rounded-md border">
-      <Table>
-        <DataTableHeader table={table} />
-        <DataTableBody table={table} columns={columns} />
-      </Table>
+    <div>
+      <div className="mb-2">
+        <DataTableFacetedFilter
+          title="Difficulty"
+          column={table.getColumn("difficulty")}
+          options={[
+            { value: "easy", label: "Easy" },
+            { value: "medium", label: "Medium" },
+            { value: "hard", label: "Hard" },
+          ]}
+        />
+      </div>
+      <div className="rounded-md border mb-4">
+        <Table>
+          <DataTableHeader table={table} />
+          <DataTableBody table={table} columns={columns} />
+        </Table>
+      </div>
+      <DataTablePagination table={table} />
     </div>
   );
 }

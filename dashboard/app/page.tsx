@@ -1,10 +1,10 @@
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Metadata } from 'next'
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: 'Dashboard',
-  description: 'Example dashboard app built using the components.',
-}
+  title: "Dashboard",
+  description: "Example dashboard app built using the components.",
+};
 
 export default function DashboardPage() {
   return (
@@ -22,5 +22,5 @@ export default function DashboardPage() {
         </Tabs>
       </div>
     </>
-  )
+  );
 }
