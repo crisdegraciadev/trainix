@@ -2,11 +2,11 @@ version: '3.9'
 
 services:
   postgres:
+    container_name: postgres-trainix
     image: postgres:15.3
-    container_name: postgres_trainix
     restart: always
     ports:
-      - 5432:5432
+      - 5433:5432
     environment:
       POSTGRES_USER: trainix
       POSTGRES_PASSWORD: trainix
@@ -15,8 +15,8 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   pgadmin:
+    container_name: pgadmin-trainix
     image: dpage/pgadmin4:7
-    container_name: pgadmin_trainix
     restart: always
     environment:
       PGADMIN_DEFAULT_EMAIL: 'trainix@example.com'
