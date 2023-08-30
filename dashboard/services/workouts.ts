@@ -8,7 +8,7 @@ export async function fetchWorkouts(): Promise<Workout[]> {
       name: "Push-up Challenge",
       difficulty: "medium",
       category: "upper",
-      muscleGroups: ["chest", "shoulders", "triceps"],
+      muscles: ["chest", "shoulders", "triceps"],
     },
     {
       id: "2",
@@ -16,7 +16,7 @@ export async function fetchWorkouts(): Promise<Workout[]> {
       name: "Squat Circuit",
       difficulty: "hard",
       category: "lower",
-      muscleGroups: ["quads", "hamstrings", "gluteus"],
+      muscles: ["quads", "hamstrings", "gluteus"],
     },
     {
       id: "3",
@@ -24,7 +24,7 @@ export async function fetchWorkouts(): Promise<Workout[]> {
       name: "Core Blast",
       difficulty: "easy",
       category: "abs",
-      muscleGroups: ["core"],
+      muscles: ["core"],
     },
     {
       id: "4",
@@ -32,7 +32,7 @@ export async function fetchWorkouts(): Promise<Workout[]> {
       name: "Pull-up Routine",
       difficulty: "hard",
       category: "upper",
-      muscleGroups: ["back", "biceps"],
+      muscles: ["back", "biceps"],
     },
     {
       id: "5",
@@ -40,7 +40,7 @@ export async function fetchWorkouts(): Promise<Workout[]> {
       name: "Leg Day",
       difficulty: "medium",
       category: "lower",
-      muscleGroups: ["quads", "hamstrings", "calves"],
+      muscles: ["quads", "hamstrings", "calves"],
     },
     {
       id: "6",
@@ -48,7 +48,7 @@ export async function fetchWorkouts(): Promise<Workout[]> {
       name: "Beginner's Workout",
       difficulty: "easy",
       category: "full-body",
-      muscleGroups: ["chest", "back", "legs", "arms"],
+      muscles: ["chest", "back", "triceps"],
     },
     {
       id: "7",
@@ -56,15 +56,7 @@ export async function fetchWorkouts(): Promise<Workout[]> {
       name: "Core Strengthening",
       difficulty: "medium",
       category: "abs",
-      muscleGroups: ["core"],
-    },
-    {
-      id: "8",
-      description: "A cardio-focused workout to burn calories.",
-      name: "Cardio Blast",
-      difficulty: "medium",
-      category: "cardio",
-      muscleGroups: ["heart", "legs", "arms"],
+      muscles: ["core"],
     },
     {
       id: "9",
@@ -72,7 +64,7 @@ export async function fetchWorkouts(): Promise<Workout[]> {
       name: "Lower Body Burn",
       difficulty: "hard",
       category: "lower",
-      muscleGroups: ["quads", "hamstrings", "gluteus"],
+      muscles: ["quads", "hamstrings", "gluteus"],
     },
     {
       id: "10",
@@ -80,7 +72,23 @@ export async function fetchWorkouts(): Promise<Workout[]> {
       name: "Quick Workout",
       difficulty: "easy",
       category: "full-body",
-      muscleGroups: ["chest", "back", "legs", "arms"],
+      muscles: ["chest", "back", "biceps"],
+    },
+    {
+      id: "9",
+      description: "An intense lower body workout with squats and lunges.",
+      name: "Lower Body Burn",
+      difficulty: "hard",
+      category: "lower",
+      muscles: ["quads", "hamstrings", "gluteus"],
+    },
+    {
+      id: "10",
+      description: "A quick and easy workout for busy schedules.",
+      name: "Quick Workout",
+      difficulty: "easy",
+      category: "full-body",
+      muscles: ["chest", "back", "biceps"],
     },
   ];
 }

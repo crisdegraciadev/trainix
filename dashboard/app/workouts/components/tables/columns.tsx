@@ -1,6 +1,9 @@
 "use client";
 
-import { Workout } from "@/types/workout";
+import {
+  Workout,
+  WorkoutMuscleGroups as WorkoutMuscleGroup,
+} from "@/types/workout";
 import { ColumnDef } from "@tanstack/react-table";
 
 import { Checkbox } from "@/components/ui/checkbox";
@@ -9,6 +12,9 @@ import DifficultyCell from "./cells/difficulty-cell";
 import CategoryCell from "./cells/category-cell";
 import MuscleGroupsCell from "./cells/muscle-groups-cell";
 import ActionsCell from "./cells/actions-cell";
+import { WorkoutConsts } from "../../consts";
+
+const { Cells } = WorkoutConsts.WorkoutTable;
 
 export const WORKOUT_COLUMNS: ColumnDef<Workout>[] = [
   {
@@ -17,7 +23,6 @@ export const WORKOUT_COLUMNS: ColumnDef<Workout>[] = [
       <Checkbox
         checked={table.getIsAllPageRowsSelected()}
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
         className="translate-y-[2px]"
       />
     ),
@@ -25,7 +30,6 @@ export const WORKOUT_COLUMNS: ColumnDef<Workout>[] = [
       <Checkbox
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
         className="translate-y-[2px]"
       />
     ),
@@ -33,40 +37,44 @@ export const WORKOUT_COLUMNS: ColumnDef<Workout>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "name",
+    accessorKey: Cells.Name.ACCESSOR_KEY,
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Name" />
+      <DataTableColumnHeader column={column} title={Cells.Name.TITLE} />
     ),
   },
   {
-    accessorKey: "description",
+    accessorKey: Cells.Description.ACCESSOR_KEY,
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Description" />
+      <DataTableColumnHeader column={column} title={Cells.Description.TITLE} />
     ),
   },
   {
-    accessorKey: "difficulty",
+    accessorKey: Cells.Difficulty.ACCESSOR_KEY,
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Difficulty" />
+      <DataTableColumnHeader column={column} title={Cells.Difficulty.TITLE} />
     ),
     cell: ({ row }) => <DifficultyCell row={row} />,
     filterFn: (row, id, value) => value.includes(row.getValue(id)),
   },
   {
-    accessorKey: "category",
+    accessorKey: Cells.Category.ACCESSOR_KEY,
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Category" />
+      <DataTableColumnHeader column={column} title={Cells.Category.TITLE} />
     ),
     cell: ({ row }) => <CategoryCell row={row} />,
     filterFn: (row, id, value) => value.includes(row.getValue(id)),
   },
   {
-    accessorKey: "muscleGroups",
+    accessorKey: Cells.MuscleGroups.ACCESSOR_KEY,
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Muscle groups" />
+      <DataTableColumnHeader column={column} title={Cells.MuscleGroups.TITLE} />
     ),
     cell: ({ row }) => <MuscleGroupsCell row={row} />,
-    filterFn: (row, id, value) => value.includes(row.getValue(id)),
+    filterFn: (row, id, value) => {
+      return value.every((val: WorkoutMuscleGroup) =>
+        row.getValue<WorkoutMuscleGroup[]>(id).includes(val)
+      );
+    },
   },
   {
     id: "actions",

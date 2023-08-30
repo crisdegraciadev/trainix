@@ -1,5 +1,6 @@
 "use client";
 
+import { WorkoutConsts } from "@/app/workouts/consts";
 import { capitalize } from "@/app/workouts/utils/capitalize";
 import { Badge } from "@/components/ui/badge";
 import { Workout } from "@/types/workout";
@@ -10,8 +11,10 @@ type MuscleGroupsCellProps = {
   row: Row<Workout>;
 };
 
+const { MuscleGroups } = WorkoutConsts.WorkoutTable.Cells;
+
 export default function MuscleGroupsCell({ row }: MuscleGroupsCellProps) {
-  const values: string[] = row.getValue("muscleGroups");
+  const values: string[] = row.getValue(MuscleGroups.ACCESSOR_KEY);
   const formattedValues = values.map((value) => capitalize(value));
 
   return (

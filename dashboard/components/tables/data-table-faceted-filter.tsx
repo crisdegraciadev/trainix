@@ -17,7 +17,7 @@ import {
   CommandSeparator,
 } from "../ui/command";
 
-interface DataTableFacetedFilter<TData, TValue> {
+type DataTableFacetedFilter<TData, TValue> = {
   column?: Column<TData, TValue>;
   title?: string;
   options: {
@@ -25,7 +25,7 @@ interface DataTableFacetedFilter<TData, TValue> {
     value: string;
     icon?: React.ComponentType<{ className?: string }>;
   }[];
-}
+};
 
 export function DataTableFacetedFilter<TData, TValue>({
   column,

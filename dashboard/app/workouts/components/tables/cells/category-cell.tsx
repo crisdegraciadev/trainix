@@ -1,5 +1,6 @@
 "use client";
 
+import { WorkoutConsts } from "@/app/workouts/consts";
 import { capitalize } from "@/app/workouts/utils/capitalize";
 import { Badge } from "@/components/ui/badge";
 import { Workout } from "@/types/workout";
@@ -9,8 +10,11 @@ type CategoryCellProps = {
   row: Row<Workout>;
 };
 
+const { Category } = WorkoutConsts.WorkoutTable.Cells;
+
 export default function CategoryCell({ row }: CategoryCellProps) {
-  const value: string = row.getValue("category");
+  const value: string = row.getValue(Category.ACCESSOR_KEY);
+  console.log(value);
   const formattedValue = capitalize(value);
 
   return (
