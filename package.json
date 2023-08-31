@@ -10,8 +10,6 @@
     "lint": "pnpm lint:api && pnpm lint:mobile",
     "lint:api": "cd ./api && pnpm lint",
     "lint:mobile": "cd ./mobile && pnpm lint",
-    "test:api": "cd ./api && pnpm test",
-    "test:mobile": "cd ./mobile && pnpm run test:e2e",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {
