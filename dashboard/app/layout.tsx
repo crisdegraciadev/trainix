@@ -17,13 +17,21 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const authenticated = false;
+
   return (
     <html lang="en">
       <body className={inter.className}>
         <Providers>
-          <Navbar />
-          <div className="m-8">{children}</div>
-          <Toaster />
+          {authenticated ? (
+            <>
+              <Navbar />
+              <div className="m-8">{children}</div>
+              <Toaster />
+            </>
+          ) : (
+            <>{children}</>
+          )}
         </Providers>
       </body>
     </html>

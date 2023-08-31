@@ -1,8 +1,8 @@
 import { Effect } from 'effect';
-import { NotFoundError } from '../../../errors/types';
 import { User } from '@prisma/client';
 import prisma from '../../../config/prisma';
 import { handlePrismaErrors } from '../../../errors/handlers';
+import { NotFoundError } from '../../../errors/types';
 
 type FindByIdArgs = { id: number };
 type FindByIdErrors = NotFoundError;

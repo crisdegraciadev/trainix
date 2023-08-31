@@ -3,7 +3,9 @@ import { isValidLoginDto } from './utils';
 import { Effect, Exit, pipe } from 'effect';
 import { createAccessToken } from './services/auth';
 import { handleFailureCauses } from '../../errors/handlers';
-import { HttpStatus } from '../../consts';
+import { Auth, Global, HttpStatus } from '../../consts';
+import { serialize } from 'cookie';
+import { transformMillisecondsToDays } from '../../utils';
 
 export const handleLogin = async (req: Request, res: Response): Promise<void> => {
   const { body } = req;
@@ -15,7 +17,17 @@ export const handleLogin = async (req: Request, res: Response): Promise<void> =>
   );
 
   Exit.match(accessTokenResult, {
-    onSuccess: (accessToken) => res.status(HttpStatus.OK).send({ accessToken }),
+    onSuccess: (accessToken) => {
+      const cookieOptions = {
+        httpOnly: true,
+        secure: Global.ENV === 'prod',
+        sameSite: 'strict',
+        maxAge: transformMillisecondsToDays(30),
+        path: Auth.COOKIE_PATH,
+      } as const;
+
+      res.setHeader('Set-Cookie', serialize('auth-token', accessToken, { ...cookieOptions })).sendStatus(HttpStatus.OK);
+    },
     onFailure: (cause) => handleFailureCauses(cause, res),
   });
 };

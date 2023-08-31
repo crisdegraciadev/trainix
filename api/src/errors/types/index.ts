@@ -1,3 +1,7 @@
+export class BaseError extends Error {
+  type = 'Error';
+}
+
 export type ErrorParams = Partial<{
   meta: Record<string, unknown>;
   message: string;

@@ -2,6 +2,8 @@ import { User } from '@prisma/client';
 import { Effect } from 'effect';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { UnauthorizedError } from '../errors/types';
+import { transformMillisecondsToDays } from '../utils';
+import { Auth } from '../consts';
 
 type CreateTokenArgs = {
   payload: Partial<User>;
@@ -9,7 +11,8 @@ type CreateTokenArgs = {
 };
 
 export const createToken = ({ payload, secret }: CreateTokenArgs): Effect.Effect<never, never, string> => {
-  return Effect.succeed(jwt.sign(payload, secret));
+  const { TIME_EXPIRATION_TOKEN } = Auth;
+  return Effect.succeed(jwt.sign(payload, secret, { expiresIn: transformMillisecondsToDays(TIME_EXPIRATION_TOKEN) }));
 };
 
 type VerifyTokenArgs = {

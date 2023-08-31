@@ -1,6 +1,6 @@
-import { ErrorParams } from '.';
+import { BaseError, ErrorParams } from '.';
 
-export class UnknownError extends Error {
+export class UnknownError extends BaseError {
   public type = UnknownError.name;
 
   public meta?: Record<string, unknown>;
