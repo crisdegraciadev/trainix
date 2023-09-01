@@ -1,6 +1,6 @@
-import { ErrorParams } from '.';
+import { BaseError, ErrorParams } from '.';
 
-export class RelationError extends Error {
+export class RelationError extends BaseError {
   public type = RelationError.name;
 
   public meta?: Record<string, unknown>;

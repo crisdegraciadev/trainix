@@ -53,6 +53,8 @@
     "zod": "^3.21.4"
   },
   "devDependencies": {
-    "@tanstack/react-query-devtools": "^4.33.0"
+    "@tanstack/react-query-devtools": "^4.33.0",
+    "@types": "link:@types",
+    "axios": "^1.5.0"
   }
 }

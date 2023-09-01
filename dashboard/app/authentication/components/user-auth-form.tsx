@@ -1,17 +1,14 @@
 "use client";
 
-import * as React from "react";
-
 import { cn } from "@/lib/clsx";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/ui/icons";
+import { useState } from "react";
 
-interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
-
-export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
-  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+export function UserAuthForm() {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   async function onSubmit(event: React.SyntheticEvent) {
     event.preventDefault();
@@ -23,7 +20,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   }
 
   return (
-    <div className={cn("grid gap-6", className)} {...props}>
+    <div className="grid gap-6">
       <form onSubmit={onSubmit}>
         <div className="grid gap-2">
           <div className="grid gap-1">

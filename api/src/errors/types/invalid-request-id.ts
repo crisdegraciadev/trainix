@@ -1,6 +1,6 @@
-import { ErrorParams } from '.';
+import { BaseError, ErrorParams } from '.';
 
-export class InvalidRequestIdError extends Error {
+export class InvalidRequestIdError extends BaseError {
   public type = InvalidRequestIdError.name;
 
   public meta?: Record<string, unknown>;
