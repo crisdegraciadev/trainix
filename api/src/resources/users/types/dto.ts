@@ -2,6 +2,7 @@ import { User } from '@prisma/client';
 
 export type CreateUserDto = {
   username: string;
+  email: string;
   password: string;
   repeatedPassword: string;
 };

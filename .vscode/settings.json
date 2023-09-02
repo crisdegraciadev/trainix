@@ -1,5 +1,5 @@
 {
-  "eslint.workingDirectories": ["api", "dashboard"],
+  "eslint.workingDirectories": ["api", "web"],
   "cSpell.words": [
     "clsx",
     "hookform",

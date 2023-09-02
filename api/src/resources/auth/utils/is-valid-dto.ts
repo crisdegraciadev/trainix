@@ -3,6 +3,6 @@ import { InvalidDtoError } from '../../../errors/types';
 import { LoginDto } from '../types';
 
 export const isValidLoginDto = (body: unknown): Effect.Effect<never, InvalidDtoError, LoginDto> => {
-  const { username, password } = body as LoginDto;
-  return !!username && !!password ? Effect.succeed({ username, password }) : Effect.fail(new InvalidDtoError({}));
+  const { email, password } = body as LoginDto;
+  return !!email && !!password ? Effect.succeed({ email, password }) : Effect.fail(new InvalidDtoError({}));
 };

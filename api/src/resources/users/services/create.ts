@@ -18,11 +18,11 @@ export const createUser = ({ dto }: CreateArgs): CreateReturn => {
 };
 
 const buildUserData = (dto: CreateUserDto): Effect.Effect<never, InvalidDtoError, Omit<User, 'id' | 'role'>> => {
-  const { username, password } = dto;
+  const { email, username, password } = dto;
 
   return pipe(
     Effect.all([hashPassword({ password })]),
-    Effect.map(([passwordHash]) => ({ username, passwordHash }))
+    Effect.map(([passwordHash]) => ({ email, username, passwordHash }))
   );
 };
 

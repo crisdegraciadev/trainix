@@ -4,13 +4,7 @@ import { Auth, HttpStatus } from '../consts';
 import { UnauthorizedError } from '../errors/types';
 
 export const validateToken = (req: Request, res: Response, next: NextFunction): unknown => {
-  const { authorization } = req.headers;
-
-  if (!authorization) {
-    return res.status(HttpStatus.UNAUTHORIZED).send({ error: new UnauthorizedError({}) });
-  }
-
-  const token = getJwtToken(authorization);
+  const { token } = req.cookies;
 
   if (!token) {
     return res.status(HttpStatus.UNAUTHORIZED).send({ error: new UnauthorizedError({}) });
@@ -21,8 +15,4 @@ export const validateToken = (req: Request, res: Response, next: NextFunction): 
   req.authorizedUserRole = role;
 
   next();
-};
-
-const getJwtToken = (authHeader: string): string => {
-  return authHeader && authHeader.split(' ')[1];
 };

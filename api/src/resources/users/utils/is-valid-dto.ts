@@ -3,9 +3,9 @@ import { CreateUserDto, UpdateUserDto } from '../types';
 import { InvalidDtoError } from '../../../errors/types';
 
 export const isValidCreateUserDto = (body: unknown): Effect.Effect<never, InvalidDtoError, CreateUserDto> => {
-  const { username, password, repeatedPassword } = body as CreateUserDto;
-  return !!username && !!password && !!repeatedPassword
-    ? Effect.succeed({ username, password, repeatedPassword })
+  const { email, username, password, repeatedPassword } = body as CreateUserDto;
+  return !!email && !!username && !!password && !!repeatedPassword
+    ? Effect.succeed({ email, username, password, repeatedPassword })
     : Effect.fail(new InvalidDtoError({}));
 };
 

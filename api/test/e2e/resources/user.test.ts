@@ -27,7 +27,7 @@ describe('USERS', () => {
       const createUserPayload = { username: 'cris', password: '1234', repeatedPassword: '1234' };
       const { id: userId } = await createUser(createUserPayload);
 
-      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
 
       const { statusCode, body } = await getRequest({
         url: `${BASE_USER_PATH}/${userId}`,
@@ -41,7 +41,7 @@ describe('USERS', () => {
     });
 
     it('not found', async () => {
-      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
 
       const { statusCode, body } = await getRequest({
         url: `${BASE_USER_PATH}/${INEXISTENT_ID}`,
@@ -56,7 +56,7 @@ describe('USERS', () => {
       const createUserPayload = { username: 'cris', password: '1234', repeatedPassword: '1234' };
       const { id: userId } = await createUser(createUserPayload);
 
-      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
 
       const { statusCode, body } = await getRequest({
         url: `${BASE_USER_PATH}/${userId}`,
@@ -81,7 +81,7 @@ describe('USERS', () => {
 
       const createdUsers = await Promise.all(createUserPayloads.map(async (payload) => createUser(payload)));
 
-      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
 
       const { statusCode, body } = await getRequest({
         url: `${BASE_USER_PATH}/`,
@@ -98,7 +98,7 @@ describe('USERS', () => {
     });
 
     it('empty list', async () => {
-      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
 
       const { statusCode, body } = await getRequest({
         url: `${BASE_USER_PATH}/`,
@@ -118,7 +118,7 @@ describe('USERS', () => {
 
       const createdUsers = await Promise.all(createUserPayloads.map(async (payload) => createUser(payload)));
 
-      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
 
       const { statusCode, body } = await getRequest({
         url: `${BASE_USER_PATH}/`,
@@ -220,7 +220,7 @@ describe('USERS', () => {
 
       const updateUserPayload = { username: 'cfres' };
 
-      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
 
       const { statusCode, body } = await putRequest({
         url: `${BASE_USER_PATH}/${userId}`,
@@ -240,7 +240,7 @@ describe('USERS', () => {
 
       const updateUserPayload = { user: 'cfres' };
 
-      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
 
       const { statusCode, body } = await putRequest({
         url: `${BASE_USER_PATH}/${userId}`,
@@ -257,7 +257,7 @@ describe('USERS', () => {
     it('not found', async () => {
       const updateUserPayload = { username: 'cris', password: '1234', repeatedPassword: '1234' };
 
-      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
 
       const { statusCode, body } = await putRequest({
         url: `${BASE_USER_PATH}/${INEXISTENT_ID}`,
@@ -276,7 +276,7 @@ describe('USERS', () => {
       const createUserPayload2 = { username: 'ana', password: '1234', repeatedPassword: '1234' };
       const { id: id2 } = await createUser(createUserPayload2);
 
-      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
 
       const { statusCode, body } = await putRequest({
         url: `${BASE_USER_PATH}/${id1}`,
@@ -297,7 +297,7 @@ describe('USERS', () => {
 
       const updateUserPayload = { username: 'cfres' };
 
-      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
 
       const { statusCode, body } = await putRequest({
         url: `${BASE_USER_PATH}/${userId}`,
@@ -317,7 +317,7 @@ describe('USERS', () => {
       const createUserPayload = { username: 'cris', password: '1234', repeatedPassword: '1234' };
       const { id: userId } = await createUser(createUserPayload);
 
-      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
 
       const { statusCode, body } = await deleteRequest({
         url: `${BASE_USER_PATH}/${userId}`,
@@ -334,7 +334,7 @@ describe('USERS', () => {
     });
 
     it('not found', async () => {
-      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
 
       const { statusCode } = await deleteRequest({
         url: `${BASE_USER_PATH}/${INEXISTENT_ID}`,
@@ -348,7 +348,7 @@ describe('USERS', () => {
       const createUserPayload = { username: 'cris', password: '1234', repeatedPassword: '1234' };
       const { id: userId } = await createUser(createUserPayload);
 
-      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
 
       const { statusCode, body } = await deleteRequest({
         url: `${BASE_USER_PATH}/${userId}`,

@@ -27,7 +27,7 @@ describe('ACTIVITIES', () => {
       const createActivityPayload = { reps: 8, sets: 4, exerciseId: 1 };
       const { id: activityId } = await createActivity(createActivityPayload);
 
-      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
 
       const { statusCode, body } = await getRequest({
         url: `${BASE_ACTIVITY_PATH}/${activityId}`,
@@ -41,7 +41,7 @@ describe('ACTIVITIES', () => {
     });
 
     it('not found', async () => {
-      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
 
       const { statusCode, body } = await getRequest({
         url: `${BASE_ACTIVITY_PATH}/${INEXISTENT_ID}`,
@@ -65,7 +65,7 @@ describe('ACTIVITIES', () => {
         createActivityPayloads.map(async (payload) => createActivity(payload))
       );
 
-      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
 
       const { statusCode, body } = await getRequest({
         url: `${BASE_ACTIVITY_PATH}/`,
@@ -82,7 +82,7 @@ describe('ACTIVITIES', () => {
     });
 
     it('empty list', async () => {
-      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
 
       const { statusCode, body } = await getRequest({
         url: `${BASE_ACTIVITY_PATH}/`,
@@ -98,7 +98,7 @@ describe('ACTIVITIES', () => {
     it('create', async () => {
       const createActivityPayload = { reps: 8, sets: 4, exerciseId: 1 };
 
-      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
 
       const { statusCode, body } = await postRequest({
         url: `${BASE_ACTIVITY_PATH}/`,
@@ -126,7 +126,7 @@ describe('ACTIVITIES', () => {
     it('invalid dto', async () => {
       const createActivityPayload = { rep: 8, sets: 4 };
 
-      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
 
       const { statusCode, body } = await postRequest({
         url: `${BASE_ACTIVITY_PATH}/`,
@@ -141,7 +141,7 @@ describe('ACTIVITIES', () => {
     it('invalid relation', async () => {
       const createActivityPayload = { reps: 8, sets: 4, exerciseId: INEXISTENT_ID };
 
-      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
 
       const { statusCode, body } = await postRequest({
         url: `${BASE_ACTIVITY_PATH}/`,
@@ -164,7 +164,7 @@ describe('ACTIVITIES', () => {
 
       const updateActivityPayload = { reps: 1, sets: 9, exerciseId: 2 };
 
-      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
 
       const { statusCode, body } = await putRequest({
         url: `${BASE_ACTIVITY_PATH}/${activityId}`,
@@ -184,7 +184,7 @@ describe('ACTIVITIES', () => {
 
       const updateActivityPayload = { rep: 4, set: 4 };
 
-      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
 
       const { statusCode, body } = await putRequest({
         url: `${BASE_ACTIVITY_PATH}/${activityId}`,
@@ -201,7 +201,7 @@ describe('ACTIVITIES', () => {
     it('not found', async () => {
       const updateActivityPayload = { reps: 8, sets: 4, exerciseId: 1 };
 
-      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
 
       const { statusCode, body } = await putRequest({
         url: `${BASE_ACTIVITY_PATH}/${INEXISTENT_ID}`,
@@ -219,7 +219,7 @@ describe('ACTIVITIES', () => {
 
       const updateActivityPayload = { reps: 8, sets: 3, exerciseId: INEXISTENT_ID };
 
-      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
 
       const { statusCode, body } = await putRequest({
         url: `${BASE_ACTIVITY_PATH}/${activityId}`,
@@ -237,7 +237,7 @@ describe('ACTIVITIES', () => {
       const createActivityPayload = { reps: 8, sets: 4, exerciseId: 1 };
       const { id: activityId } = await createActivity(createActivityPayload);
 
-      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
 
       const { statusCode, body } = await deleteRequest({
         url: `${BASE_ACTIVITY_PATH}/${activityId}`,
@@ -252,7 +252,7 @@ describe('ACTIVITIES', () => {
     });
 
     it('not found', async () => {
-      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
 
       const { statusCode, body } = await deleteRequest({
         url: `${BASE_ACTIVITY_PATH}/${INEXISTENT_ID}`,

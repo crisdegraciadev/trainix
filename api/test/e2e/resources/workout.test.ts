@@ -31,7 +31,7 @@ describe('WORKOUTS', () => {
       const createWorkoutPayload = { name: 'Upper - Muscle Up', userId };
       const { id: workoutId } = await createWorkout(createWorkoutPayload);
 
-      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
 
       const { statusCode, body } = await getRequest({
         url: `${BASE_WORKOUT_PATH}/${workoutId}`,
@@ -46,7 +46,7 @@ describe('WORKOUTS', () => {
     });
 
     it('not found', async () => {
-      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
 
       const { statusCode, body } = await getRequest({
         url: `${BASE_WORKOUT_PATH}/${INEXISTENT_ID}`,
@@ -71,7 +71,7 @@ describe('WORKOUTS', () => {
 
       const createdWorkouts = await Promise.all(createWorkoutPayloads.map(async (payload) => createWorkout(payload)));
 
-      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
 
       const { statusCode, body } = await getRequest({
         url: `${BASE_WORKOUT_PATH}/`,
@@ -89,7 +89,7 @@ describe('WORKOUTS', () => {
     });
 
     it('empty list', async () => {
-      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
 
       const { statusCode, body } = await getRequest({
         url: `${BASE_WORKOUT_PATH}/`,
@@ -108,7 +108,7 @@ describe('WORKOUTS', () => {
 
       const createWorkoutPayload = { name: 'Upper - Muscle Up', userId };
 
-      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
 
       const { statusCode, body } = await postRequest({
         url: `${BASE_WORKOUT_PATH}/`,
@@ -133,7 +133,7 @@ describe('WORKOUTS', () => {
 
       const createWorkoutPayload = { userId };
 
-      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
 
       const { statusCode, body } = await postRequest({
         url: `${BASE_WORKOUT_PATH}/`,
@@ -153,7 +153,7 @@ describe('WORKOUTS', () => {
 
       const createWorkoutPayload = { name: 'Upper - Muscle Up', userId };
 
-      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
 
       const { statusCode: statusCode1, body: body1 } = await postRequest({
         url: `${BASE_WORKOUT_PATH}/`,
@@ -191,7 +191,7 @@ describe('WORKOUTS', () => {
 
       const updateWorkoutPayload = { name: 'Upper - Front' };
 
-      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
 
       const { statusCode, body } = await putRequest({
         url: `${BASE_WORKOUT_PATH}/${workoutId}`,
@@ -215,7 +215,7 @@ describe('WORKOUTS', () => {
 
       const updateWorkoutPayload = { username: 'Front' };
 
-      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
 
       const { statusCode, body } = await putRequest({
         url: `${BASE_WORKOUT_PATH}/${workoutId}`,
@@ -233,7 +233,7 @@ describe('WORKOUTS', () => {
     it('not found', async () => {
       const updateWorkoutPayload = { name: 'Upper - Muscle Up', userId: 99 };
 
-      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
 
       const { statusCode, body } = await putRequest({
         url: `${BASE_WORKOUT_PATH}/${INEXISTENT_ID}`,
@@ -255,7 +255,7 @@ describe('WORKOUTS', () => {
       const createWorkoutPayload2 = { name: 'Upper - Front', userId };
       const { id: workoutId2 } = await createWorkout(createWorkoutPayload2);
 
-      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
 
       const { statusCode, body } = await putRequest({
         url: `${BASE_WORKOUT_PATH}/${workoutId1}`,
@@ -280,7 +280,7 @@ describe('WORKOUTS', () => {
       const createWorkoutPayload = { name: 'Upper - Muscle Up', userId };
       const { id: workoutId } = await createWorkout(createWorkoutPayload);
 
-      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
 
       const { statusCode, body } = await deleteRequest({
         url: `${BASE_WORKOUT_PATH}/${workoutId}`,
@@ -297,7 +297,7 @@ describe('WORKOUTS', () => {
     });
 
     it('not found', async () => {
-      const ACCESS_TOKEN = await loginUser({ username: 'admin', password: 'admin' });
+      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
 
       const { statusCode, body } = await deleteRequest({
         url: `${BASE_WORKOUT_PATH}/${INEXISTENT_ID}`,

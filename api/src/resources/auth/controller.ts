@@ -26,7 +26,7 @@ export const handleLogin = async (req: Request, res: Response): Promise<void> =>
         path: Auth.COOKIE_PATH,
       } as const;
 
-      res.setHeader('Set-Cookie', serialize('auth-token', accessToken, { ...cookieOptions })).sendStatus(HttpStatus.OK);
+      res.setHeader('Set-Cookie', serialize('token', accessToken, { ...cookieOptions })).sendStatus(HttpStatus.OK);
     },
     onFailure: (cause) => handleFailureCauses(cause, res),
   });
