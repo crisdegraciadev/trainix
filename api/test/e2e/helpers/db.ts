@@ -1,16 +1,4 @@
-import { Effect } from 'effect';
 import prisma from '../../../src/config/prisma';
-import { hashPassword } from '../../../src/lib/bcrypt';
-
-export const createAdmin = async (): Promise<void> => {
-  await prisma.user.create({
-    data: {
-      username: 'admin',
-      passwordHash: Effect.runSync(hashPassword({ password: 'admin' })),
-      role: 'ADMIN',
-    },
-  });
-};
 
 type CleanDatabaseArgs = Partial<{
   all: boolean;

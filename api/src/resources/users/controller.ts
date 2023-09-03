@@ -42,6 +42,8 @@ export const handleFindUserByFields = async (_req: Request, res: Response<Respon
 export const handleCreateUser = async (req: Request, res: Response<ResponseUserDto>): Promise<void> => {
   const { body } = req;
 
+  console.log({ body });
+
   const createResult = await pipe(
     Effect.all([isValidCreateUserDto(body)]),
     Effect.flatMap(([data]) => createUser({ dto: data })),

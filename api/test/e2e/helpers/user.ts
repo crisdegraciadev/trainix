@@ -27,6 +27,7 @@ export const findUserById = async (id: number): Promise<User | null> => {
 export const createUser = async (dto: CreateUserDto): Promise<UserResponse> => {
   const { statusCode, body } = await request(app).post(`${BASE_USER_PATH}/`).send(dto);
 
+  console.log({ statusCode, body });
   expect(statusCode).toBe(HttpStatus.CREATED);
   expect(isValidUserResponse(body)).toBeTruthy();
 
@@ -37,6 +38,7 @@ export const createAdminUser = async (): Promise<void> => {
   prisma.user.create({
     data: {
       username: 'admin',
+      email: 'admin@admin.com',
       passwordHash: Effect.runSync(hashPassword({ password: 'admin' })),
       role: 'ADMIN',
     },
