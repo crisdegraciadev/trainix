@@ -1,19 +1,22 @@
 import { HttpStatus } from '../../../src/consts';
-import { isErrorResponse } from '../helpers/error';
 import {
   createUser,
   BASE_USER_PATH,
   isValidUserResponse,
   deleteUser,
+  createAdminUser,
   UserResponse,
   findUserById,
 } from '../helpers/user';
 import { loginUser } from '../helpers/auth';
-import { createAdmin, cleanDatabase } from '../helpers/db';
-import { deleteRequest, getRequest, INEXISTENT_ID, postRequest, putRequest } from '../helpers/request';
+import { cleanDatabase } from '../helpers/db';
+import { INEXISTENT_ID, deleteRequest, getRequest, postRequest, putRequest } from '../helpers/request';
+import { CREATE_USER_ALBER_PAYLOAD, CREATE_USER_ANA_PAYLOAD, CREATE_USER_CRIS_PAYLOAD } from '../fixtures/users';
+import { ADMIN_CREDENTIALS } from '../fixtures/auth';
+import { isErrorResponse } from '../helpers/error';
 
 beforeAll(async () => {
-  await createAdmin();
+  await createAdminUser();
   await cleanDatabase({ all: false });
 });
 
@@ -24,14 +27,13 @@ afterAll(async () => {
 describe('USERS', () => {
   describe('GET /:id', () => {
     it('find by id', async () => {
-      const createUserPayload = { username: 'cris', password: '1234', repeatedPassword: '1234' };
-      const { id: userId } = await createUser(createUserPayload);
+      const { id: userId } = await createUser(CREATE_USER_CRIS_PAYLOAD);
 
-      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
+      const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
       const { statusCode, body } = await getRequest({
         url: `${BASE_USER_PATH}/${userId}`,
-        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        headers: { Cookie: ACCESS_TOKEN_COOKIE },
       });
 
       expect(statusCode).toBe(HttpStatus.OK);
@@ -41,11 +43,11 @@ describe('USERS', () => {
     });
 
     it('not found', async () => {
-      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
+      const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
       const { statusCode, body } = await getRequest({
         url: `${BASE_USER_PATH}/${INEXISTENT_ID}`,
-        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        headers: { Cookie: ACCESS_TOKEN_COOKIE },
       });
 
       expect(statusCode).toBe(HttpStatus.NOT_FOUND);
@@ -53,14 +55,13 @@ describe('USERS', () => {
     });
 
     it('password hash not returned', async () => {
-      const createUserPayload = { username: 'cris', password: '1234', repeatedPassword: '1234' };
-      const { id: userId } = await createUser(createUserPayload);
+      const { id: userId } = await createUser(CREATE_USER_CRIS_PAYLOAD);
 
-      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
+      const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
       const { statusCode, body } = await getRequest({
         url: `${BASE_USER_PATH}/${userId}`,
-        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        headers: { Cookie: ACCESS_TOKEN_COOKIE },
       });
 
       expect(statusCode).toBe(HttpStatus.OK);
@@ -73,19 +74,14 @@ describe('USERS', () => {
 
   describe('GET /', () => {
     it('list with 3 elements', async () => {
-      const createUserPayloads = [
-        { username: 'cris', password: '1234', repeatedPassword: '1234' },
-        { username: 'ana', password: '1234', repeatedPassword: '1234' },
-        { username: 'alberto', password: '1234', repeatedPassword: '1234' },
-      ];
-
+      const createUserPayloads = [CREATE_USER_CRIS_PAYLOAD, CREATE_USER_ALBER_PAYLOAD, CREATE_USER_ANA_PAYLOAD];
       const createdUsers = await Promise.all(createUserPayloads.map(async (payload) => createUser(payload)));
 
-      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
+      const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
       const { statusCode, body } = await getRequest({
         url: `${BASE_USER_PATH}/`,
-        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        headers: { Cookie: ACCESS_TOKEN_COOKIE },
       });
 
       expect(statusCode).toBe(HttpStatus.OK);
@@ -98,11 +94,11 @@ describe('USERS', () => {
     });
 
     it('empty list', async () => {
-      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
+      const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
       const { statusCode, body } = await getRequest({
         url: `${BASE_USER_PATH}/`,
-        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        headers: { Cookie: ACCESS_TOKEN_COOKIE },
       });
 
       expect(statusCode).toBe(HttpStatus.OK);
@@ -110,19 +106,14 @@ describe('USERS', () => {
     });
 
     it('password hash not returned', async () => {
-      const createUserPayloads = [
-        { username: 'cris', password: '1234', repeatedPassword: '1234' },
-        { username: 'ana', password: '1234', repeatedPassword: '1234' },
-        { username: 'alberto', password: '1234', repeatedPassword: '1234' },
-      ];
-
+      const createUserPayloads = [CREATE_USER_CRIS_PAYLOAD, CREATE_USER_ALBER_PAYLOAD, CREATE_USER_ANA_PAYLOAD];
       const createdUsers = await Promise.all(createUserPayloads.map(async (payload) => createUser(payload)));
 
-      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
+      const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
       const { statusCode, body } = await getRequest({
         url: `${BASE_USER_PATH}/`,
-        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        headers: { Cookie: ACCESS_TOKEN_COOKIE },
       });
 
       expect(statusCode).toBe(HttpStatus.OK);
@@ -136,11 +127,9 @@ describe('USERS', () => {
 
   describe('POST /', () => {
     it('create', async () => {
-      const createUserPayload = { username: 'cris', password: '1234', repeatedPassword: '1234' };
-
       const { statusCode, body } = await postRequest({
         url: `${BASE_USER_PATH}/`,
-        dto: createUserPayload,
+        dto: CREATE_USER_CRIS_PAYLOAD,
       });
 
       expect(statusCode).toBe(HttpStatus.CREATED);
@@ -149,7 +138,7 @@ describe('USERS', () => {
       const { id } = body as UserResponse;
       expect(id).toBeDefined();
 
-      const { username } = createUserPayload;
+      const { username } = CREATE_USER_CRIS_PAYLOAD;
       expect(body).toMatchObject({ id, username });
 
       await deleteUser(id);
@@ -168,11 +157,9 @@ describe('USERS', () => {
     });
 
     it('duplicate username', async () => {
-      const createUserPayload = { username: 'cris', password: '1234', repeatedPassword: '1234' };
-
       const { statusCode: statusCode1, body: body1 } = await postRequest({
         url: `${BASE_USER_PATH}/`,
-        dto: createUserPayload,
+        dto: CREATE_USER_CRIS_PAYLOAD,
       });
 
       expect(statusCode1).toBe(HttpStatus.CREATED);
@@ -180,7 +167,7 @@ describe('USERS', () => {
 
       const { statusCode: statusCode2, body: body2 } = await postRequest({
         url: `${BASE_USER_PATH}/`,
-        dto: createUserPayload,
+        dto: CREATE_USER_CRIS_PAYLOAD,
       });
 
       expect(statusCode2).toBe(HttpStatus.CONFLICT);
@@ -190,11 +177,9 @@ describe('USERS', () => {
     });
 
     it('password hash not returned', async () => {
-      const createUserPayload = { username: 'cris', password: '1234', repeatedPassword: '1234' };
-
       const { statusCode, body } = await postRequest({
         url: `${BASE_USER_PATH}/`,
-        dto: createUserPayload,
+        dto: CREATE_USER_CRIS_PAYLOAD,
       });
 
       expect(statusCode).toBe(HttpStatus.CREATED);
@@ -211,20 +196,19 @@ describe('USERS', () => {
 
   describe('PUT /:id', () => {
     it('update', async () => {
-      const createUserPayload = { username: 'cris', password: '1234', repeatedPassword: '1234' };
-      const { id: userId } = await createUser(createUserPayload);
+      const { id: userId } = await createUser(CREATE_USER_CRIS_PAYLOAD);
 
       const createdUser = await findUserById(userId);
-      const { username } = createUserPayload;
+      const { username } = CREATE_USER_CRIS_PAYLOAD;
       expect(createdUser).toMatchObject({ id: userId, username });
 
       const updateUserPayload = { username: 'cfres' };
 
-      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
+      const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
       const { statusCode, body } = await putRequest({
         url: `${BASE_USER_PATH}/${userId}`,
-        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        headers: { Cookie: ACCESS_TOKEN_COOKIE },
         dto: updateUserPayload,
       });
 
@@ -235,16 +219,15 @@ describe('USERS', () => {
     });
 
     it('invalid dto', async () => {
-      const createUserPayload = { username: 'cris', password: '1234', repeatedPassword: '1234' };
-      const { id: userId } = await createUser(createUserPayload);
+      const { id: userId } = await createUser(CREATE_USER_CRIS_PAYLOAD);
 
       const updateUserPayload = { user: 'cfres' };
 
-      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
+      const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
       const { statusCode, body } = await putRequest({
         url: `${BASE_USER_PATH}/${userId}`,
-        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        headers: { Cookie: ACCESS_TOKEN_COOKIE },
         dto: updateUserPayload,
       });
 
@@ -255,14 +238,12 @@ describe('USERS', () => {
     });
 
     it('not found', async () => {
-      const updateUserPayload = { username: 'cris', password: '1234', repeatedPassword: '1234' };
-
-      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
+      const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
       const { statusCode, body } = await putRequest({
         url: `${BASE_USER_PATH}/${INEXISTENT_ID}`,
-        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
-        dto: updateUserPayload,
+        headers: { Cookie: ACCESS_TOKEN_COOKIE },
+        dto: CREATE_USER_CRIS_PAYLOAD,
       });
 
       expect(statusCode).toBe(HttpStatus.NOT_FOUND);
@@ -270,18 +251,16 @@ describe('USERS', () => {
     });
 
     it('duplicate', async () => {
-      const createUserPayload1 = { username: 'cris', password: '1234', repeatedPassword: '1234' };
-      const { id: id1 } = await createUser(createUserPayload1);
+      const { id: id1 } = await createUser(CREATE_USER_CRIS_PAYLOAD);
 
-      const createUserPayload2 = { username: 'ana', password: '1234', repeatedPassword: '1234' };
-      const { id: id2 } = await createUser(createUserPayload2);
+      const { id: id2 } = await createUser(CREATE_USER_ANA_PAYLOAD);
 
-      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
+      const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
       const { statusCode, body } = await putRequest({
         url: `${BASE_USER_PATH}/${id1}`,
-        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
-        dto: createUserPayload2,
+        headers: { Cookie: ACCESS_TOKEN_COOKIE },
+        dto: CREATE_USER_ANA_PAYLOAD,
       });
 
       expect(statusCode).toBe(HttpStatus.CONFLICT);
@@ -292,16 +271,15 @@ describe('USERS', () => {
     });
 
     it('password hash not returned', async () => {
-      const createUserPayload = { username: 'cris', password: '1234', repeatedPassword: '1234' };
-      const { id: userId } = await createUser(createUserPayload);
+      const { id: userId } = await createUser(CREATE_USER_CRIS_PAYLOAD);
 
       const updateUserPayload = { username: 'cfres' };
 
-      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
+      const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
       const { statusCode, body } = await putRequest({
         url: `${BASE_USER_PATH}/${userId}`,
-        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        headers: { Cookie: ACCESS_TOKEN_COOKIE },
         dto: updateUserPayload,
       });
 
@@ -314,19 +292,18 @@ describe('USERS', () => {
 
   describe('DELETE /:id', () => {
     it('delete', async () => {
-      const createUserPayload = { username: 'cris', password: '1234', repeatedPassword: '1234' };
-      const { id: userId } = await createUser(createUserPayload);
+      const { id: userId } = await createUser(CREATE_USER_CRIS_PAYLOAD);
 
-      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
+      const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
       const { statusCode, body } = await deleteRequest({
         url: `${BASE_USER_PATH}/${userId}`,
-        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        headers: { Cookie: ACCESS_TOKEN_COOKIE },
       });
 
       expect(statusCode).toBe(HttpStatus.OK);
 
-      const { username } = createUserPayload;
+      const { username } = CREATE_USER_CRIS_PAYLOAD;
       expect(body).toMatchObject({ id: userId, username });
 
       const user = await findUserById(userId);
@@ -334,25 +311,24 @@ describe('USERS', () => {
     });
 
     it('not found', async () => {
-      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
+      const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
       const { statusCode } = await deleteRequest({
         url: `${BASE_USER_PATH}/${INEXISTENT_ID}`,
-        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        headers: { Cookie: ACCESS_TOKEN_COOKIE },
       });
 
       expect(statusCode).toBe(HttpStatus.NOT_FOUND);
     });
 
     it('password hash not returned', async () => {
-      const createUserPayload = { username: 'cris', password: '1234', repeatedPassword: '1234' };
-      const { id: userId } = await createUser(createUserPayload);
+      const { id: userId } = await createUser(CREATE_USER_CRIS_PAYLOAD);
 
-      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
+      const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
       const { statusCode, body } = await deleteRequest({
         url: `${BASE_USER_PATH}/${userId}`,
-        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        headers: { Cookie: ACCESS_TOKEN_COOKIE },
       });
 
       expect(statusCode).toBe(HttpStatus.OK);

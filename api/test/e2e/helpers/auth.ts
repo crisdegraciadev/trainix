@@ -3,10 +3,13 @@ import request from 'supertest';
 import app from '../../../src/app';
 
 import { LoginDto } from '../../../src/resources/auth/types';
+import { HttpStatus } from '../../../src/consts';
 
 export const BASE_AUTH_PATH = '/auth';
 
-export const loginUser = async ({ email: username, password }: LoginDto): Promise<string> => {
-  const { body } = await request(app).post(`${BASE_AUTH_PATH}/login`).send({ username, password });
-  return body.accessToken;
+export const loginUser = async ({ email, password }: LoginDto): Promise<string> => {
+  const { statusCode, headers } = await request(app).post(`${BASE_AUTH_PATH}/login`).send({ email, password });
+  expect(statusCode).toBe(HttpStatus.OK);
+  expect(headers).toHaveProperty('set-cookie');
+  return headers['set-cookie'][0];
 };
