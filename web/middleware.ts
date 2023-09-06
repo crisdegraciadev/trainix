@@ -6,9 +6,19 @@ export function middleware(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
 
+  console.log({ pathname });
+
+  if (pathname === AppPaths.ROOT) {
+    return NextResponse.redirect(new URL(AppPaths.DASHBOARD, request.url));
+  }
+
   if (pathname.includes(AppPaths.DASHBOARD) && !token) {
-    return NextResponse.redirect(new URL("/authentication", request.url));
+    return NextResponse.redirect(new URL(AppPaths.AUTHENTICATION, request.url));
   }
 
   return NextResponse.next();
 }
+
+export const config = {
+  matcher: [AppPaths.ROOT, `${AppPaths.DASHBOARD}/:path*`],
+};
