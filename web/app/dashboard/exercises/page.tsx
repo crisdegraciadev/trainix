@@ -1,17 +1,16 @@
 import SearchBar from "@/components/ui/search-bar";
 import { ExerciseFilters } from "./components/filters";
+import { DataTable } from "../../../components/tables/data-table";
 
 export default function ExercisesPage() {
   return (
-    <>
-      <nav className="flex py-2">
-        <div className="flex gap-2">
-          <SearchBar />
-          <ExerciseFilters />
-        </div>
-      </nav>
-
-      <section className="grid-list mt-4"></section>
-    </>
+    <section className="mt-1">
+      <DataTable
+        columns={WORKOUT_COLUMNS}
+        createFormDialog={<WorkoutCreateFormDialog />}
+        data={data}
+        facetedFilters={FACETED_FILTERS}
+      />
+    </section>
   );
 }

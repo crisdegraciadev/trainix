@@ -2,7 +2,6 @@
 
 import { DataTable } from "@/components/tables/data-table";
 import { WorkoutCreateFormDialog } from "./components/forms/create";
-import SearchBar from "@/components/ui/search-bar";
 import { useFetchWorkouts } from "./hooks/useFetchWorkouts";
 import { WORKOUT_COLUMNS } from "./components/tables/columns";
 import { FACETED_FILTERS } from "./data/faceted-filters";
