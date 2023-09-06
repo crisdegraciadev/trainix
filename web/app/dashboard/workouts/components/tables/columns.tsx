@@ -1,18 +1,16 @@
 "use client";
 
-import {
-  Workout,
-  WorkoutMuscleGroups as WorkoutMuscleGroup,
-} from "@/types/workout";
 import { ColumnDef } from "@tanstack/react-table";
 
-import { Checkbox } from "@/components/ui/checkbox";
 import { DataTableColumnHeader } from "@/components/tables/data-table-column-header";
-import DifficultyCell from "./cells/difficulty-cell";
-import CategoryCell from "./cells/category-cell";
-import MuscleGroupsCell from "./cells/muscle-groups-cell";
-import ActionsCell from "./cells/actions-cell";
+import { Checkbox } from "@/components/ui/checkbox";
+import ActionsCell from "../../../../../components/tables/cells/actions-cell";
+import DifficultyCell from "../../../../../components/tables/cells/difficulty-cell";
+import MuscleGroupsCell from "../../../../../components/tables/cells/muscle-groups-cell";
+import { Workout } from "../../../../../types/entities";
+import { Muscle } from "../../../../../types/enums";
 import { WorkoutConsts } from "../../consts";
+import CategoryCell from "./cells/category-cell";
 
 const { Cells } = WorkoutConsts.WorkoutTable;
 
@@ -53,7 +51,9 @@ export const WORKOUT_COLUMNS: ColumnDef<Workout>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title={Cells.Difficulty.TITLE} />
     ),
-    cell: ({ row }) => <DifficultyCell row={row} />,
+    cell: ({ row }) => (
+      <DifficultyCell row={row} accessorKey={Cells.Difficulty.ACCESSOR_KEY} />
+    ),
     filterFn: (row, id, value) => value.includes(row.getValue(id)),
   },
   {
@@ -69,10 +69,15 @@ export const WORKOUT_COLUMNS: ColumnDef<Workout>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title={Cells.MuscleGroups.TITLE} />
     ),
-    cell: ({ row }) => <MuscleGroupsCell row={row} />,
+    cell: ({ row }) => (
+      <MuscleGroupsCell
+        row={row}
+        accessorKey={Cells.MuscleGroups.ACCESSOR_KEY}
+      />
+    ),
     filterFn: (row, id, value) => {
-      return value.every((val: WorkoutMuscleGroup) =>
-        row.getValue<WorkoutMuscleGroup[]>(id).includes(val)
+      return value.every((val: Muscle) =>
+        row.getValue<Muscle[]>(id).includes(val)
       );
     },
   },

@@ -1,20 +1,21 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import { Workout } from "@/types/workout";
 import { Row } from "@tanstack/react-table";
 import { nanoid } from "nanoid";
-import { WorkoutConsts } from "../../../consts";
-import { capitalize } from "../../../utils/capitalize";
+import { capitalize } from "../../../utils";
 
-type MuscleGroupsCellProps = {
-  row: Row<Workout>;
+type MuscleGroupsCellProps<T> = {
+  row: Row<T>;
+  accessorKey: string;
 };
 
-const { MuscleGroups } = WorkoutConsts.WorkoutTable.Cells;
-
-export default function MuscleGroupsCell({ row }: MuscleGroupsCellProps) {
-  const values: string[] = row.getValue(MuscleGroups.ACCESSOR_KEY);
+export default function MuscleGroupsCell<T>({
+  row,
+  accessorKey,
+}: MuscleGroupsCellProps<T>) {
+  const values: string[] = row.getValue(accessorKey);
+  console.log({ values });
   const formattedValues = values.map((value) => capitalize(value));
 
   return (

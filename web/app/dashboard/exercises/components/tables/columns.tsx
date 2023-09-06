@@ -1,8 +1,16 @@
-import { Checkbox } from "@radix-ui/react-checkbox";
-import { ColumnDef } from "@tanstack/react-table";
-import { Exercise } from "../../../../../types/exercise";
+"use client";
 
-const { Cells } = ;
+import { ColumnDef } from "@tanstack/react-table";
+import { Exercise } from "../../../../../types/entities/exercise";
+import { DataTableColumnHeader } from "../../../../../components/tables/data-table-column-header";
+import { ExerciseConsts } from "../../consts";
+import DifficultyCell from "../../../../../components/tables/cells/difficulty-cell";
+import MuscleGroupsCell from "../../../../../components/tables/cells/muscle-groups-cell";
+import { Muscle } from "../../../../../types/enums";
+import ActionsCell from "../../../../../components/tables/cells/actions-cell";
+import { Checkbox } from "../../../../../components/ui/checkbox";
+
+const { Cells } = ExerciseConsts.ExerciseTable;
 
 export const EXERCISES_COLUMNS: ColumnDef<Exercise>[] = [
   {
@@ -41,15 +49,9 @@ export const EXERCISES_COLUMNS: ColumnDef<Exercise>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title={Cells.Difficulty.TITLE} />
     ),
-    cell: ({ row }) => <DifficultyCell row={row} />,
-    filterFn: (row, id, value) => value.includes(row.getValue(id)),
-  },
-  {
-    accessorKey: Cells.Category.ACCESSOR_KEY,
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title={Cells.Category.TITLE} />
+    cell: ({ row }) => (
+      <DifficultyCell row={row} accessorKey={Cells.Difficulty.ACCESSOR_KEY} />
     ),
-    cell: ({ row }) => <CategoryCell row={row} />,
     filterFn: (row, id, value) => value.includes(row.getValue(id)),
   },
   {
@@ -57,10 +59,15 @@ export const EXERCISES_COLUMNS: ColumnDef<Exercise>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title={Cells.MuscleGroups.TITLE} />
     ),
-    cell: ({ row }) => <MuscleGroupsCell row={row} />,
+    cell: ({ row }) => (
+      <MuscleGroupsCell
+        row={row}
+        accessorKey={Cells.MuscleGroups.ACCESSOR_KEY}
+      />
+    ),
     filterFn: (row, id, value) => {
-      return value.every((val: WorkoutMuscleGroup) =>
-        row.getValue<WorkoutMuscleGroup[]>(id).includes(val)
+      return value.every((val: Muscle) =>
+        row.getValue<Muscle[]>(id).includes(val)
       );
     },
   },

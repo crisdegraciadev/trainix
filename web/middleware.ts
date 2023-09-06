@@ -6,8 +6,6 @@ export function middleware(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
 
-  console.log({ pathname });
-
   if (pathname === AppPaths.ROOT) {
     return NextResponse.redirect(new URL(AppPaths.DASHBOARD, request.url));
   }

@@ -1,7 +1,10 @@
 {
   "eslint.workingDirectories": ["api", "web"],
   "cSpell.words": [
+    "Burpees",
     "clsx",
+    "Deadlift",
+    "glutes",
     "hookform",
     "lucide",
     "shadcn",

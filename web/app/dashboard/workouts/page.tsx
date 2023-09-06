@@ -14,6 +14,7 @@ export default function WorkoutsPage() {
       <DataTable
         columns={WORKOUT_COLUMNS}
         createFormDialog={<WorkoutCreateFormDialog />}
+        searchBarPlaceholder="Search by workout name..."
         data={data}
         facetedFilters={FACETED_FILTERS}
       />

@@ -1,10 +1,10 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import { Workout } from "@/types/workout";
 import { Row } from "@tanstack/react-table";
 import { WorkoutConsts } from "../../../consts";
-import { capitalize } from "../../../utils/capitalize";
+import { capitalize } from "../../../../../../utils/capitalize";
+import { Workout } from "../../../../../../types/entities";
 
 type CategoryCellProps = {
   row: Row<Workout>;

@@ -1,3 +1,5 @@
+import { Difficulty, Muscle } from "../../../../types/enums";
+
 export const ExerciseTable = {
   Cells: {
     Name: {
@@ -27,16 +29,16 @@ export const ExerciseTable = {
     },
     MuscleGroups: {
       OPTIONS: [
-        { value: MuscleGroups.BACK, label: "Back" },
-        { value: MuscleGroups.BICEPS, label: "Biceps" },
-        { value: MuscleGroups.CALVES, label: "Calves" },
-        { value: MuscleGroups.CHEST, label: "Chest" },
-        { value: MuscleGroups.CORE, label: "Core" },
-        { value: MuscleGroups.GLUTEUS, label: "Gluteus" },
-        { value: MuscleGroups.HAMSTRINGS, label: "Hamstrings" },
-        { value: MuscleGroups.QUADS, label: "Quads" },
-        { value: MuscleGroups.SHOULDERS, label: "Shoulders" },
-        { value: MuscleGroups.TRICEPS, label: "Triceps" },
+        { value: Muscle.BACK, label: "Back" },
+        { value: Muscle.BICEPS, label: "Biceps" },
+        { value: Muscle.CALVES, label: "Calves" },
+        { value: Muscle.CHEST, label: "Chest" },
+        { value: Muscle.CORE, label: "Core" },
+        { value: Muscle.GLUTEUS, label: "Gluteus" },
+        { value: Muscle.HAMSTRINGS, label: "Hamstrings" },
+        { value: Muscle.QUADS, label: "Quads" },
+        { value: Muscle.SHOULDERS, label: "Shoulders" },
+        { value: Muscle.TRICEPS, label: "Triceps" },
       ],
     },
   },

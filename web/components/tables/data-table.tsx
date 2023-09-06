@@ -23,7 +23,7 @@ import DataTableBody from "./data-table-body";
 import DataTableVisibility from "./data-table-visibility";
 import SearchBar from "../ui/search-bar";
 
-type FaceTedFilterOptions = {
+export type FaceTedFilterOptions = {
   title: string;
   accessorKey: string;
   options: { value: string; label: string }[];
@@ -32,6 +32,7 @@ type FaceTedFilterOptions = {
 type DataTableProps<T, K> = {
   columns: ColumnDef<T, K>[];
   createFormDialog: ReactElement;
+  searchBarPlaceholder: string;
   data?: T[];
   facetedFilters?: FaceTedFilterOptions[];
 };
@@ -39,6 +40,7 @@ type DataTableProps<T, K> = {
 export function DataTable<T, K>({
   columns,
   createFormDialog,
+  searchBarPlaceholder,
   data = [],
   facetedFilters = [],
 }: DataTableProps<T, K>) {
@@ -66,7 +68,7 @@ export function DataTable<T, K>({
   return (
     <div>
       <div className="mb-2 flex gap-2">
-        <SearchBar />
+        <SearchBar placeholder={searchBarPlaceholder} />
         {facetedFilters.map(({ title, accessorKey: columnName, options }) => (
           <DataTableFacetedFilter
             key={nanoid()}

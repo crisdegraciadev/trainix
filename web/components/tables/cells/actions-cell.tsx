@@ -9,18 +9,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Workout } from "@/types/workout";
 import { Pencil1Icon, Cross2Icon, StarIcon } from "@radix-ui/react-icons";
 import { Row } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 
-type ActionsCellType = {
-  row: Row<Workout>;
+type ActionsCellProps<T> = {
+  row: Row<T>;
 };
 
-export default function ActionsCell({ row }: ActionsCellType) {
-  const payment = row.original;
-
+export default function ActionsCell<T>({ row }: ActionsCellProps<T>) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
