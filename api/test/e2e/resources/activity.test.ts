@@ -8,12 +8,15 @@ import {
 } from '../helpers/activity';
 import { HttpStatus } from '../../../src/consts';
 import { isErrorResponse } from '../helpers/error';
-import { cleanDatabase, createAdmin } from '../helpers/db';
+import { cleanDatabase } from '../helpers/db';
 import { INEXISTENT_ID, deleteRequest, getRequest, postRequest, putRequest } from '../helpers/request';
 import { loginUser } from '../helpers/auth';
+import { createAdminUser } from '../helpers/user';
+import { ACTIVITY_EASY, ACTIVITY_HARD, ACTIVITY_MEDIUM } from '../fixtures/activities';
+import { ADMIN_CREDENTIALS } from '../fixtures/auth';
 
 beforeAll(async () => {
-  await createAdmin();
+  await createAdminUser();
   await cleanDatabase({ all: false });
 });
 
@@ -24,14 +27,13 @@ afterAll(async () => {
 describe('ACTIVITIES', () => {
   describe('GET /:id', () => {
     it('find by id', async () => {
-      const createActivityPayload = { reps: 8, sets: 4, exerciseId: 1 };
-      const { id: activityId } = await createActivity(createActivityPayload);
+      const { id: activityId } = await createActivity(ACTIVITY_EASY);
 
-      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
+      const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
       const { statusCode, body } = await getRequest({
         url: `${BASE_ACTIVITY_PATH}/${activityId}`,
-        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        headers: { Cookie: ACCESS_TOKEN_COOKIE },
       });
 
       expect(statusCode).toBe(HttpStatus.OK);
@@ -41,11 +43,11 @@ describe('ACTIVITIES', () => {
     });
 
     it('not found', async () => {
-      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
+      const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
       const { statusCode, body } = await getRequest({
         url: `${BASE_ACTIVITY_PATH}/${INEXISTENT_ID}`,
-        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        headers: { Cookie: ACCESS_TOKEN_COOKIE },
       });
 
       expect(statusCode).toBe(HttpStatus.NOT_FOUND);
@@ -55,21 +57,17 @@ describe('ACTIVITIES', () => {
 
   describe('GET /', () => {
     it('list with 3 elements', async () => {
-      const createActivityPayloads = [
-        { reps: 8, sets: 4, exerciseId: 1 },
-        { reps: 3, sets: 1, exerciseId: 1 },
-        { reps: 1, sets: 8, exerciseId: 1 },
-      ];
+      const createActivityPayloads = [ACTIVITY_EASY, ACTIVITY_MEDIUM, ACTIVITY_HARD];
 
       const createdActivities = await Promise.all(
         createActivityPayloads.map(async (payload) => createActivity(payload))
       );
 
-      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
+      const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
       const { statusCode, body } = await getRequest({
         url: `${BASE_ACTIVITY_PATH}/`,
-        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        headers: { Cookie: ACCESS_TOKEN_COOKIE },
       });
 
       expect(statusCode).toBe(HttpStatus.OK);
@@ -82,11 +80,11 @@ describe('ACTIVITIES', () => {
     });
 
     it('empty list', async () => {
-      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
+      const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
       const { statusCode, body } = await getRequest({
         url: `${BASE_ACTIVITY_PATH}/`,
-        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        headers: { Cookie: ACCESS_TOKEN_COOKIE },
       });
 
       expect(statusCode).toBe(HttpStatus.OK);
@@ -96,13 +94,13 @@ describe('ACTIVITIES', () => {
 
   describe('POST /', () => {
     it('create', async () => {
-      const createActivityPayload = { reps: 8, sets: 4, exerciseId: 1 };
+      const createActivityPayload = { ...ACTIVITY_EASY };
 
-      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
+      const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
       const { statusCode, body } = await postRequest({
         url: `${BASE_ACTIVITY_PATH}/`,
-        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        headers: { Cookie: ACCESS_TOKEN_COOKIE },
         dto: createActivityPayload,
       });
 
@@ -126,11 +124,11 @@ describe('ACTIVITIES', () => {
     it('invalid dto', async () => {
       const createActivityPayload = { rep: 8, sets: 4 };
 
-      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
+      const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
       const { statusCode, body } = await postRequest({
         url: `${BASE_ACTIVITY_PATH}/`,
-        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        headers: { Cookie: ACCESS_TOKEN_COOKIE },
         dto: createActivityPayload,
       });
 
@@ -139,13 +137,13 @@ describe('ACTIVITIES', () => {
     });
 
     it('invalid relation', async () => {
-      const createActivityPayload = { reps: 8, sets: 4, exerciseId: INEXISTENT_ID };
+      const createActivityPayload = { ...ACTIVITY_MEDIUM, exerciseId: INEXISTENT_ID };
 
-      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
+      const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
       const { statusCode, body } = await postRequest({
         url: `${BASE_ACTIVITY_PATH}/`,
-        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        headers: { Cookie: ACCESS_TOKEN_COOKIE },
         dto: createActivityPayload,
       });
 
@@ -156,7 +154,7 @@ describe('ACTIVITIES', () => {
 
   describe('PUT /:id', () => {
     it('update', async () => {
-      const createActivityPayload = { reps: 8, sets: 4, exerciseId: 1 };
+      const createActivityPayload = { ...ACTIVITY_EASY };
       const { id: activityId } = await createActivity(createActivityPayload);
 
       const createdActivity = await findActivityById(activityId);
@@ -164,11 +162,11 @@ describe('ACTIVITIES', () => {
 
       const updateActivityPayload = { reps: 1, sets: 9, exerciseId: 2 };
 
-      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
+      const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
       const { statusCode, body } = await putRequest({
         url: `${BASE_ACTIVITY_PATH}/${activityId}`,
-        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        headers: { Cookie: ACCESS_TOKEN_COOKIE },
         dto: updateActivityPayload,
       });
 
@@ -179,16 +177,16 @@ describe('ACTIVITIES', () => {
     });
 
     it('invalid dto', async () => {
-      const createActivityPayload = { reps: 8, sets: 4, exerciseId: 1 };
+      const createActivityPayload = { ...ACTIVITY_EASY };
       const { id: activityId } = await createActivity(createActivityPayload);
 
       const updateActivityPayload = { rep: 4, set: 4 };
 
-      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
+      const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
       const { statusCode, body } = await putRequest({
         url: `${BASE_ACTIVITY_PATH}/${activityId}`,
-        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        headers: { Cookie: ACCESS_TOKEN_COOKIE },
         dto: updateActivityPayload,
       });
 
@@ -199,13 +197,13 @@ describe('ACTIVITIES', () => {
     });
 
     it('not found', async () => {
-      const updateActivityPayload = { reps: 8, sets: 4, exerciseId: 1 };
+      const updateActivityPayload = { ...ACTIVITY_EASY };
 
-      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
+      const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
       const { statusCode, body } = await putRequest({
         url: `${BASE_ACTIVITY_PATH}/${INEXISTENT_ID}`,
-        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        headers: { Cookie: ACCESS_TOKEN_COOKIE },
         dto: updateActivityPayload,
       });
 
@@ -214,16 +212,16 @@ describe('ACTIVITIES', () => {
     });
 
     it('invalid relation', async () => {
-      const createActivityPayload = { reps: 8, sets: 4, exerciseId: 1 };
+      const createActivityPayload = { ...ACTIVITY_HARD };
       const { id: activityId } = await createActivity(createActivityPayload);
 
       const updateActivityPayload = { reps: 8, sets: 3, exerciseId: INEXISTENT_ID };
 
-      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
+      const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
       const { statusCode, body } = await putRequest({
         url: `${BASE_ACTIVITY_PATH}/${activityId}`,
-        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        headers: { Cookie: ACCESS_TOKEN_COOKIE },
         dto: updateActivityPayload,
       });
 
@@ -234,14 +232,14 @@ describe('ACTIVITIES', () => {
 
   describe('DELETE /:id', () => {
     it('delete', async () => {
-      const createActivityPayload = { reps: 8, sets: 4, exerciseId: 1 };
+      const createActivityPayload = { ...ACTIVITY_EASY };
       const { id: activityId } = await createActivity(createActivityPayload);
 
-      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
+      const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
       const { statusCode, body } = await deleteRequest({
         url: `${BASE_ACTIVITY_PATH}/${activityId}`,
-        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        headers: { Cookie: ACCESS_TOKEN_COOKIE },
       });
 
       expect(statusCode).toBe(HttpStatus.OK);
@@ -252,11 +250,11 @@ describe('ACTIVITIES', () => {
     });
 
     it('not found', async () => {
-      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
+      const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
       const { statusCode, body } = await deleteRequest({
         url: `${BASE_ACTIVITY_PATH}/${INEXISTENT_ID}`,
-        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        headers: { Cookie: ACCESS_TOKEN_COOKIE },
       });
 
       expect(statusCode).toBe(HttpStatus.NOT_FOUND);
