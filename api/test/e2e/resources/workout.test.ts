@@ -8,13 +8,16 @@ import {
   isValidWorkoutResponse,
 } from '../helpers/workout';
 import { isErrorResponse } from '../helpers/error';
-import { createUser, deleteUser } from '../helpers/user';
-import { createAdmin, cleanDatabase } from '../helpers/db';
+import { createAdminUser, createUser, deleteUser } from '../helpers/user';
+import { cleanDatabase } from '../helpers/db';
 import { INEXISTENT_ID, deleteRequest, getRequest, postRequest, putRequest } from '../helpers/request';
 import { loginUser } from '../helpers/auth';
+import { CREATE_USER_CRIS_PAYLOAD } from '../fixtures/users';
+import { WORKOUT_ABS, WORKOUT_LEGS, WORKOUT_MUSCLE_UP } from '../fixtures/workouts';
+import { ADMIN_CREDENTIALS } from '../fixtures/auth';
 
 beforeAll(async () => {
-  await createAdmin();
+  await createAdminUser();
   await cleanDatabase({ all: false });
 });
 
@@ -25,17 +28,16 @@ afterAll(async () => {
 describe('WORKOUTS', () => {
   describe('GET /:id', () => {
     it('find by id', async () => {
-      const createUserPayload = { username: 'cris', password: '1234', repeatedPassword: '1234' };
-      const { id: userId } = await createUser(createUserPayload);
+      const { id: userId } = await createUser(CREATE_USER_CRIS_PAYLOAD);
 
-      const createWorkoutPayload = { name: 'Upper - Muscle Up', userId };
+      const createWorkoutPayload = { ...WORKOUT_MUSCLE_UP, userId };
       const { id: workoutId } = await createWorkout(createWorkoutPayload);
 
-      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
+      const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
       const { statusCode, body } = await getRequest({
         url: `${BASE_WORKOUT_PATH}/${workoutId}`,
-        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        headers: { Cookie: ACCESS_TOKEN_COOKIE },
       });
 
       expect(statusCode).toBe(HttpStatus.OK);
@@ -46,11 +48,11 @@ describe('WORKOUTS', () => {
     });
 
     it('not found', async () => {
-      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
+      const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
       const { statusCode, body } = await getRequest({
         url: `${BASE_WORKOUT_PATH}/${INEXISTENT_ID}`,
-        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        headers: { Cookie: ACCESS_TOKEN_COOKIE },
       });
 
       expect(statusCode).toBe(HttpStatus.NOT_FOUND);
@@ -60,22 +62,21 @@ describe('WORKOUTS', () => {
 
   describe('GET /', () => {
     it('list with 3 elements', async () => {
-      const createUserPayload = { username: 'cris', password: '1234', repeatedPassword: '1234' };
-      const { id: userId } = await createUser(createUserPayload);
+      const { id: userId } = await createUser(CREATE_USER_CRIS_PAYLOAD);
 
       const createWorkoutPayloads = [
-        { name: 'Upper', userId: userId },
-        { name: 'Lower', userId: userId },
-        { name: 'Abs', userId: userId },
+        { ...WORKOUT_MUSCLE_UP, userId },
+        { ...WORKOUT_ABS, userId },
+        { ...WORKOUT_LEGS, userId },
       ];
 
       const createdWorkouts = await Promise.all(createWorkoutPayloads.map(async (payload) => createWorkout(payload)));
 
-      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
+      const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
       const { statusCode, body } = await getRequest({
         url: `${BASE_WORKOUT_PATH}/`,
-        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        headers: { Cookie: ACCESS_TOKEN_COOKIE },
       });
 
       expect(statusCode).toBe(HttpStatus.OK);
@@ -89,11 +90,11 @@ describe('WORKOUTS', () => {
     });
 
     it('empty list', async () => {
-      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
+      const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
       const { statusCode, body } = await getRequest({
         url: `${BASE_WORKOUT_PATH}/`,
-        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        headers: { Cookie: ACCESS_TOKEN_COOKIE },
       });
 
       expect(statusCode).toBe(HttpStatus.OK);
@@ -103,16 +104,15 @@ describe('WORKOUTS', () => {
 
   describe('POST /', () => {
     it('create', async () => {
-      const createUserPayload = { username: 'cris', password: '1234', repeatedPassword: '1234' };
-      const { id: userId } = await createUser(createUserPayload);
+      const { id: userId } = await createUser(CREATE_USER_CRIS_PAYLOAD);
 
-      const createWorkoutPayload = { name: 'Upper - Muscle Up', userId };
+      const createWorkoutPayload = { ...WORKOUT_MUSCLE_UP, userId };
 
-      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
+      const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
       const { statusCode, body } = await postRequest({
         url: `${BASE_WORKOUT_PATH}/`,
-        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        headers: { Cookie: ACCESS_TOKEN_COOKIE },
         dto: createWorkoutPayload,
       });
 
@@ -128,16 +128,15 @@ describe('WORKOUTS', () => {
     });
 
     it('invalid dto', async () => {
-      const createUserPayload = { username: 'cris', password: '1234', repeatedPassword: '1234' };
-      const { id: userId } = await createUser(createUserPayload);
+      const { id: userId } = await createUser(CREATE_USER_CRIS_PAYLOAD);
 
       const createWorkoutPayload = { userId };
 
-      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
+      const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
       const { statusCode, body } = await postRequest({
         url: `${BASE_WORKOUT_PATH}/`,
-        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        headers: { Cookie: ACCESS_TOKEN_COOKIE },
         dto: createWorkoutPayload,
       });
 
@@ -148,16 +147,15 @@ describe('WORKOUTS', () => {
     });
 
     it('duplicate name', async () => {
-      const createUserPayload = { username: 'cris', password: '1234', repeatedPassword: '1234' };
-      const { id: userId } = await createUser(createUserPayload);
+      const { id: userId } = await createUser(CREATE_USER_CRIS_PAYLOAD);
 
-      const createWorkoutPayload = { name: 'Upper - Muscle Up', userId };
+      const createWorkoutPayload = { ...WORKOUT_MUSCLE_UP, userId };
 
-      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
+      const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
       const { statusCode: statusCode1, body: body1 } = await postRequest({
         url: `${BASE_WORKOUT_PATH}/`,
-        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        headers: { Cookie: ACCESS_TOKEN_COOKIE },
         dto: createWorkoutPayload,
       });
 
@@ -166,7 +164,7 @@ describe('WORKOUTS', () => {
 
       const { statusCode: statusCode2, body: body2 } = await postRequest({
         url: `${BASE_WORKOUT_PATH}/`,
-        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        headers: { Cookie: ACCESS_TOKEN_COOKIE },
         dto: createWorkoutPayload,
       });
 
@@ -180,22 +178,21 @@ describe('WORKOUTS', () => {
 
   describe('PUT /:id', () => {
     it('update', async () => {
-      const createUserPayload = { username: 'cris', password: '1234', repeatedPassword: '1234' };
-      const { id: userId } = await createUser(createUserPayload);
+      const { id: userId } = await createUser(CREATE_USER_CRIS_PAYLOAD);
 
-      const createWorkoutPayload = { name: 'Upper - Muscle Up', userId };
+      const createWorkoutPayload = { ...WORKOUT_MUSCLE_UP, userId };
       const { id: workoutId } = await createWorkout(createWorkoutPayload);
 
       const createdWorkout = await findWorkoutById(workoutId);
       expect(createdWorkout).toMatchObject({ id: workoutId, ...createWorkoutPayload });
 
-      const updateWorkoutPayload = { name: 'Upper - Front' };
+      const updateWorkoutPayload = { ...WORKOUT_ABS };
 
-      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
+      const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
       const { statusCode, body } = await putRequest({
         url: `${BASE_WORKOUT_PATH}/${workoutId}`,
-        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        headers: { Cookie: ACCESS_TOKEN_COOKIE },
         dto: updateWorkoutPayload,
       });
 
@@ -207,19 +204,18 @@ describe('WORKOUTS', () => {
     });
 
     it('invalid dto', async () => {
-      const createUserPayload = { username: 'cris', password: '1234', repeatedPassword: '1234' };
-      const { id: userId } = await createUser(createUserPayload);
+      const { id: userId } = await createUser(CREATE_USER_CRIS_PAYLOAD);
 
-      const createWorkoutPayload = { name: 'Upper - Muscle Up', userId };
+      const createWorkoutPayload = { ...WORKOUT_MUSCLE_UP, userId };
       const { id: workoutId } = await createWorkout(createWorkoutPayload);
 
       const updateWorkoutPayload = { username: 'Front' };
 
-      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
+      const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
       const { statusCode, body } = await putRequest({
         url: `${BASE_WORKOUT_PATH}/${workoutId}`,
-        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        headers: { Cookie: ACCESS_TOKEN_COOKIE },
         dto: updateWorkoutPayload,
       });
 
@@ -231,13 +227,13 @@ describe('WORKOUTS', () => {
     });
 
     it('not found', async () => {
-      const updateWorkoutPayload = { name: 'Upper - Muscle Up', userId: 99 };
+      const updateWorkoutPayload = { ...WORKOUT_MUSCLE_UP, userId: 99 };
 
-      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
+      const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
       const { statusCode, body } = await putRequest({
         url: `${BASE_WORKOUT_PATH}/${INEXISTENT_ID}`,
-        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        headers: { Cookie: ACCESS_TOKEN_COOKIE },
         dto: updateWorkoutPayload,
       });
 
@@ -246,20 +242,19 @@ describe('WORKOUTS', () => {
     });
 
     it('duplicate', async () => {
-      const createUserPayload = { username: 'cris', password: '1234', repeatedPassword: '1234' };
-      const { id: userId } = await createUser(createUserPayload);
+      const { id: userId } = await createUser(CREATE_USER_CRIS_PAYLOAD);
 
-      const createWorkoutPayload1 = { name: 'Upper - Muscle Up', userId };
+      const createWorkoutPayload1 = { ...WORKOUT_MUSCLE_UP, userId };
       const { id: workoutId1 } = await createWorkout(createWorkoutPayload1);
 
-      const createWorkoutPayload2 = { name: 'Upper - Front', userId };
+      const createWorkoutPayload2 = { ...WORKOUT_LEGS, userId };
       const { id: workoutId2 } = await createWorkout(createWorkoutPayload2);
 
-      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
+      const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
       const { statusCode, body } = await putRequest({
         url: `${BASE_WORKOUT_PATH}/${workoutId1}`,
-        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        headers: { Cookie: ACCESS_TOKEN_COOKIE },
         dto: createWorkoutPayload2,
       });
 
@@ -274,17 +269,16 @@ describe('WORKOUTS', () => {
 
   describe('DELETE /:id', () => {
     it('delete', async () => {
-      const createUserPayload = { username: 'cris', password: '1234', repeatedPassword: '1234' };
-      const { id: userId } = await createUser(createUserPayload);
+      const { id: userId } = await createUser(CREATE_USER_CRIS_PAYLOAD);
 
-      const createWorkoutPayload = { name: 'Upper - Muscle Up', userId };
+      const createWorkoutPayload = { ...WORKOUT_MUSCLE_UP, userId };
       const { id: workoutId } = await createWorkout(createWorkoutPayload);
 
-      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
+      const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
       const { statusCode, body } = await deleteRequest({
         url: `${BASE_WORKOUT_PATH}/${workoutId}`,
-        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        headers: { Cookie: ACCESS_TOKEN_COOKIE },
       });
 
       expect(statusCode).toBe(HttpStatus.OK);
@@ -297,11 +291,11 @@ describe('WORKOUTS', () => {
     });
 
     it('not found', async () => {
-      const ACCESS_TOKEN = await loginUser({ email: 'admin', password: 'admin' });
+      const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
       const { statusCode, body } = await deleteRequest({
         url: `${BASE_WORKOUT_PATH}/${INEXISTENT_ID}`,
-        headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+        headers: { Cookie: ACCESS_TOKEN_COOKIE },
       });
 
       expect(statusCode).toBe(HttpStatus.NOT_FOUND);
