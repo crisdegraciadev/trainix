@@ -5,7 +5,7 @@ import { createResponseUserDto, isValidCreateUserDto, isValidUpdateUserDto } fro
 import { mapIdToNumber } from '../../utils';
 import { ResponseUserDto, UpdateUserDto, UserRequestParams } from './types';
 import { handleFailureCauses } from '../../errors/handlers';
-import { createUser, findUserById, findUsersByFields, deleteUser, updateUser } from './services';
+import { insertUser, retrieveUser, filterUsers, deleteUser, updateUser } from './services';
 
 export const handleFindUserById = async (
   req: Request<UserRequestParams>,
@@ -15,7 +15,7 @@ export const handleFindUserById = async (
 
   const findByIdResult = await pipe(
     Effect.all([mapIdToNumber(userId)]),
-    Effect.flatMap(([id]) => findUserById({ id })),
+    Effect.flatMap(([id]) => retrieveUser({ id })),
     Effect.flatMap((user) => createResponseUserDto(user)),
     Effect.runPromiseExit
   );
@@ -28,7 +28,7 @@ export const handleFindUserById = async (
 
 export const handleFindUserByFields = async (_req: Request, res: Response<ResponseUserDto[]>): Promise<void> => {
   const findByFieldsResult = await pipe(
-    Effect.all([findUsersByFields({})]),
+    Effect.all([filterUsers({})]),
     Effect.map(([users]) => users.map((user) => Effect.runSync(createResponseUserDto(user)))),
     Effect.runPromiseExit
   );
@@ -44,7 +44,7 @@ export const handleCreateUser = async (req: Request, res: Response<ResponseUserD
 
   const createResult = await pipe(
     Effect.all([isValidCreateUserDto(body)]),
-    Effect.flatMap(([data]) => createUser({ dto: data })),
+    Effect.flatMap(([data]) => insertUser({ dto: data })),
     Effect.flatMap((user) => createResponseUserDto(user)),
     Effect.runPromiseExit
   );

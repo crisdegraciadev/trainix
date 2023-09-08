@@ -3,7 +3,7 @@ import { createToken } from '../../../lib/jwt';
 import { LoginDto } from '../types';
 import { Filters } from '../../../utils';
 import { User } from '@prisma/client';
-import { findUsersByFields } from '../../users/services';
+import { filterUsers } from '../../users/services';
 import { hasSameHash } from '../../../lib/bcrypt';
 import { Auth } from '../../../consts';
 import { UnauthorizedError } from '../../../errors/types';
@@ -25,7 +25,7 @@ const checkIfUserExist = (dto: LoginDto): Effect.Effect<never, UnauthorizedError
   const filters: Filters<User> = { email };
 
   return pipe(
-    Effect.all([findUsersByFields({ filters })]),
+    Effect.all([filterUsers({ filters })]),
     Effect.map(([users]) => users.at(0)),
     Effect.flatMap((user) => {
       return !user ? Effect.fail(new UnauthorizedError({ message: 'No user' })) : Effect.succeed(user);

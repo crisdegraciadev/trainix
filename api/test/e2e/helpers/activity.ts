@@ -22,11 +22,11 @@ export const isValidActivityResponse = (body: unknown): body is ActivityResponse
   return !!id && !!sets && !!reps && !!exerciseId && !!hasExercise;
 };
 
-export const findActivityById = async (id: number): Promise<Activity | null> => {
+export const retrieveActivity = async (id: number): Promise<Activity | null> => {
   return prisma.activity.findFirst({ where: { id } });
 };
 
-export const createActivity = async (data: CreateActivityDto): Promise<ActivityWithExercise> => {
+export const insertActivity = async (data: CreateActivityDto): Promise<ActivityWithExercise> => {
   return prisma.activity.create({ data, include: { exercise: true } });
 };
 

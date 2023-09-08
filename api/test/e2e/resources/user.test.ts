@@ -1,12 +1,12 @@
 import { HttpStatus } from '../../../src/consts';
 import {
-  createUser,
+  insertUser,
   BASE_USER_PATH,
   isValidUserResponse,
   deleteUser,
-  createAdminUser,
+  insertAdminUser,
   UserResponse,
-  findUserById,
+  retrieveUser,
 } from '../helpers/user';
 import { loginUser } from '../helpers/auth';
 import { cleanDatabase } from '../helpers/db';
@@ -16,7 +16,7 @@ import { ADMIN_CREDENTIALS } from '../fixtures/auth';
 import { isErrorResponse } from '../helpers/error';
 
 beforeAll(async () => {
-  await createAdminUser();
+  await insertAdminUser();
   await cleanDatabase({ all: false });
 });
 
@@ -27,7 +27,7 @@ afterAll(async () => {
 describe('USERS', () => {
   describe('GET /:id', () => {
     it('find by id', async () => {
-      const { id: userId } = await createUser(CREATE_USER_CRIS_PAYLOAD);
+      const { id: userId } = await insertUser(CREATE_USER_CRIS_PAYLOAD);
 
       const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
@@ -55,7 +55,7 @@ describe('USERS', () => {
     });
 
     it('password hash not returned', async () => {
-      const { id: userId } = await createUser(CREATE_USER_CRIS_PAYLOAD);
+      const { id: userId } = await insertUser(CREATE_USER_CRIS_PAYLOAD);
 
       const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
@@ -75,7 +75,7 @@ describe('USERS', () => {
   describe('GET /', () => {
     it('list with 3 elements', async () => {
       const createUserPayloads = [CREATE_USER_CRIS_PAYLOAD, CREATE_USER_ALBER_PAYLOAD, CREATE_USER_ANA_PAYLOAD];
-      const createdUsers = await Promise.all(createUserPayloads.map(async (payload) => createUser(payload)));
+      const createdUsers = await Promise.all(createUserPayloads.map(async (payload) => insertUser(payload)));
 
       const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
@@ -107,7 +107,7 @@ describe('USERS', () => {
 
     it('password hash not returned', async () => {
       const createUserPayloads = [CREATE_USER_CRIS_PAYLOAD, CREATE_USER_ALBER_PAYLOAD, CREATE_USER_ANA_PAYLOAD];
-      const createdUsers = await Promise.all(createUserPayloads.map(async (payload) => createUser(payload)));
+      const createdUsers = await Promise.all(createUserPayloads.map(async (payload) => insertUser(payload)));
 
       const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
@@ -196,9 +196,9 @@ describe('USERS', () => {
 
   describe('PUT /:id', () => {
     it('update', async () => {
-      const { id: userId } = await createUser(CREATE_USER_CRIS_PAYLOAD);
+      const { id: userId } = await insertUser(CREATE_USER_CRIS_PAYLOAD);
 
-      const createdUser = await findUserById(userId);
+      const createdUser = await retrieveUser(userId);
       const { username } = CREATE_USER_CRIS_PAYLOAD;
       expect(createdUser).toMatchObject({ id: userId, username });
 
@@ -219,7 +219,7 @@ describe('USERS', () => {
     });
 
     it('invalid dto', async () => {
-      const { id: userId } = await createUser(CREATE_USER_CRIS_PAYLOAD);
+      const { id: userId } = await insertUser(CREATE_USER_CRIS_PAYLOAD);
 
       const updateUserPayload = { user: 'cfres' };
 
@@ -251,9 +251,9 @@ describe('USERS', () => {
     });
 
     it('duplicate', async () => {
-      const { id: id1 } = await createUser(CREATE_USER_CRIS_PAYLOAD);
+      const { id: id1 } = await insertUser(CREATE_USER_CRIS_PAYLOAD);
 
-      const { id: id2 } = await createUser(CREATE_USER_ANA_PAYLOAD);
+      const { id: id2 } = await insertUser(CREATE_USER_ANA_PAYLOAD);
 
       const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
@@ -271,7 +271,7 @@ describe('USERS', () => {
     });
 
     it('password hash not returned', async () => {
-      const { id: userId } = await createUser(CREATE_USER_CRIS_PAYLOAD);
+      const { id: userId } = await insertUser(CREATE_USER_CRIS_PAYLOAD);
 
       const updateUserPayload = { username: 'cfres' };
 
@@ -292,7 +292,7 @@ describe('USERS', () => {
 
   describe('DELETE /:id', () => {
     it('delete', async () => {
-      const { id: userId } = await createUser(CREATE_USER_CRIS_PAYLOAD);
+      const { id: userId } = await insertUser(CREATE_USER_CRIS_PAYLOAD);
 
       const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
@@ -306,7 +306,7 @@ describe('USERS', () => {
       const { username } = CREATE_USER_CRIS_PAYLOAD;
       expect(body).toMatchObject({ id: userId, username });
 
-      const user = await findUserById(userId);
+      const user = await retrieveUser(userId);
       expect(user).toBeNull();
     });
 
@@ -322,7 +322,7 @@ describe('USERS', () => {
     });
 
     it('password hash not returned', async () => {
-      const { id: userId } = await createUser(CREATE_USER_CRIS_PAYLOAD);
+      const { id: userId } = await insertUser(CREATE_USER_CRIS_PAYLOAD);
 
       const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
@@ -335,7 +335,7 @@ describe('USERS', () => {
 
       expect(body.passwordHash).toBeUndefined();
 
-      const user = await findUserById(userId);
+      const user = await retrieveUser(userId);
       expect(user).toBeNull();
     });
   });

@@ -4,11 +4,11 @@ import prisma from '../../../config/prisma';
 import { handlePrismaErrors } from '../../../errors/handlers';
 import { NotFoundError } from '../../../errors/types';
 
-type FindByIdArgs = { id: number };
-type FindByIdErrors = NotFoundError;
-type FindByIdReturn = Effect.Effect<never, FindByIdErrors, User>;
+type RetrieveArgs = { id: number };
+type RetrieveErrors = NotFoundError;
+type RetrieveReturn = Effect.Effect<never, RetrieveErrors, User>;
 
-export const findUserById = ({ id }: FindByIdArgs): FindByIdReturn => {
+export const retrieveUser = ({ id }: RetrieveArgs): RetrieveReturn => {
   return Effect.tryPromise({
     try: () => prisma.user.findUniqueOrThrow({ where: { id } }),
     catch: (error) => handlePrismaErrors(error),

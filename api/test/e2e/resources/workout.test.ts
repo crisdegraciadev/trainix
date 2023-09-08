@@ -8,7 +8,7 @@ import {
   isValidWorkoutResponse,
 } from '../helpers/workout';
 import { isErrorResponse } from '../helpers/error';
-import { createAdminUser, createUser, deleteUser } from '../helpers/user';
+import { insertAdminUser, insertUser, deleteUser } from '../helpers/user';
 import { cleanDatabase } from '../helpers/db';
 import { INEXISTENT_ID, deleteRequest, getRequest, postRequest, putRequest } from '../helpers/request';
 import { loginUser } from '../helpers/auth';
@@ -17,7 +17,7 @@ import { WORKOUT_ABS, WORKOUT_LEGS, WORKOUT_MUSCLE_UP } from '../fixtures/workou
 import { ADMIN_CREDENTIALS } from '../fixtures/auth';
 
 beforeAll(async () => {
-  await createAdminUser();
+  await insertAdminUser();
   await cleanDatabase({ all: false });
 });
 
@@ -28,7 +28,7 @@ afterAll(async () => {
 describe('WORKOUTS', () => {
   describe('GET /:id', () => {
     it('find by id', async () => {
-      const { id: userId } = await createUser(CREATE_USER_CRIS_PAYLOAD);
+      const { id: userId } = await insertUser(CREATE_USER_CRIS_PAYLOAD);
 
       const createWorkoutPayload = { ...WORKOUT_MUSCLE_UP, userId };
       const { id: workoutId } = await createWorkout(createWorkoutPayload);
@@ -62,7 +62,7 @@ describe('WORKOUTS', () => {
 
   describe('GET /', () => {
     it('list with 3 elements', async () => {
-      const { id: userId } = await createUser(CREATE_USER_CRIS_PAYLOAD);
+      const { id: userId } = await insertUser(CREATE_USER_CRIS_PAYLOAD);
 
       const createWorkoutPayloads = [
         { ...WORKOUT_MUSCLE_UP, userId },
@@ -104,7 +104,7 @@ describe('WORKOUTS', () => {
 
   describe('POST /', () => {
     it('create', async () => {
-      const { id: userId } = await createUser(CREATE_USER_CRIS_PAYLOAD);
+      const { id: userId } = await insertUser(CREATE_USER_CRIS_PAYLOAD);
 
       const createWorkoutPayload = { ...WORKOUT_MUSCLE_UP, userId };
 
@@ -128,7 +128,7 @@ describe('WORKOUTS', () => {
     });
 
     it('invalid dto', async () => {
-      const { id: userId } = await createUser(CREATE_USER_CRIS_PAYLOAD);
+      const { id: userId } = await insertUser(CREATE_USER_CRIS_PAYLOAD);
 
       const createWorkoutPayload = { userId };
 
@@ -147,7 +147,7 @@ describe('WORKOUTS', () => {
     });
 
     it('duplicate name', async () => {
-      const { id: userId } = await createUser(CREATE_USER_CRIS_PAYLOAD);
+      const { id: userId } = await insertUser(CREATE_USER_CRIS_PAYLOAD);
 
       const createWorkoutPayload = { ...WORKOUT_MUSCLE_UP, userId };
 
@@ -178,7 +178,7 @@ describe('WORKOUTS', () => {
 
   describe('PUT /:id', () => {
     it('update', async () => {
-      const { id: userId } = await createUser(CREATE_USER_CRIS_PAYLOAD);
+      const { id: userId } = await insertUser(CREATE_USER_CRIS_PAYLOAD);
 
       const createWorkoutPayload = { ...WORKOUT_MUSCLE_UP, userId };
       const { id: workoutId } = await createWorkout(createWorkoutPayload);
@@ -204,7 +204,7 @@ describe('WORKOUTS', () => {
     });
 
     it('invalid dto', async () => {
-      const { id: userId } = await createUser(CREATE_USER_CRIS_PAYLOAD);
+      const { id: userId } = await insertUser(CREATE_USER_CRIS_PAYLOAD);
 
       const createWorkoutPayload = { ...WORKOUT_MUSCLE_UP, userId };
       const { id: workoutId } = await createWorkout(createWorkoutPayload);
@@ -242,7 +242,7 @@ describe('WORKOUTS', () => {
     });
 
     it('duplicate', async () => {
-      const { id: userId } = await createUser(CREATE_USER_CRIS_PAYLOAD);
+      const { id: userId } = await insertUser(CREATE_USER_CRIS_PAYLOAD);
 
       const createWorkoutPayload1 = { ...WORKOUT_MUSCLE_UP, userId };
       const { id: workoutId1 } = await createWorkout(createWorkoutPayload1);
@@ -269,7 +269,7 @@ describe('WORKOUTS', () => {
 
   describe('DELETE /:id', () => {
     it('delete', async () => {
-      const { id: userId } = await createUser(CREATE_USER_CRIS_PAYLOAD);
+      const { id: userId } = await insertUser(CREATE_USER_CRIS_PAYLOAD);
 
       const createWorkoutPayload = { ...WORKOUT_MUSCLE_UP, userId };
       const { id: workoutId } = await createWorkout(createWorkoutPayload);

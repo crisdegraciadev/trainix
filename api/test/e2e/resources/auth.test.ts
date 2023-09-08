@@ -1,13 +1,13 @@
 import { BASE_AUTH_PATH } from '../helpers/auth';
 import { HttpStatus } from '../../../src/consts';
-import { createAdminUser, createUser, deleteUser } from '../helpers/user';
+import { insertAdminUser, insertUser, deleteUser } from '../helpers/user';
 import { cleanDatabase } from '../helpers/db';
 import { postRequest } from '../helpers/request';
 import { isErrorResponse } from '../helpers/error';
 import { CREATE_USER_CRIS_PAYLOAD } from '../fixtures/users';
 
 beforeAll(async () => {
-  await createAdminUser();
+  await insertAdminUser();
   await cleanDatabase({ all: false });
 });
 
@@ -19,7 +19,7 @@ describe('AUTH', () => {
   describe('LOGIN', () => {
     it('valid credentials', async () => {
       const { email, password } = CREATE_USER_CRIS_PAYLOAD;
-      const { id: userId } = await createUser(CREATE_USER_CRIS_PAYLOAD);
+      const { id: userId } = await insertUser(CREATE_USER_CRIS_PAYLOAD);
 
       const { statusCode, body, headers } = await postRequest({
         url: `${BASE_AUTH_PATH}/login`,
@@ -38,7 +38,7 @@ describe('AUTH', () => {
 
     it('invalid credentials', async () => {
       const { email } = CREATE_USER_CRIS_PAYLOAD;
-      const { id: userId } = await createUser(CREATE_USER_CRIS_PAYLOAD);
+      const { id: userId } = await insertUser(CREATE_USER_CRIS_PAYLOAD);
 
       const { statusCode, body } = await postRequest({
         url: `${BASE_AUTH_PATH}/login`,

@@ -6,14 +6,14 @@ import { Activity } from '@prisma/client';
 import { HttpStatus } from '../../consts';
 import { handleFailureCauses } from '../../errors/handlers';
 import { isValidCreateActivityDto, isValidUpdateActivityDto } from './utils';
-import { createActivity, findActivityByFields, findActivityById, updateActivity, deleteActivity } from './services';
+import { insertActivity, filterActivities, retrieveActivity, updateActivity, deleteActivity } from './services';
 
 export const handleFindActivityById = async (req: Request<ActivityRequestParams>, res: Response): Promise<void> => {
   const { id: activityId } = req.params;
 
   const findByIdResult = await pipe(
     Effect.all([mapIdToNumber(activityId)]),
-    Effect.flatMap(([id]) => findActivityById({ id })),
+    Effect.flatMap(([id]) => retrieveActivity({ id })),
     Effect.runPromiseExit
   );
 
@@ -24,7 +24,7 @@ export const handleFindActivityById = async (req: Request<ActivityRequestParams>
 };
 
 export const handleFindActivityByFields = async (_req: Request, res: Response): Promise<void> => {
-  const findByFieldsResult = await Effect.runPromiseExit(findActivityByFields({}));
+  const findByFieldsResult = await Effect.runPromiseExit(filterActivities({}));
 
   Exit.match(findByFieldsResult, {
     onSuccess: (activities: Activity[]) => res.status(HttpStatus.OK).send(activities),
@@ -37,7 +37,7 @@ export const handleCreateActivity = async (req: Request, res: Response): Promise
 
   const createResult = await pipe(
     Effect.all([isValidCreateActivityDto(body)]),
-    Effect.flatMap(([data]) => createActivity({ data })),
+    Effect.flatMap(([data]) => insertActivity({ data })),
     Effect.runPromiseExit
   );
 

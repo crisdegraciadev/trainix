@@ -7,6 +7,7 @@ import { RoutesConstants } from './consts';
 import { Global } from './consts/global';
 import cookieParser from 'cookie-parser';
 import { CORS_CONFIG } from './config/cors';
+import { exerciseRouter } from './resources/exercises/route';
 
 require('dotenv').config();
 
@@ -25,5 +26,6 @@ app.use(RoutesConstants.USERS, userRouter);
 app.use(RoutesConstants.WORKOUTS, workoutRouter);
 app.use(RoutesConstants.ACTIVITIES, activitiesRouter);
 app.use(RoutesConstants.AUTH, authRouter);
+app.use(RoutesConstants.EXERCISES, exerciseRouter);
 
 export default app;

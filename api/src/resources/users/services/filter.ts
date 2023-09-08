@@ -3,11 +3,11 @@ import prisma from '../../../config/prisma';
 import { User } from '@prisma/client';
 import { Filters, buildFilters } from '../../../utils';
 
-type FindByFieldsArgs = { filters?: Filters<User> };
-type FindByFieldsErrors = never;
-type FindByFieldsReturn = Effect.Effect<never, FindByFieldsErrors, User[]>;
+type FilterArgs = { filters?: Filters<User> };
+type FilterErrors = never;
+type FilterReturn = Effect.Effect<never, FilterErrors, User[]>;
 
-export const findUsersByFields = ({ filters }: FindByFieldsArgs): FindByFieldsReturn => {
+export const filterUsers = ({ filters }: FilterArgs): FilterReturn => {
   const queryFilters = buildFilters(filters);
   return Effect.promise(() => prisma.user.findMany(queryFilters));
 };

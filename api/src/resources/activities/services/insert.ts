@@ -5,11 +5,11 @@ import { handlePrismaErrors } from '../../../errors/handlers';
 import { DuplicateError } from '../../../errors/types';
 import { CreateActivityDto } from '../types';
 
-type CreateArgs = { data: CreateActivityDto };
-type CreateErrors = DuplicateError;
-type CreateReturn = Effect.Effect<never, CreateErrors, Activity>;
+type InsertArgs = { data: CreateActivityDto };
+type InsertErrors = DuplicateError;
+type InsertReturn = Effect.Effect<never, InsertErrors, Activity>;
 
-export const createActivity = ({ data }: CreateArgs): CreateReturn => {
+export const insertActivity = ({ data }: InsertArgs): InsertReturn => {
   return Effect.tryPromise({
     try: () => prisma.activity.create({ data, include: { exercise: true } }),
     catch: (error) => handlePrismaErrors(error),

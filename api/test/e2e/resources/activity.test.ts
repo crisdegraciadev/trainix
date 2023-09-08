@@ -1,9 +1,9 @@
 import {
   ActivityResponse,
   BASE_ACTIVITY_PATH,
-  createActivity,
+  insertActivity,
   deleteActivity,
-  findActivityById,
+  retrieveActivity,
   isValidActivityResponse,
 } from '../helpers/activity';
 import { HttpStatus } from '../../../src/consts';
@@ -11,12 +11,12 @@ import { isErrorResponse } from '../helpers/error';
 import { cleanDatabase } from '../helpers/db';
 import { INEXISTENT_ID, deleteRequest, getRequest, postRequest, putRequest } from '../helpers/request';
 import { loginUser } from '../helpers/auth';
-import { createAdminUser } from '../helpers/user';
+import { insertAdminUser } from '../helpers/user';
 import { ACTIVITY_EASY, ACTIVITY_HARD, ACTIVITY_MEDIUM } from '../fixtures/activities';
 import { ADMIN_CREDENTIALS } from '../fixtures/auth';
 
 beforeAll(async () => {
-  await createAdminUser();
+  await insertAdminUser();
   await cleanDatabase({ all: false });
 });
 
@@ -27,7 +27,7 @@ afterAll(async () => {
 describe('ACTIVITIES', () => {
   describe('GET /:id', () => {
     it('find by id', async () => {
-      const { id: activityId } = await createActivity(ACTIVITY_EASY);
+      const { id: activityId } = await insertActivity(ACTIVITY_EASY);
 
       const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
@@ -60,7 +60,7 @@ describe('ACTIVITIES', () => {
       const createActivityPayloads = [ACTIVITY_EASY, ACTIVITY_MEDIUM, ACTIVITY_HARD];
 
       const createdActivities = await Promise.all(
-        createActivityPayloads.map(async (payload) => createActivity(payload))
+        createActivityPayloads.map(async (payload) => insertActivity(payload))
       );
 
       const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
@@ -74,7 +74,7 @@ describe('ACTIVITIES', () => {
       expect(body.length).toBe(3);
 
       const activities = body as ActivityResponse[];
-      activities.forEach((user) => expect(isValidActivityResponse(user)).toBeTruthy());
+      activities.forEach((exercise) => expect(isValidActivityResponse(exercise)).toBeTruthy());
 
       await Promise.all(createdActivities.map(({ id }) => deleteActivity(id)));
     });
@@ -155,9 +155,9 @@ describe('ACTIVITIES', () => {
   describe('PUT /:id', () => {
     it('update', async () => {
       const createActivityPayload = { ...ACTIVITY_EASY };
-      const { id: activityId } = await createActivity(createActivityPayload);
+      const { id: activityId } = await insertActivity(createActivityPayload);
 
-      const createdActivity = await findActivityById(activityId);
+      const createdActivity = await retrieveActivity(activityId);
       expect(createdActivity).toMatchObject({ id: activityId, ...createActivityPayload });
 
       const updateActivityPayload = { reps: 1, sets: 9, exerciseId: 2 };
@@ -178,7 +178,7 @@ describe('ACTIVITIES', () => {
 
     it('invalid dto', async () => {
       const createActivityPayload = { ...ACTIVITY_EASY };
-      const { id: activityId } = await createActivity(createActivityPayload);
+      const { id: activityId } = await insertActivity(createActivityPayload);
 
       const updateActivityPayload = { rep: 4, set: 4 };
 
@@ -213,7 +213,7 @@ describe('ACTIVITIES', () => {
 
     it('invalid relation', async () => {
       const createActivityPayload = { ...ACTIVITY_HARD };
-      const { id: activityId } = await createActivity(createActivityPayload);
+      const { id: activityId } = await insertActivity(createActivityPayload);
 
       const updateActivityPayload = { reps: 8, sets: 3, exerciseId: INEXISTENT_ID };
 
@@ -233,7 +233,7 @@ describe('ACTIVITIES', () => {
   describe('DELETE /:id', () => {
     it('delete', async () => {
       const createActivityPayload = { ...ACTIVITY_EASY };
-      const { id: activityId } = await createActivity(createActivityPayload);
+      const { id: activityId } = await insertActivity(createActivityPayload);
 
       const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
@@ -245,7 +245,7 @@ describe('ACTIVITIES', () => {
       expect(statusCode).toBe(HttpStatus.OK);
       expect(body).toMatchObject({ id: activityId, ...createActivityPayload });
 
-      const activity = await findActivityById(activityId);
+      const activity = await retrieveActivity(activityId);
       expect(activity).toBeNull();
     });
 

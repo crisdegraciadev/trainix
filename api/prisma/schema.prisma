@@ -11,7 +11,9 @@ model Exercise {
   id          Int        @id @default(autoincrement())
   name        String     @unique
   description String
-  activity    Activity[]
+  difficulty  Difficulty @default(MEDIUM)
+  muscles     Muscle[]
+  activities  Activity[]
 }
 
 model Activity {
@@ -52,4 +54,23 @@ model User {
 enum Role {
   USER
   ADMIN
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum Muscle {
+  CHEST
+  BACK
+  SHOULDERS
+  TRICEPS
+  BICEPS
+  CORE
+  QUADS
+  HAMSTRINGS
+  GLUTEUS
+  CALVES
 }

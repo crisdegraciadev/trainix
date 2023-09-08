@@ -7,6 +7,7 @@ type CleanDatabaseArgs = Partial<{
 export const cleanDatabase = async ({ all }: CleanDatabaseArgs): Promise<void> => {
   const deleteActivities = prisma.activity.deleteMany();
   const deleteWorkouts = prisma.workout.deleteMany();
+  const deleteExercises = prisma.exercise.deleteMany();
   const deleteUsers = all
     ? prisma.user.deleteMany()
     : prisma.user.deleteMany({
@@ -17,5 +18,5 @@ export const cleanDatabase = async ({ all }: CleanDatabaseArgs): Promise<void> =
         },
       });
 
-  await prisma.$transaction([deleteActivities, deleteWorkouts, deleteUsers]);
+  await prisma.$transaction([deleteActivities, deleteWorkouts, deleteExercises, deleteUsers]);
 };

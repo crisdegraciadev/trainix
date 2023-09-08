@@ -6,11 +6,11 @@ import prisma from '../../../config/prisma';
 import { User } from '@prisma/client';
 import { hashPassword } from '../../../lib/bcrypt';
 
-type CreateArgs = { dto: CreateUserDto };
-type CreateErrors = DuplicateError;
-type CreateReturn = Effect.Effect<never, CreateErrors, User>;
+type InsertArgs = { dto: CreateUserDto };
+type InsertErrors = DuplicateError;
+type InsertReturn = Effect.Effect<never, InsertErrors, User>;
 
-export const createUser = ({ dto }: CreateArgs): CreateReturn => {
+export const insertUser = ({ dto }: InsertArgs): InsertReturn => {
   return pipe(
     Effect.all([buildUserData(dto)]),
     Effect.flatMap(([data]) => saveUserData(data))

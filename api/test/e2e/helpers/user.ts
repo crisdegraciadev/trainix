@@ -20,11 +20,11 @@ export const isValidUserResponse = (body: unknown): body is UserResponse => {
   return !!id && !!username;
 };
 
-export const findUserById = async (id: number): Promise<User | null> => {
+export const retrieveUser = async (id: number): Promise<User | null> => {
   return prisma.user.findFirst({ where: { id } });
 };
 
-export const createUser = async (dto: CreateUserDto): Promise<UserResponse> => {
+export const insertUser = async (dto: CreateUserDto): Promise<UserResponse> => {
   const { statusCode, body } = await request(app).post(`${BASE_USER_PATH}/`).send(dto);
 
   expect(statusCode).toBe(HttpStatus.CREATED);
@@ -33,7 +33,7 @@ export const createUser = async (dto: CreateUserDto): Promise<UserResponse> => {
   return body;
 };
 
-export const createAdminUser = async (): Promise<User> => {
+export const insertAdminUser = async (): Promise<User> => {
   return prisma.user.create({
     data: {
       username: 'admin',

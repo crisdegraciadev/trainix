@@ -4,7 +4,7 @@ import { Request, Response } from 'express';
 import { HttpStatus } from '../../consts';
 import { handleFailureCauses } from '../../errors/handlers';
 import { mapIdToNumber } from '../../utils';
-import { createWorkout, deleteWorkout, findWorkoutByFields, findWorkoutById, update } from './services';
+import { insertWorkout, deleteWorkout, filterWorkouts, retrieveWorkout, updateWorkout } from './services';
 import { WorkoutRequestParams } from './types';
 import { isValidCreateWorkoutDto, isValidUpdateWorkoutDto } from './utils';
 
@@ -13,7 +13,7 @@ export const handleFindWorkoutById = async (req: Request<WorkoutRequestParams>, 
 
   const findByIdResult = await pipe(
     Effect.all([mapIdToNumber(workoutId)]),
-    Effect.flatMap(([id]) => findWorkoutById({ id })),
+    Effect.flatMap(([id]) => retrieveWorkout({ id })),
     Effect.runPromiseExit
   );
 
@@ -24,7 +24,7 @@ export const handleFindWorkoutById = async (req: Request<WorkoutRequestParams>, 
 };
 
 export const handleFindWorkoutByFields = async (_req: Request, res: Response): Promise<void> => {
-  const findByFieldsResult = await Effect.runPromiseExit(findWorkoutByFields({}));
+  const findByFieldsResult = await Effect.runPromiseExit(filterWorkouts({}));
 
   Exit.match(findByFieldsResult, {
     onSuccess: (workouts: Workout[]) => res.status(HttpStatus.OK).send(workouts),
@@ -37,7 +37,7 @@ export const handleCreateWorkout = async (req: Request, res: Response): Promise<
 
   const createResult = await pipe(
     Effect.all([isValidCreateWorkoutDto(body)]),
-    Effect.flatMap(([data]) => createWorkout({ data })),
+    Effect.flatMap(([data]) => insertWorkout({ data })),
     Effect.runPromiseExit
   );
 
@@ -53,7 +53,7 @@ export const handleUpdateWorkout = async (req: Request<WorkoutRequestParams>, re
 
   const updateResult = await pipe(
     Effect.all([mapIdToNumber(workoutId), isValidUpdateWorkoutDto(body)]),
-    Effect.flatMap(([id, data]) => update({ id, data })),
+    Effect.flatMap(([id, data]) => updateWorkout({ id, data })),
     Effect.runPromiseExit
   );
 
