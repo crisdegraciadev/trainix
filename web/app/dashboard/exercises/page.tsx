@@ -2,18 +2,25 @@
 
 import { DataTable } from "../../../components/tables/data-table";
 import { EXERCISES_COLUMNS } from "./components/tables/columns";
-import { WorkoutCreateFormDialog } from "../workouts/components/forms/create";
 import { useFetchExercises } from "./hooks/useFetchExercises";
 import { FACETED_FILTERS } from "./data/faceted-filter";
+import CreateExerciseFormDialog from "./components/forms/create-exercise-form";
+import { useState } from "react";
 
 export default function ExercisesPage() {
   const { data } = useFetchExercises();
+  const [isFormOpen, setIsFormOpen] = useState(false);
 
   return (
     <section className="mt-1">
       <DataTable
         columns={EXERCISES_COLUMNS}
-        createFormDialog={<WorkoutCreateFormDialog />}
+        createFormDialog={
+          <CreateExerciseFormDialog
+            isFormOpen={isFormOpen}
+            setIsFormOpen={setIsFormOpen}
+          />
+        }
         searchBarPlaceholder="Search by exercise name..."
         data={data}
         facetedFilters={FACETED_FILTERS}

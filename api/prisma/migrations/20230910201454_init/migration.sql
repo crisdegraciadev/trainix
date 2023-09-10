@@ -1,11 +1,19 @@
 -- CreateEnum
-CREATE TYPE "Role" AS ENUM ('USER', 'ADMIN');
+CREATE TYPE "Role" AS ENUM ('user', 'admin');
+
+-- CreateEnum
+CREATE TYPE "Difficulty" AS ENUM ('easy', 'medium', 'hard');
+
+-- CreateEnum
+CREATE TYPE "Muscle" AS ENUM ('chest', 'back', 'shoulders', 'triceps', 'biceps', 'abs', 'core', 'quads', 'hamstrings', 'gluteus', 'calves');
 
 -- CreateTable
 CREATE TABLE "Exercise" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "description" TEXT NOT NULL,
+    "difficulty" "Difficulty" NOT NULL DEFAULT 'medium',
+    "muscles" "Muscle"[],
 
     CONSTRAINT "Exercise_pkey" PRIMARY KEY ("id")
 );
@@ -43,7 +51,7 @@ CREATE TABLE "User" (
     "username" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "passwordHash" TEXT NOT NULL,
-    "role" "Role" NOT NULL DEFAULT 'USER',
+    "role" "Role" NOT NULL DEFAULT 'user',
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );

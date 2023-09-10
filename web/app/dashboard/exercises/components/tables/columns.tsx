@@ -66,8 +66,8 @@ export const EXERCISES_COLUMNS: ColumnDef<Exercise>[] = [
       />
     ),
     filterFn: (row, id, value) => {
-      return value.every((val: Muscle) =>
-        row.getValue<Muscle[]>(id).includes(val)
+      return value.some((val: Muscle) =>
+        row.getValue<string[]>(id).includes(val.toUpperCase())
       );
     },
   },

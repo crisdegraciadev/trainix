@@ -1,5 +1,4 @@
 import { Difficulty, Exercise, Muscle } from '@prisma/client';
-import { HttpStatus } from '../../../src/consts';
 import { CreateExerciseDto } from '../../../src/resources/exercises/types';
 import { deleteRequest, getRequest, postRequest } from './request';
 

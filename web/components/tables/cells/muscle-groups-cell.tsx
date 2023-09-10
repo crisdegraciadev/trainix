@@ -15,7 +15,6 @@ export default function MuscleGroupsCell<T>({
   accessorKey,
 }: MuscleGroupsCellProps<T>) {
   const values: string[] = row.getValue(accessorKey);
-  console.log({ values });
   const formattedValues = values.map((value) => capitalize(value));
 
   return (

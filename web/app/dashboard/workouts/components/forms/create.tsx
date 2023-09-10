@@ -13,7 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PlusCircleIcon } from "lucide-react";
-export function WorkoutCreateFormDialog() {
+export function CreateWorkoutFormDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild>

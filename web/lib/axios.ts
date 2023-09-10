@@ -6,11 +6,23 @@ type SendPostRequestArgs = {
   data: Record<string, unknown>;
 };
 
-export async function sendPostRequest({
+export async function sendPostRequest<T>({
   path,
   data,
-}: SendPostRequestArgs): Promise<AxiosResponse> {
-  return axios.post(`${Global.API_ENDPOINT}/${path}`, data, {
+}: SendPostRequestArgs): Promise<AxiosResponse<T>> {
+  return axios.post<T>(`${Global.API_ENDPOINT}/${path}`, data, {
+    withCredentials: true,
+  });
+}
+
+type SendGetRequestArgs = {
+  path: string;
+};
+
+export async function sendGetRequest<T>({
+  path,
+}: SendGetRequestArgs): Promise<AxiosResponse<T>> {
+  return axios.get<T>(`${Global.API_ENDPOINT}/${path}`, {
     withCredentials: true,
   });
 }

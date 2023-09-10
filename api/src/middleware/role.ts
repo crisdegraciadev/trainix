@@ -9,7 +9,7 @@ export const hasAdminRole = (req: Request, res: Response, next: NextFunction): u
     return res.status(HttpStatus.FORBIDDEN).send({ error: new ForbiddenError({}) });
   }
 
-  if (authorizedUserRole !== 'ADMIN') {
+  if (authorizedUserRole !== 'admin') {
     return res.status(HttpStatus.FORBIDDEN).send({ error: new ForbiddenError({}) });
   }
 

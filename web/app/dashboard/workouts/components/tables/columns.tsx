@@ -76,7 +76,7 @@ export const WORKOUT_COLUMNS: ColumnDef<Workout>[] = [
       />
     ),
     filterFn: (row, id, value) => {
-      return value.every((val: Muscle) =>
+      return value.some((val: Muscle) =>
         row.getValue<Muscle[]>(id).includes(val)
       );
     },
