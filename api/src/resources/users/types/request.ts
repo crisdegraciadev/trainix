@@ -1,3 +1,3 @@
-export type UserRequestParams = {
+export type FindUserByIdRequestParams = {
   id: string;
 };

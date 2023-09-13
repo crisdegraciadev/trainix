@@ -1,5 +1,8 @@
 export const ReactQueryKeys = {
   Query: {
+    User: {
+      FETCH_ALL: ["fetch", "user"],
+    },
     Exercise: {
       FETCH_ALL: ["fetch", "exercise"],
     },

@@ -2,7 +2,7 @@
 
 import { DataTable } from "../../../components/tables/data-table";
 import { EXERCISES_COLUMNS } from "./components/tables/columns";
-import { useFetchExercises } from "./hooks/useFetchExercises";
+import { useFetchExercises } from "./hooks/use-fetch-exercises";
 import { FACETED_FILTERS } from "./data/faceted-filter";
 import CreateExerciseFormDialog from "./components/forms/create-exercise-form";
 import { useState } from "react";

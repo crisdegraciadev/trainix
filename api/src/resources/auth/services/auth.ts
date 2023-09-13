@@ -1,12 +1,12 @@
 import { Effect, pipe } from 'effect';
 import { createToken } from '../../../lib/jwt';
 import { LoginDto } from '../types';
-import { Filters } from '../../../utils';
 import { User } from '@prisma/client';
 import { filterUsers } from '../../users/services';
 import { hasSameHash } from '../../../lib/bcrypt';
 import { Auth } from '../../../consts';
 import { UnauthorizedError } from '../../../errors/types';
+import { UserFacetedFilter } from '../../users/types';
 
 type CreateAccessTokenArgs = {
   dto: LoginDto;
@@ -22,10 +22,10 @@ export const createAccessToken = ({ dto }: CreateAccessTokenArgs): Effect.Effect
 
 const checkIfUserExist = (dto: LoginDto): Effect.Effect<never, UnauthorizedError, User> => {
   const { email } = dto;
-  const filters: Filters<User> = { email };
+  const facetedFilters: UserFacetedFilter = { email };
 
   return pipe(
-    Effect.all([filterUsers({ filters })]),
+    Effect.all([filterUsers({ facetedFilters })]),
     Effect.map(([users]) => users.at(0)),
     Effect.flatMap((user) => {
       return !user ? Effect.fail(new UnauthorizedError({ message: 'No user' })) : Effect.succeed(user);

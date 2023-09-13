@@ -100,6 +100,8 @@ describe('WORKOUTS', () => {
       expect(statusCode).toBe(HttpStatus.OK);
       expect(body.length).toBe(0);
     });
+
+    it.todo('filter with params');
   });
 
   describe('POST /', () => {

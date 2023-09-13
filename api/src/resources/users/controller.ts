@@ -3,12 +3,12 @@ import { HttpStatus } from '../../consts';
 import { Effect, Exit, pipe } from 'effect';
 import { createResponseUserDto, isValidCreateUserDto, isValidUpdateUserDto } from './utils';
 import { mapIdToNumber } from '../../utils';
-import { ResponseUserDto, UpdateUserDto, UserRequestParams } from './types';
+import { ResponseUserDto, UpdateUserDto, FindUserByIdRequestParams } from './types';
 import { handleFailureCauses } from '../../errors/handlers';
 import { insertUser, retrieveUser, filterUsers, deleteUser, updateUser } from './services';
 
 export const handleFindUserById = async (
-  req: Request<UserRequestParams>,
+  req: Request<FindUserByIdRequestParams>,
   res: Response<ResponseUserDto>
 ): Promise<void> => {
   const { id: userId } = req.params;
@@ -26,9 +26,11 @@ export const handleFindUserById = async (
   });
 };
 
-export const handleFindUserByFields = async (_req: Request, res: Response<ResponseUserDto[]>): Promise<void> => {
+export const handleFindUserByFields = async (req: Request, res: Response<ResponseUserDto[]>): Promise<void> => {
+  const { query } = req;
+
   const findByFieldsResult = await pipe(
-    Effect.all([filterUsers({})]),
+    Effect.all([filterUsers({ facetedFilters: { ...query } })]),
     Effect.map(([users]) => users.map((user) => Effect.runSync(createResponseUserDto(user)))),
     Effect.runPromiseExit
   );
@@ -56,7 +58,7 @@ export const handleCreateUser = async (req: Request, res: Response<ResponseUserD
 };
 
 export const handleUpdateUser = async (
-  req: Request<UserRequestParams, unknown, UpdateUserDto>,
+  req: Request<FindUserByIdRequestParams, unknown, UpdateUserDto>,
   res: Response<ResponseUserDto>
 ): Promise<void> => {
   const { body } = req;
@@ -75,7 +77,7 @@ export const handleUpdateUser = async (
   });
 };
 
-export const handleDeleteUser = async (req: Request<UserRequestParams>, res: Response): Promise<void> => {
+export const handleDeleteUser = async (req: Request<FindUserByIdRequestParams>, res: Response): Promise<void> => {
   const { id: userId } = req.params;
 
   const removeResult = await pipe(

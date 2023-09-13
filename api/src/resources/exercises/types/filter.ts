@@ -5,7 +5,3 @@ export type ExerciseFacetedFilter = {
   muscles: Muscle[];
   difficulty: Difficulty;
 };
-
-export type FilterExerciseByName = {
-  name: string;
-};

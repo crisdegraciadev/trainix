@@ -1,8 +1,4 @@
-import {
-  QueryClient,
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createExercise } from "../../../../services/exercises";
 import { ReactQueryKeys } from "../../../../lib/react-queries";
 

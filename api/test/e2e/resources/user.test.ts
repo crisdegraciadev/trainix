@@ -123,6 +123,8 @@ describe('USERS', () => {
 
       await Promise.all(createdUsers.map(({ id }) => deleteUser(id)));
     });
+
+    it.todo('filter with params');
   });
 
   describe('POST /', () => {

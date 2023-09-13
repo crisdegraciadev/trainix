@@ -1,5 +1,5 @@
 import { CREATE_EXERCISE_INITIAL_VALUES } from "./create-exercise-form-data";
-import { useCreateExercise } from "../../hooks/useCreateExercise";
+import { useCreateExercise } from "../../hooks/use-create-exercise";
 import { useEffect } from "react";
 import { useToast } from "../../../../../components/ui/use-toast";
 import {

@@ -1,14 +1,14 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { Exercise } from "../../../../../types/entities/exercise";
-import { DataTableColumnHeader } from "../../../../../components/tables/data-table-column-header";
-import { ExerciseConsts } from "../../consts";
 import DifficultyCell from "../../../../../components/tables/cells/difficulty-cell";
 import MuscleGroupsCell from "../../../../../components/tables/cells/muscle-groups-cell";
-import { Muscle } from "../../../../../types/enums";
-import ActionsCell from "../../../../../components/tables/cells/actions-cell";
+import { DataTableColumnHeader } from "../../../../../components/tables/data-table-column-header";
 import { Checkbox } from "../../../../../components/ui/checkbox";
+import { Exercise } from "../../../../../types/entities/exercise";
+import { Muscle } from "../../../../../types/enums";
+import { ExerciseConsts } from "../../consts";
+import ExerciseActionsCell from "./actions-cell";
 
 const { Cells } = ExerciseConsts.ExerciseTable;
 
@@ -73,6 +73,6 @@ export const EXERCISES_COLUMNS: ColumnDef<Exercise>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => <ActionsCell row={row} />,
+    cell: ({ row }) => <ExerciseActionsCell row={row} />,
   },
 ];

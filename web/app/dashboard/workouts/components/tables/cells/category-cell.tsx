@@ -14,7 +14,6 @@ const { Category } = WorkoutConsts.WorkoutTable.Cells;
 
 export default function CategoryCell({ row }: CategoryCellProps) {
   const value: string = row.getValue(Category.ACCESSOR_KEY);
-  console.log(value);
   const formattedValue = capitalize(value);
 
   return (
