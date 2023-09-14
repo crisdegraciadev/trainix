@@ -51,7 +51,7 @@ The majority of the code resides in `/src`, adhering to the following structure:
 └── ...
 ```
 
-The API currently encompasses five core resources:
+The API currently encompasses four core resources:
 
 - Activities
 - Exercises
