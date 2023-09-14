@@ -125,3 +125,21 @@ export const handleFindExerciseById = async (
 ```
 
 By adhering to these coding principles and utilizing the Effect library, Trainix aims to provide a clean, maintainable, and reliable fitness tracking solution for its users.
+
+### Testing
+
+Trainix adopts a Test-Driven Development (TDD) approach to ensure robust and reliable software development. This strategy entails that the development process is guided by failing tests, which serve as the blueprint for code implementation and feature development.
+
+Currently, Trainix conducts two types of tests:
+
+1. **Unit Testing:** These tests focus on examining individual units of code, typically utility functions or complex data management functions, in isolation to validate their correctness and functionality.
+2. **Integration Testing (E2E API Level):** Integration tests assess the different endpoints that represent the resources, ensuring that the expected responses arrives correclty.
+
+Key technologies leveraged for testing include:
+
+- **Jest:** Jest is a widely-used JavaScript testing framework that provides a comprehensive suite of testing utilities for writing unit and integration tests.
+- **Supertest:** Supertest is an HTTP assertion library that enables automated testing of API endpoints. It facilitates sending HTTP requests and receiving responses, allowing for thorough testing of the API's functionality.
+
+The testing environment in Trainix operates autonomously, running tests in a separate instance of the application, complete with its dedicated database. This isolation ensures that tests do not interfere with the application's production data.
+
+Looking ahead, Trainix has plans to implement a continuous integration (CI) pipeline. This pipeline will automate the testing process, running tests with each code commit, and ensuring that only bug-free and well-tested code is pushed to the repository. This proactive approach to quality control will enhance the overall reliability and stability of the application.
