@@ -1,83 +1,88 @@
-# Trainix
+# Trainix - Fitness Tracking App
 
-Trainix is a fitness tracking app built with Typescript based technologies to help its users to be consistent with their training and help them perceive a sensation of progress.
+Trainix is a TypeScript-based fitness tracking application designed to help users maintain consistency in their training routines and experience a sense of progress. This README provides an overview of Trainix, its architecture, coding style, and core technologies used.
 
 ## Packages
 
-The app is composed by 2 different packages, the `api` package and the `web` package (in the future, the idea is to be composed by 3, being this third package a mobile app).
+Trainix consists of two primary packages: the `api` package and the `web` package (with plans for a future mobile app package).
 
 ## API
 
 ### Description
 
-This package store the backend of the application. As it's name suggest, the backend is built following the API REST structural pattern.
+The `api` package serves as the backend of the application, following the RESTful API architectural pattern. It leverages several core technologies:
 
-The core technologies used to develop this package are 4.
-
-- Typescript
+- TypeScript
 - Express
 - Prisma
 - Effect
 
-Typescript has been the selected technology to develop this application, using Express framework in convination to provide external access through HTTP. Also, Prisma is the ORM used to perform database interactions. The interesting point with this API, is that it uses a functional programming library called [Effect](https://effect.website/).
+**TypeScript** is the chosen technology for development, with the **Express** framework used to provide external access through HTTP. **Prisma** serves as the ORM for database interactions. Notably, the API employs a functional programming library called [Effect](https://effect.website/) , which focuses on isolating side effects to enhance code reliability and maintainability.
 
-The idea behind Effect is to bring a way to isolate side effects, so in that way you can work in a safer and cleaner way. The beneficts os using this library, is that side effects are more controllable and well defined, so the code is much more trustable.
+Effect's primary goal is to isolate and manage side effects in a controlled and well-defined manner. This approach promotes code trustworthiness.
 
 ### Architecture
 
-The backend root folder is divided in 4 folders.
+The backend root folder is organized into four key sections:
 
-    .
-    ├── containers       # Docker files containing database images
-    ├── prisma           # Schema files, seeds and primsa migrations
-    ├── src              # Source code
-    ├── test             # Tests files
+```bash
 
-Most part of the code is inside in `/src`, where the following folder structure has been followed
+.
+├── containers       # Docker files containing database images
+├── prisma           # Schema files, seeds, and Prisma migrations
+├── src              # Source code
+├── test             # Test files
+```
 
-    .
-    ├── src
-    │   ├── auth            # Authorization endpoints
-    │   ├── config          # External libs configurations
-    │   ├── consts          # Constants
-    │   ├── errors          # Error types and handlers
-    │   ├── lib             # External non core libs wrappers
-    │   ├── middleware      # Request/Response middlewares
-    │   ├── resources       # Resource endpoints
-    │   └── utils           # Utility functions
-    └── ...
+The majority of the code resides in `/src`, adhering to the following structure:
 
-The API currently represents 5 resources
+```bash
+
+.
+├── src
+│   ├── auth            # Authorization endpoints
+│   ├── config          # External library configurations
+│   ├── consts          # Constants
+│   ├── errors          # Error types and handlers
+│   ├── lib             # Wrappers for external non-core libraries
+│   ├── middleware      # Request/Response middlewares
+│   ├── resources       # Resource endpoints
+│   └── utils           # Utility functions
+└── ...
+```
+
+The API currently encompasses five core resources:
 
 - Activities
 - Exercises
 - Workouts
 - Users
 
-Each resource, is organized with the following folder structure.
+Each resource is structured similarly with the following components:
 
-    .
-    ├── exercises
-    │   ├── services            # Resource services
-    │   ├── types               # Types to represents the resource
-    │   ├── utils               # Utility functions
-    │   ├── controller.ts       # HTTP Request handlers
-    │   └── route.ts            # Request-Controller mapper
-    └── ...
+```bash
 
-### Coding style
+.
+├── exercises
+│   ├── services            # Resource services
+│   ├── types               # Types representing the resource
+│   ├── utils               # Utility functions
+│   ├── controller.ts       # HTTP Request handlers
+│   └── route.ts            # Request-Controller mapper
+└── ...
+```
 
-The main idea behind this package, is to follow a functional approach as much as I can. To achieve that, I'll try to follow 3 principles.
+### Coding Style
 
-- Pure functions
-- Inmutability
-- Referencial transparency
+The core coding principles driving this package include:
 
-To achieve this, I'll use a library called Effect, which embraces functional programming and will allow me to write better pure functions and implement transparencial transparency.
+1. **Pure Functions:** The package follows a functional approach, emphasizing pure functions.
+2. **Immutability:** Code is designed to be immutable whenever possible.
+3. **Referential Transparency:** The codebase aims to achieve referential transparency, enhancing predictability and testability.
 
-The main idea behind this library, is the `Effect<Requirements, Error, Value>` type. The idea is to return and effect in all the functions that can throw an error, to be consistent with the return types (referencial transparency) and to have tools to work with side effects at a higher level.
+To support these principles, the **Effect** library is employed extensively. It introduces the `Effect<Requirements, Error, Value>` type to handle potential errors and side effects consistently.
 
-In example, the code to find an exercise by id, where we can expect and error or an undefined value, will be something like this.
+For example, here's how an exercise retrieval function is implemented:
 
 ```ts
 type RetrieveArgs = { id: number };
@@ -92,28 +97,11 @@ export const retrieveExercise = ({ id }: RetrieveArgs): RetrieveReturn => {
 };
 ```
 
-All the services will be functions, one exported function per file, trying to also respect the SRP. Also, to improve the extensibility of this code, the input arguments will be types,
+All services that interact with the database and may produce side effects are wrapped in an `Effect`, indicating the expected return type and defined errors.
 
-```ts
-type UpdateArgs = { id: number; data: UpdateExerciseDto };
-type UpdateErrors = NotFoundError;
-type UpdateReturn = Effect.Effect<never, UpdateErrors, Exercise>;
+Controllers leverage the tools provided by Effect to work at a higher level with the values stored in the returned Effects. Functions are composed into pipelines using utilities like the `pipe` function to enhance readability.
 
-export const updateExercise = ({ id, data }: UpdateArgs): UpdateReturn => {
-  return Effect.tryPromise({
-    try: () => prisma.exercise.update({ where: { id }, data }),
-    catch: (error) => handlePrismaErrors(error),
-  });
-};
-```
-
-The idea is that all services that access the database, and as consecuence can produce side effects, are wrapped in a `Effect`, to clarify that this service can return the expected type, or the defined errors.
-
-In the other hands, the controllers will work with the tools provided by Effect, to work at a higher level with the values stored in the returned Effects.
-
-Thanks to utilities like the `pipe` function, we can work with our functions creating pipelines, which highly improve readability. We can also use some kind of pattern matching, to return a clean response for every case that we meet.
-
-Here is an example of how the controller to find an exercise by id is implemented.
+Here's an example of a controller for finding an exercise by ID:
 
 ```ts
 export const handleFindExerciseById = async (
@@ -135,3 +123,5 @@ export const handleFindExerciseById = async (
   });
 };
 ```
+
+By adhering to these coding principles and utilizing the Effect library, Trainix aims to provide a clean, maintainable, and reliable fitness tracking solution for its users.
