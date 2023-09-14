@@ -2,10 +2,10 @@ import { Request, Response } from 'express';
 import { isValidLoginDto } from './utils';
 import { Effect, Exit, pipe } from 'effect';
 import { createAccessToken } from './services/auth';
-import { handleFailureCauses } from '../../errors/handlers';
-import { Auth, Global, HttpStatus } from '../../consts';
 import { serialize } from 'cookie';
-import { transformMillisecondsToDays } from '../../utils';
+import { Auth, Global, HttpStatus } from '../consts';
+import { transformMillisecondsToDays } from '../utils';
+import { handleFailureCauses } from '../errors/handlers';
 
 export const handleLogin = async (req: Request, res: Response): Promise<void> => {
   const { body } = req;

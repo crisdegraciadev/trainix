@@ -1,12 +1,12 @@
 import { Effect, pipe } from 'effect';
-import { createToken } from '../../../lib/jwt';
 import { LoginDto } from '../types';
 import { User } from '@prisma/client';
-import { filterUsers } from '../../users/services';
-import { hasSameHash } from '../../../lib/bcrypt';
-import { Auth } from '../../../consts';
-import { UnauthorizedError } from '../../../errors/types';
-import { UserFacetedFilter } from '../../users/types';
+import { Auth } from '../../consts';
+import { UnauthorizedError } from '../../errors/types';
+import { hasSameHash } from '../../lib/bcrypt';
+import { createToken } from '../../lib/jwt';
+import { filterUsers } from '../../resources/users/services';
+import { UserFacetedFilter } from '../../resources/users/types';
 
 type CreateAccessTokenArgs = {
   dto: LoginDto;

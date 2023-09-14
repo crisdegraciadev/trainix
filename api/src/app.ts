@@ -2,12 +2,13 @@ import express from 'express';
 import morgan from 'morgan';
 import helmet from 'helmet';
 import cors from 'cors';
-import { activitiesRouter, authRouter, userRouter, workoutRouter } from './resources';
+import { activitiesRouter, userRouter, workoutRouter } from './resources';
 import { RoutesConstants } from './consts';
 import { Global } from './consts/global';
 import cookieParser from 'cookie-parser';
 import { CORS_CONFIG } from './config/cors';
 import { exerciseRouter } from './resources/exercises/route';
+import { authRouter } from './auth/routes';
 
 require('dotenv').config();
 
