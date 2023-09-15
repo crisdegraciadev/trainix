@@ -26,8 +26,12 @@ export const retrieveExercise = async (id: number, accessTokenCookie: string): P
   return body;
 };
 
-export const insertExercise = async (dto: CreateExerciseDto): Promise<Exercise> => {
-  const { body } = await postRequest({ url: `${BASE_EXERCISE_PATH}`, dto });
+export const insertExercise = async (dto: CreateExerciseDto, accessTokenCookie: string): Promise<Exercise> => {
+  const { body } = await postRequest({
+    url: `${BASE_EXERCISE_PATH}`,
+    headers: { Cookie: accessTokenCookie },
+    dto,
+  });
 
   return body;
 };

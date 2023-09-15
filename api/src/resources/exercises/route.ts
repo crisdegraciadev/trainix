@@ -13,6 +13,6 @@ export const exerciseRouter = express.Router();
 
 exerciseRouter.get('/:id', validateToken, handleFindExerciseById);
 exerciseRouter.get('/', validateToken, handleFindExerciseByFields);
-exerciseRouter.post('/', handleCreateExercise);
+exerciseRouter.post('/', validateToken, handleCreateExercise);
 exerciseRouter.put('/:id', validateToken, handleUpdateExercise);
 exerciseRouter.delete('/:id', validateToken, hasAdminRole, handleDeleteExercise);

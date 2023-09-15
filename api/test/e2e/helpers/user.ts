@@ -39,7 +39,7 @@ export const insertAdminUser = async (): Promise<User> => {
       username: 'admin',
       email: 'admin@admin.com',
       passwordHash: Effect.runSync(hashPassword({ password: 'admin' })),
-      role: 'ADMIN',
+      role: 'admin',
     },
   });
 };

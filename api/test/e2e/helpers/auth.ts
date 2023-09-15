@@ -2,8 +2,8 @@ import request from 'supertest';
 
 import app from '../../../src/app';
 
-import { LoginDto } from '../../../src/resources/auth/types';
 import { HttpStatus } from '../../../src/consts';
+import { LoginDto } from '../../../src/auth/types';
 
 export const BASE_AUTH_PATH = '/auth';
 

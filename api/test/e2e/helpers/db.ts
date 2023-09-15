@@ -13,7 +13,7 @@ export const cleanDatabase = async ({ all }: CleanDatabaseArgs): Promise<void> =
     : prisma.user.deleteMany({
         where: {
           role: {
-            not: 'ADMIN',
+            not: 'admin',
           },
         },
       });

@@ -27,9 +27,9 @@ afterAll(async () => {
 describe('EXERCISES', () => {
   describe('GET /:id', () => {
     it('retrieve', async () => {
-      const { id: exerciseId } = await insertExercise(EXERCISE_PUSH_UP);
-
       const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
+
+      const { id: exerciseId } = await insertExercise(EXERCISE_PUSH_UP, ACCESS_TOKEN_COOKIE);
 
       const { statusCode, body } = await getRequest({
         url: `${BASE_EXERCISE_PATH}/${exerciseId}`,
@@ -57,13 +57,13 @@ describe('EXERCISES', () => {
 
   describe('GET /', () => {
     it('list with 3 elements', async () => {
+      const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
+
       const createExercisePayloads = [EXERCISE_PUSH_UP, EXERCISE_PULL_UP, EXERCISE_SQUAT];
 
       const createdExercises = await Promise.all(
-        createExercisePayloads.map(async (payload) => insertExercise(payload))
+        createExercisePayloads.map(async (payload) => insertExercise(payload, ACCESS_TOKEN_COOKIE))
       );
-
-      const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
       const { statusCode, body } = await getRequest({
         url: `${BASE_EXERCISE_PATH}/`,
@@ -135,10 +135,10 @@ describe('EXERCISES', () => {
 
   describe('PUT /:id', () => {
     it('update', async () => {
-      const createExercisePayload = { ...EXERCISE_PULL_UP };
-      const { id: exerciseId } = await insertExercise(createExercisePayload);
-
       const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
+
+      const createExercisePayload = { ...EXERCISE_PULL_UP };
+      const { id: exerciseId } = await insertExercise(createExercisePayload, ACCESS_TOKEN_COOKIE);
 
       const createdExercise = await retrieveExercise(exerciseId, ACCESS_TOKEN_COOKIE);
       expect(createdExercise).toMatchObject({ id: exerciseId, ...createExercisePayload });
@@ -158,12 +158,12 @@ describe('EXERCISES', () => {
     });
 
     it('invalid dto', async () => {
+      const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
+
       const createExercisePayload = { ...EXERCISE_PULL_UP };
-      const { id: exerciseId } = await insertExercise(createExercisePayload);
+      const { id: exerciseId } = await insertExercise(createExercisePayload, ACCESS_TOKEN_COOKIE);
 
       const updateExercisePayload = { a: 4, b: 4 };
-
-      const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
       const { statusCode, body } = await putRequest({
         url: `${BASE_EXERCISE_PATH}/${exerciseId}`,
@@ -195,10 +195,10 @@ describe('EXERCISES', () => {
 
   describe('DELETE /:id', () => {
     it('delete', async () => {
-      const createExercisePayload = { ...EXERCISE_PULL_UP };
-      const { id: exerciseId } = await insertExercise(createExercisePayload);
-
       const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
+
+      const createExercisePayload = { ...EXERCISE_PULL_UP };
+      const { id: exerciseId } = await insertExercise(createExercisePayload, ACCESS_TOKEN_COOKIE);
 
       const { statusCode, body } = await deleteRequest({
         url: `${BASE_EXERCISE_PATH}/${exerciseId}`,

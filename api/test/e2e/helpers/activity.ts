@@ -1,6 +1,7 @@
 import { Activity } from '@prisma/client';
 import prisma from '../../../src/config/prisma';
 import { ActivityWithExercise, CreateActivityDto } from '../../../src/resources/activities/types';
+import { deleteRequest, postRequest } from './request';
 
 export const BASE_ACTIVITY_PATH = '/activities';
 
@@ -26,10 +27,24 @@ export const retrieveActivity = async (id: number): Promise<Activity | null> => 
   return prisma.activity.findFirst({ where: { id } });
 };
 
-export const insertActivity = async (data: CreateActivityDto): Promise<ActivityWithExercise> => {
-  return prisma.activity.create({ data, include: { exercise: true } });
+export const insertActivity = async (
+  dto: CreateActivityDto,
+  accessTokenCookie: string
+): Promise<ActivityWithExercise> => {
+  const { body } = await postRequest({
+    url: `${BASE_ACTIVITY_PATH}`,
+    headers: { Cookie: accessTokenCookie },
+    dto,
+  });
+
+  return body;
 };
 
-export const deleteActivity = async (id: number): Promise<Activity> => {
-  return prisma.activity.delete({ where: { id } });
+export const deleteActivity = async (id: number, accessTokenCookie: string): Promise<Activity> => {
+  const { body } = await deleteRequest({
+    url: `${BASE_ACTIVITY_PATH}/${id}`,
+    headers: { Cookie: accessTokenCookie },
+  });
+
+  return body;
 };
