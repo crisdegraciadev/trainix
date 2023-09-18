@@ -15,13 +15,15 @@ import { MoreHorizontal } from "lucide-react";
 import { useState } from "react";
 import ExerciseDeleteDialog from "../dialogs/delete";
 import { Exercise } from "../../../../../types/entities";
+import EditExerciseFormDialog from "../forms/edit-exercise/edit-exercise-form";
 
 type ExerciseActionsCellProps = {
   row: Row<Exercise>;
 };
 
 export default function ExerciseActionsCell({ row }: ExerciseActionsCellProps) {
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   return (
     <>
@@ -34,19 +36,26 @@ export default function ExerciseActionsCell({ row }: ExerciseActionsCellProps) {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem className="flex">
-            <Pencil1Icon className="mr-2" />
-            <span>Edit</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            className="flex"
-            onSelect={() => setShowDeleteDialog(true)}
-          >
-            <Cross2Icon className="mr-2" />
-            <span>Delete</span>
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
+          {process.env.NEXT_PUBLIC_ENV === "dev" && (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                className="flex"
+                onSelect={() => setIsEditDialogOpen(true)}
+              >
+                <Pencil1Icon className="mr-2" />
+                <span>Edit</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="flex"
+                onSelect={() => setIsDeleteDialogOpen(true)}
+              >
+                <Cross2Icon className="mr-2" />
+                <span>Delete</span>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+            </>
+          )}
           <DropdownMenuItem className="flex">
             <StarIcon className="mr-2" />
             <span>Favorite</span>
@@ -56,8 +65,14 @@ export default function ExerciseActionsCell({ row }: ExerciseActionsCellProps) {
 
       <ExerciseDeleteDialog
         exerciseId={row.original.id}
-        showDialog={showDeleteDialog}
-        setShowDialog={setShowDeleteDialog}
+        isDialogOpen={isDeleteDialogOpen}
+        setIsDialogOpen={setIsDeleteDialogOpen}
+      />
+
+      <EditExerciseFormDialog
+        exercise={row.original}
+        isFormOpen={isEditDialogOpen}
+        setIsFormOpen={setIsEditDialogOpen}
       />
     </>
   );

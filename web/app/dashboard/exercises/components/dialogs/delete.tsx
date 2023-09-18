@@ -13,19 +13,19 @@ import { useDeleteExercise } from "../../hooks/use-delete-exercise";
 
 type ExerciseDeleteDialogProps = {
   exerciseId: string;
-  showDialog: boolean;
-  setShowDialog: (value: boolean) => void;
+  isDialogOpen: boolean;
+  setIsDialogOpen: (value: boolean) => void;
 };
 
 export default function ExerciseDeleteDialog({
   exerciseId,
-  showDialog,
-  setShowDialog,
+  isDialogOpen,
+  setIsDialogOpen,
 }: ExerciseDeleteDialogProps) {
   const { mutate } = useDeleteExercise();
 
   return (
-    <AlertDialog open={showDialog} onOpenChange={setShowDialog}>
+    <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Are you sure absolutely sure?</AlertDialogTitle>
@@ -39,8 +39,8 @@ export default function ExerciseDeleteDialog({
           <Button
             variant="destructive"
             onClick={() => {
-              mutate(exerciseId);
-              setShowDialog(false);
+              mutate({ id: exerciseId });
+              setIsDialogOpen(false);
               toast({
                 description: "This preset has been deleted.",
               });

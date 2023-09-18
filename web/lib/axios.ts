@@ -15,6 +15,22 @@ export async function sendPostRequest<T>({
   });
 }
 
+type SendPutRequestArgs = {
+  id: string;
+  path: string;
+  data: Record<string, unknown>;
+};
+
+export async function sendPutRequest<T>({
+  id,
+  path,
+  data,
+}: SendPutRequestArgs): Promise<AxiosResponse<T>> {
+  return axios.put<T>(`${Global.API_ENDPOINT}/${path}/${id}`, data, {
+    withCredentials: true,
+  });
+}
+
 type SendGetRequestArgs = {
   path: string;
   params?: Record<string, string | number | boolean>;

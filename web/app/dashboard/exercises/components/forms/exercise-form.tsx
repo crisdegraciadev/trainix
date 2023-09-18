@@ -24,7 +24,6 @@ import { Difficulty, Muscle } from "../../../../../types/enums";
 import { capitalize } from "../../../../../utils";
 import { Checkbox } from "../../../../../components/ui/checkbox";
 import { nanoid } from "nanoid";
-import { useCreateExerciseForm } from "./use-create-exercise-form";
 import { Icons } from "../../../../../components/ui/icons";
 import {
   Form,
@@ -34,37 +33,50 @@ import {
   FormLabel,
   FormMessage,
 } from "../../../../../components/ui/form";
+import { UseFormReturn } from "react-hook-form";
+import { ExerciseSchema } from "./exercise-form-schema";
 
-type CreateExerciseFormDialogProps = {
-  isFormOpen: boolean;
+export type ExerciseFormDialogProps = {
+  form: UseFormReturn<ExerciseSchema>;
+  flags: {
+    isLoading: boolean;
+    isFormOpen: boolean;
+    useInternalTrigger?: boolean;
+  };
+  text: {
+    title: string;
+    description: string;
+    submit: string;
+    internalTrigger?: string;
+  };
+  onSubmit: (values: ExerciseSchema) => void;
   setIsFormOpen: (isFormOpen: boolean) => void;
 };
 
-export default function CreateExerciseFormDialog({
-  isFormOpen,
+export default function _ExerciseFormDialog({
+  form,
+  flags,
+  text,
+  onSubmit,
   setIsFormOpen,
-}: CreateExerciseFormDialogProps) {
-  const { form, onSubmit, isLoading } = useCreateExerciseForm({
-    setIsFormOpen,
-  });
-
+}: ExerciseFormDialogProps) {
   return (
-    <Dialog open={isFormOpen} onOpenChange={() => setIsFormOpen(!isFormOpen)}>
-      <DialogTrigger asChild>
-        <Button
-          variant="outline"
-          className="h-8"
-          onClick={() => setIsFormOpen(true)}
-        >
-          <PlusCircleIcon className="mr-2 h-4 w-4" /> Create
-        </Button>
-      </DialogTrigger>
+    <Dialog open={flags.isFormOpen} onOpenChange={setIsFormOpen}>
+      {flags.useInternalTrigger && (
+        <DialogTrigger asChild>
+          <Button
+            variant="outline"
+            className="h-8"
+            onClick={() => setIsFormOpen(true)}
+          >
+            <PlusCircleIcon className="mr-2 h-4 w-4" /> {text.internalTrigger}
+          </Button>
+        </DialogTrigger>
+      )}
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Create Exercise</DialogTitle>
-          <DialogDescription>
-            Create an exercise for your workouts.
-          </DialogDescription>
+          <DialogTitle>{text.title}</DialogTitle>
+          <DialogDescription>{text.description}</DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -77,7 +89,7 @@ export default function CreateExerciseFormDialog({
                   <FormControl>
                     <Input
                       placeholder="Muscle Up"
-                      disabled={isLoading}
+                      disabled={flags.isLoading}
                       {...field}
                     />
                   </FormControl>
@@ -96,7 +108,7 @@ export default function CreateExerciseFormDialog({
                     <Textarea
                       id="description"
                       placeholder="Pushing and pulling exercise where..."
-                      disabled={isLoading}
+                      disabled={flags.isLoading}
                       {...field}
                     />
                   </FormControl>
@@ -116,7 +128,10 @@ export default function CreateExerciseFormDialog({
                       onValueChange={field.onChange}
                       defaultValue={field.value}
                     >
-                      <SelectTrigger className="w-full" disabled={isLoading}>
+                      <SelectTrigger
+                        className="w-full"
+                        disabled={flags.isLoading}
+                      >
                         <SelectValue placeholder="Select difficulty" />
                       </SelectTrigger>
                       <SelectContent id="difficulty">
@@ -185,11 +200,11 @@ export default function CreateExerciseFormDialog({
             />
 
             <DialogFooter>
-              <Button disabled={isLoading} type="submit">
-                {isLoading && (
+              <Button disabled={flags.isLoading} type="submit">
+                {flags.isLoading && (
                   <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
                 )}
-                Create
+                {text.submit}
               </Button>
             </DialogFooter>
           </form>

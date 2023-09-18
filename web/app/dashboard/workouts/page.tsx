@@ -11,13 +11,13 @@ export default function WorkoutsPage() {
 
   return (
     <section className="mt-1">
-      <DataTable
+      {/* <DataTable
         columns={WORKOUT_COLUMNS}
         createFormDialog={<CreateWorkoutFormDialog />}
         searchBarPlaceholder="Search by workout name..."
         data={data}
         facetedFilters={FACETED_FILTERS}
-      />
+      /> */}
     </section>
   );
 }

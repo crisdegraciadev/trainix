@@ -4,7 +4,7 @@ import { DataTable } from "../../../components/tables/data-table";
 import { EXERCISES_COLUMNS } from "./components/tables/columns";
 import { useFetchExercises } from "./hooks/use-fetch-exercises";
 import { FACETED_FILTERS } from "./data/faceted-filter";
-import CreateExerciseFormDialog from "./components/forms/create-exercise-form";
+import CreateExerciseFormDialog from "./components/forms/create-exercise/create-exercise-form";
 import { useState } from "react";
 
 export default function ExercisesPage() {
@@ -18,6 +18,7 @@ export default function ExercisesPage() {
         createFormDialog={
           <CreateExerciseFormDialog
             isFormOpen={isFormOpen}
+            useInternalTrigger={true}
             setIsFormOpen={setIsFormOpen}
           />
         }
