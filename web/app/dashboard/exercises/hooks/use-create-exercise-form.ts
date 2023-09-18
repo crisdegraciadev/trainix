@@ -1,8 +1,11 @@
-import { CREATE_EXERCISE_INITIAL_VALUES } from "../exercise-form-data";
-import { useCreateExercise } from "../../../hooks/use-create-exercise";
+import { CREATE_EXERCISE_INITIAL_VALUES } from "../components/forms/exercise-form-data";
+import { useCreateExercise } from "./use-create-exercise";
 import { useEffect } from "react";
-import { useToast } from "../../../../../../components/ui/use-toast";
-import { ExerciseSchema, createExerciseSchema } from "../exercise-form-schema";
+import { useToast } from "../../../../components/ui/use-toast";
+import {
+  ExerciseSchema,
+  createExerciseSchema,
+} from "../components/forms/exercise-form-schema";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 

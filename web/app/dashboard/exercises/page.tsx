@@ -6,6 +6,7 @@ import { useFetchExercises } from "./hooks/use-fetch-exercises";
 import { FACETED_FILTERS } from "./data/faceted-filter";
 import CreateExerciseFormDialog from "./components/forms/create-exercise/create-exercise-form";
 import { useState } from "react";
+import CreateExerciseDialog from "./components/dialogs/create";
 
 export default function ExercisesPage() {
   const { data } = useFetchExercises();
@@ -16,7 +17,7 @@ export default function ExercisesPage() {
       <DataTable
         columns={EXERCISES_COLUMNS}
         createFormDialog={
-          <CreateExerciseFormDialog
+          <CreateExerciseDialog
             isFormOpen={isFormOpen}
             useInternalTrigger={true}
             setIsFormOpen={setIsFormOpen}

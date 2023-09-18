@@ -1,10 +1,13 @@
 import { useForm } from "react-hook-form";
-import { useToast } from "../../../../../../components/ui/use-toast";
-import { ExerciseSchema, createExerciseSchema } from "../exercise-form-schema";
+import { useToast } from "../../../../components/ui/use-toast";
+import {
+  ExerciseSchema,
+  createExerciseSchema,
+} from "../components/forms/exercise-form-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
-import { Exercise } from "../../../../../../types/entities";
-import { useEditExercise } from "../../../hooks/use-edit-exercise";
+import { Exercise } from "../../../../types/entities";
+import { useEditExercise } from "./use-edit-exercise";
 
 type UseEditExerciseForm = {
   setIsFormOpen: (isFormOpen: boolean) => void;

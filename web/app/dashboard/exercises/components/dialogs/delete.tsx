@@ -11,17 +11,17 @@ import { Button } from "../../../../../components/ui/button";
 import { toast } from "../../../../../components/ui/use-toast";
 import { useDeleteExercise } from "../../hooks/use-delete-exercise";
 
-type ExerciseDeleteDialogProps = {
+type DeleteExerciseDialogProps = {
   exerciseId: string;
   isDialogOpen: boolean;
   setIsDialogOpen: (value: boolean) => void;
 };
 
-export default function ExerciseDeleteDialog({
+export default function DeleteExerciseDialog({
   exerciseId,
   isDialogOpen,
   setIsDialogOpen,
-}: ExerciseDeleteDialogProps) {
+}: DeleteExerciseDialogProps) {
   const { mutate } = useDeleteExercise();
 
   return (
