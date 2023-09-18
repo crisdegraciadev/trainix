@@ -8,7 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../../../../../components/ui/dialog";
-import { useCreateExerciseForm } from "../../hooks/use-create-exercise-form";
+import { useCreateExerciseForm } from "../../hooks/form/use-create-exercise-form";
 import ExerciseForm from "../forms/exercise-form";
 
 type CreateExerciseDialogProps = {

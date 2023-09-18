@@ -9,6 +9,7 @@ import { Exercise } from "../../../../../types/entities/exercise";
 import { Muscle } from "../../../../../types/enums";
 import { ExerciseConsts } from "../../consts";
 import ExerciseActionsCell from "./actions-cell";
+import ExerciseDetailsCell from "./details-cell";
 
 const { Cells } = ExerciseConsts.ExerciseTable;
 
@@ -37,6 +38,7 @@ export const EXERCISES_COLUMNS: ColumnDef<Exercise>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title={Cells.Name.TITLE} />
     ),
+    cell: ({ row }) => <ExerciseDetailsCell row={row} />,
   },
   {
     accessorKey: Cells.Description.ACCESSOR_KEY,

@@ -1,21 +1,23 @@
-import { CREATE_EXERCISE_INITIAL_VALUES } from "../components/forms/exercise-form-data";
-import { useCreateExercise } from "./use-create-exercise";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
-import { useToast } from "../../../../components/ui/use-toast";
+import { useToast } from "../../../../../components/ui/use-toast";
+import { Exercise } from "../../../../../types/entities";
 import {
   ExerciseSchema,
   createExerciseSchema,
-} from "../components/forms/exercise-form-schema";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+} from "../../components/forms/exercise-form-schema";
+import { useEditExercise } from "../crud/use-edit-exercise";
 
-type UseCreateExerciseForm = {
+type UseEditExerciseForm = {
   setIsFormOpen: (isFormOpen: boolean) => void;
+  exercise: Exercise;
 };
 
-export const useCreateExerciseForm = ({
+export const useEditExerciseForm = ({
   setIsFormOpen,
-}: UseCreateExerciseForm) => {
+  exercise,
+}: UseEditExerciseForm) => {
   const { toast } = useToast();
 
   const {
@@ -24,11 +26,11 @@ export const useCreateExerciseForm = ({
     isSuccess,
     isError,
     reset: mutationReset,
-  } = useCreateExercise();
+  } = useEditExercise();
 
   const form = useForm<ExerciseSchema>({
     resolver: zodResolver(createExerciseSchema),
-    defaultValues: CREATE_EXERCISE_INITIAL_VALUES,
+    defaultValues: exercise,
   });
 
   useEffect(() => {
@@ -52,7 +54,7 @@ export const useCreateExerciseForm = ({
   }, [isError, mutationReset, toast]);
 
   const onSubmit = (values: ExerciseSchema) => {
-    mutate({ exercise: values });
+    mutate({ id: exercise.id, exercise: values });
   };
 
   return {

@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchExercises } from "../../../../services/exercises";
-import { ReactQueryKeys } from "../../../../lib/react-queries";
+import { fetchExercises } from "../../../../../services/exercises";
+import { ReactQueryKeys } from "../../../../../lib/react-queries";
 
 export const useFetchExercises = () => {
   const query = useQuery({

@@ -1,12 +1,12 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createExercise, editExercise } from "../../../../services/exercises";
-import { ReactQueryKeys } from "../../../../lib/react-queries";
+import { deleteExercise } from "../../../../../services/exercises";
+import { ReactQueryKeys } from "../../../../../lib/react-queries";
 
-export const useEditExercise = () => {
+export const useDeleteExercise = () => {
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
-    mutationFn: editExercise,
+    mutationFn: deleteExercise,
     onSuccess: () => {
       queryClient.invalidateQueries(ReactQueryKeys.Query.Exercise.FETCH_ALL);
     },

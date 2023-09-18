@@ -8,10 +8,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../../../../../components/ui/dialog";
-import { useCreateExerciseForm } from "../../hooks/use-create-exercise-form";
 import ExerciseForm from "../forms/exercise-form";
 import { Exercise } from "../../../../../types/entities";
-import { useEditExerciseForm } from "../../hooks/use-edit-exercise-form";
+import { useEditExerciseForm } from "../../hooks/form/use-edit-exercise-form";
 
 type EditExerciseDialogProps = {
   exercise: Exercise;
