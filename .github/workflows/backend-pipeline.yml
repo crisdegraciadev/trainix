@@ -14,8 +14,6 @@ jobs:
         with:
           sparse-checkout: api
 
-      - run: cd api
-
       - name: "Install pnpm"
         uses: pnpm/action-setup@v2
         with:
@@ -28,7 +26,7 @@ jobs:
           cache: "pnpm"
 
       - name: Install deps
-        run: pnpm install
+        run: pnpm run api:install
 
       - name: Lint
-        run: pnpm run lint
+        run: pnpm run api:lint

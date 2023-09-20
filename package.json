@@ -1,15 +1,8 @@
 {
   "private": true,
   "scripts": {
-    "setup": "pnpm install && pnpm setup:api && pnpm setup:mobile",
-    "setup:api": "cd ./api && pnpm install",
-    "setup:mobile": "cd ./mobile && pnpm install",
-    "build": "pnpm build:api && pnpm build:mobile",
-    "build:api": "cd ./api && pnpm build",
-    "build:mobile": "cd ./mobile && pnpm build",
-    "lint": "pnpm lint:api && pnpm lint:mobile",
-    "lint:api": "cd ./api && pnpm lint",
-    "lint:mobile": "cd ./mobile && pnpm lint",
+    "api:install": "cd api && pnpm install",
+    "api:lint": "cd api && pnpm lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {
