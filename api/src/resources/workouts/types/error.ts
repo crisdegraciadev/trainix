@@ -1,4 +1,4 @@
-import { DuplicateError, NotFoundError } from '../../../types';
+import { DuplicateError, NotFoundError } from '../../../errors/types';
 
 export type FindWorkoutByIdErrors = NotFoundError;
 export type FindWorkoutsByFieldsErrors = never;
