@@ -3,6 +3,9 @@ name: Backend Pipeline
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize]
 
 jobs:
   backend-pipeline:
