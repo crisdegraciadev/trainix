@@ -12,6 +12,7 @@
     "set:env:test": "cp .env.test .env",
     "test:u": "pnpm set:env:test && jest --verbose ./test/unit/*",
     "test:e2e": "pnpm set:env:test && pnpm prisma:update:test && jest --verbose --maxWorkers=1 ./test/e2e/resources/*.test.ts",
+    "prisma:generate": "pnpm prisma generate",
     "prisma:update:dev": "pnpm set:env:dev && pnpm prisma:seed:dev && pnpm dlx prisma migrate dev --name init",
     "prisma:update:test": "pnpm set:env:test && pnpm dlx prisma migrate dev --name init",
     "prisma:seed:dev": "pnpm set:env:dev && pnpm dlx prisma db seed",
