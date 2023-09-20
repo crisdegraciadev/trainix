@@ -12,7 +12,7 @@ concurrency:
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
-  backend-pipeline:
+  setup:
     runs-on: ubuntu-22.04
 
     services:
@@ -47,17 +47,34 @@ jobs:
           node-version: 20
           cache: "pnpm"
 
-      - name: Install deps
-        run: pnpm run api:install
+  lint:
+    runs-on: ubuntu-22.04
+    needs: setup
 
-      - name: Build
-        run: pnpm run api:build
-
+    steps:
       - name: Lint
         run: pnpm run api:lint
 
+  build:
+    runs-on: ubuntu-22.04
+    needs: setup
+
+    steps:
+      - name: Build
+        run: pnpm run api:build
+
+  test-unit:
+    runs-on: ubuntu-22.04
+    needs: setup
+
+    steps:
       - name: Test unit
         run: pnpm run api:test:u
 
+  test-e2e:
+    runs-on: ubuntu-22.04
+    needs: setup
+
+    steps:
       - name: Test e2e
         run: pnpm run api:test:e2e
