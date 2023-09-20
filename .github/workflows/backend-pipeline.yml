@@ -12,6 +12,8 @@ jobs:
     services:
       postgres:
         image: postgres:15.3
+        ports:
+          - 5433:5432
         env:
           POSTGRES_USER: trainix
           POSTGRES_PASSWORD: trainix
