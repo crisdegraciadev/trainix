@@ -2,7 +2,7 @@
   "private": true,
   "scripts": {
     "api:install": "cd api && pnpm install",
-    "api:build": "cd api && pnpm run build",
+    "api:build": "cd api && pnpm run prisma:update:dev && pnpm run build",
     "api:lint": "cd api && pnpm run lint",
     "api:test:e2e": "cd api && pnpm run test:e2e",
     "format": "pnpm prettier --write \"**/*.{ts,tsx,md}\""
