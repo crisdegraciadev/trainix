@@ -16,7 +16,21 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-      - uses: ./.github/actions/setup-api/action.yml
+      - name: Fetch API package
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: api
+
+      - name: "Install pnpm"
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Install node.js 20
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: "pnpm"
 
       - name: Lint
         run: pnpm run api:lint
@@ -25,7 +39,21 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-      - uses: ./.github/actions/setup-api/action.yml
+      - name: Fetch API package
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: api
+
+      - name: "Install pnpm"
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Install node.js 20
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: "pnpm"
 
       - name: Build
         run: pnpm run api:build
@@ -34,7 +62,21 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-      - uses: ./.github/actions/setup-api/action.yml
+      - name: Fetch API package
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: api
+
+      - name: "Install pnpm"
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Install node.js 20
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: "pnpm"
 
       - name: Test unit
         run: pnpm run api:test:u
@@ -58,7 +100,21 @@ jobs:
           --health-retries 5
 
     steps:
-      - uses: ./.github/actions/setup-api/action.yml
+      - name: Fetch API package
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: api
+
+      - name: "Install pnpm"
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Install node.js 20
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: "pnpm"
 
       - name: Test e2e
         run: pnpm run api:test:e2e
