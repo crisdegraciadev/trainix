@@ -14,6 +14,8 @@ jobs:
         with:
           sparse-checkout: api
 
+      - run: cd api
+
       - name: "Install pnpm"
         uses: pnpm/action-setup@v2
         with:
