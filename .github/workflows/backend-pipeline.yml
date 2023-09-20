@@ -7,81 +7,8 @@ on:
     branches: [main]
     types: [opened, synchronize]
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
-
 jobs:
-  lint:
-    runs-on: ubuntu-22.04
-
-    steps:
-      - name: Fetch API package
-        uses: actions/checkout@v4
-        with:
-          sparse-checkout: api
-
-      - name: "Install pnpm"
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
-
-      - name: Install node.js 20
-        uses: actions/setup-node@v3
-        with:
-          node-version: 20
-          cache: "pnpm"
-
-      - name: Lint
-        run: pnpm run api:lint
-
-  build:
-    runs-on: ubuntu-22.04
-
-    steps:
-      - name: Fetch API package
-        uses: actions/checkout@v4
-        with:
-          sparse-checkout: api
-
-      - name: "Install pnpm"
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
-
-      - name: Install node.js 20
-        uses: actions/setup-node@v3
-        with:
-          node-version: 20
-          cache: "pnpm"
-
-      - name: Build
-        run: pnpm run api:build
-
-  test-unit:
-    runs-on: ubuntu-22.04
-
-    steps:
-      - name: Fetch API package
-        uses: actions/checkout@v4
-        with:
-          sparse-checkout: api
-
-      - name: "Install pnpm"
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
-
-      - name: Install node.js 20
-        uses: actions/setup-node@v3
-        with:
-          node-version: 20
-          cache: "pnpm"
-
-      - name: Test unit
-        run: pnpm run api:test:u
-
-  test-e2e:
+  backend-pipeline:
     runs-on: ubuntu-22.04
 
     services:
@@ -115,6 +42,18 @@ jobs:
         with:
           node-version: 20
           cache: "pnpm"
+
+      - name: Install deps
+        run: pnpm run api:install
+
+      - name: Build
+        run: pnpm run api:build
+
+      - name: Lint
+        run: pnpm run api:lint
+
+      - name: Test unit
+        run: pnpm run api:test:u
 
       - name: Test e2e
         run: pnpm run api:test:e2e
