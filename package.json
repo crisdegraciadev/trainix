@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "api:install": "cd api && pnpm run install",
+    "api:install": "cd api && pnpm install",
     "api:build": "cd api && pnpm run build",
     "api:lint": "cd api && pnpm run lint",
     "api:test:e2e": "cd api && pnpm run test:e2e",
