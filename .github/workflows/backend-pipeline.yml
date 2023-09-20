@@ -1,0 +1,32 @@
+name: Backend Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Fetch API package
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: api
+
+      - name: "Install pnpm"
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Install node.js 20
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: "pnpm"
+
+      - name: Install deps
+        uses: pnpm install
+
+      - name: Lint
+        uses: pnpm run lint
