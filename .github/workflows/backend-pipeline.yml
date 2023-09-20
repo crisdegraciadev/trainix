@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-      - uses: ./.github/actions/setup-api.yml
+      - uses: ./.github/actions/setup-api/action.yml
 
       - name: Lint
         run: pnpm run api:lint
@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-      - uses: ./.github/actions/setup-api.yml
+      - uses: ./.github/actions/setup-api/action.yml
 
       - name: Build
         run: pnpm run api:build
@@ -34,7 +34,7 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-      - uses: ./.github/actions/setup-api.yml
+      - uses: ./.github/actions/setup-api/action.yml
 
       - name: Test unit
         run: pnpm run api:test:u
@@ -58,7 +58,7 @@ jobs:
           --health-retries 5
 
     steps:
-      - uses: ./.github/actions/setup-api.yml
+      - uses: ./.github/actions/setup-api/action.yml
 
       - name: Test e2e
         run: pnpm run api:test:e2e
