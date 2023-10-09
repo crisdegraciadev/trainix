@@ -6,7 +6,7 @@ import { Errors } from '../../../../src/consts';
 describe('handlePrismaErrors()', () => {
   const { Codes } = Errors.Prisma;
 
-  it('should return DuplicateError for Prisma error with code P2002', () => {
+  it('P2002', () => {
     const prismaError = new Prisma.PrismaClientKnownRequestError('', {
       code: Codes.P2002,
       clientVersion: '',
@@ -18,7 +18,7 @@ describe('handlePrismaErrors()', () => {
     expect(error instanceof DuplicateError).toBeTruthy();
   });
 
-  it('should return RelationError for Prisma error with code P2003', () => {
+  it('P2003', () => {
     const prismaError = new Prisma.PrismaClientKnownRequestError('', {
       code: Codes.P2003,
       clientVersion: '',
@@ -30,7 +30,7 @@ describe('handlePrismaErrors()', () => {
     expect(error instanceof RelationError).toBeTruthy();
   });
 
-  it('should return RelationError for Prisma error with code P2025', () => {
+  it('P2025', () => {
     const prismaError = new Prisma.PrismaClientKnownRequestError('', {
       code: Codes.P2025,
       clientVersion: '',
@@ -42,7 +42,7 @@ describe('handlePrismaErrors()', () => {
     expect(error instanceof NotFoundError).toBeTruthy();
   });
 
-  it('should return UnknownError for unknown error', () => {
+  it('unknown', () => {
     const error = handlePrismaErrors(new Error());
     expect(error instanceof UnknownError).toBeTruthy();
   });
