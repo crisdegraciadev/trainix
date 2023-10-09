@@ -4,7 +4,7 @@ import { DuplicateError, InvalidDtoError, InvalidRequestIdError, NotFoundError, 
 import { UnauthorizedError } from '../types/unauthorized';
 import { HttpStatus } from '../../consts';
 
-export const handleFailureCauses = (cause: Cause.Cause<Error>, res: Response): void => {
+export const handleFailureCauses = (cause: Cause.Cause<Error>, res: Response): [Response, Error | {}] => {
   const failureOption = Cause.failureOption(cause);
 
   const getStatusCode = pipe(
@@ -18,8 +18,8 @@ export const handleFailureCauses = (cause: Cause.Cause<Error>, res: Response): v
     Match.orElse(() => HttpStatus.INTERNAL_SERVER_ERROR)
   );
 
-  Option.match(failureOption, {
-    onSome: (error) => res.status(getStatusCode({ error })).send({ error }),
-    onNone: () => res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({}),
+  return Option.match(failureOption, {
+    onSome: (error) => [res.status(getStatusCode({ error })), error],
+    onNone: () => [res.status(HttpStatus.INTERNAL_SERVER_ERROR), {}],
   });
 };

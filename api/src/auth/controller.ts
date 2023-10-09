@@ -28,7 +28,10 @@ export const handleLogin = async (req: Request, res: Response): Promise<void> =>
 
       res.setHeader('Set-Cookie', serialize('token', accessToken, { ...cookieOptions })).sendStatus(HttpStatus.OK);
     },
-    onFailure: (cause) => handleFailureCauses(cause, res),
+    onFailure: (cause) => {
+      const [errorResponse, error] = handleFailureCauses(cause, res);
+      errorResponse.send({ error });
+    },
   });
 };
 

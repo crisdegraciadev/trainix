@@ -22,7 +22,10 @@ export const handleFindUserById = async (
 
   Exit.match(findByIdResult, {
     onSuccess: (dto) => res.status(HttpStatus.OK).send(dto),
-    onFailure: (cause) => handleFailureCauses(cause, res),
+    onFailure: (cause) => {
+      const [errorResponse, error] = handleFailureCauses(cause, res);
+      errorResponse.send({ error });
+    },
   });
 };
 
@@ -53,7 +56,10 @@ export const handleCreateUser = async (req: Request, res: Response<ResponseUserD
 
   Exit.match(createResult, {
     onSuccess: (dto) => res.status(HttpStatus.CREATED).send(dto),
-    onFailure: (cause) => handleFailureCauses(cause, res),
+    onFailure: (cause) => {
+      const [errorResponse, error] = handleFailureCauses(cause, res);
+      errorResponse.send({ error });
+    },
   });
 };
 
@@ -73,7 +79,10 @@ export const handleUpdateUser = async (
 
   Exit.match(updateResult, {
     onSuccess: (dto) => res.status(HttpStatus.OK).send(dto),
-    onFailure: (cause) => handleFailureCauses(cause, res),
+    onFailure: (cause) => {
+      const [errorResponse, error] = handleFailureCauses(cause, res);
+      errorResponse.send({ error });
+    },
   });
 };
 
@@ -89,6 +98,9 @@ export const handleDeleteUser = async (req: Request<FindUserByIdRequestParams>, 
 
   Exit.match(removeResult, {
     onSuccess: (dto) => res.status(HttpStatus.OK).send(dto),
-    onFailure: (cause) => handleFailureCauses(cause, res),
+    onFailure: (cause) => {
+      const [errorResponse, error] = handleFailureCauses(cause, res);
+      errorResponse.send({ error });
+    },
   });
 };

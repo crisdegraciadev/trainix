@@ -26,7 +26,10 @@ export const handleFindExerciseById = async (
 
   Exit.match(findByIdResult, {
     onSuccess: (dto) => res.status(HttpStatus.OK).send(dto),
-    onFailure: (cause) => handleFailureCauses(cause, res),
+    onFailure: (cause) => {
+      const [errorResponse, error] = handleFailureCauses(cause, res);
+      errorResponse.send({ error });
+    },
   });
 };
 
@@ -58,7 +61,10 @@ export const handleCreateExercise = async (req: Request, res: Response<ResponseE
 
   Exit.match(createResult, {
     onSuccess: (dto) => res.status(HttpStatus.CREATED).send(dto),
-    onFailure: (cause) => handleFailureCauses(cause, res),
+    onFailure: (cause) => {
+      const [errorResponse, error] = handleFailureCauses(cause, res);
+      errorResponse.send({ error });
+    },
   });
 };
 
@@ -78,7 +84,10 @@ export const handleUpdateExercise = async (
 
   Exit.match(updateResult, {
     onSuccess: (dto) => res.status(HttpStatus.OK).send(dto),
-    onFailure: (cause) => handleFailureCauses(cause, res),
+    onFailure: (cause) => {
+      const [errorResponse, error] = handleFailureCauses(cause, res);
+      errorResponse.send({ error });
+    },
   });
 };
 
@@ -94,6 +103,9 @@ export const handleDeleteExercise = async (req: Request<ExerciseRequestParams>, 
 
   Exit.match(removeResult, {
     onSuccess: (dto) => res.status(HttpStatus.OK).send(dto),
-    onFailure: (cause) => handleFailureCauses(cause, res),
+    onFailure: (cause) => {
+      const [errorResponse, error] = handleFailureCauses(cause, res);
+      errorResponse.send({ error });
+    },
   });
 };

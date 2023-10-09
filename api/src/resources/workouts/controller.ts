@@ -19,7 +19,10 @@ export const handleFindWorkoutById = async (req: Request<WorkoutRequestParams>, 
 
   Exit.match(findByIdResult, {
     onSuccess: (workout: Workout) => res.status(HttpStatus.OK).send(workout),
-    onFailure: (cause) => handleFailureCauses(cause, res),
+    onFailure: (cause) => {
+      const [errorResponse, error] = handleFailureCauses(cause, res);
+      errorResponse.send({ error });
+    },
   });
 };
 
@@ -28,7 +31,7 @@ export const handleFindWorkoutByFields = async (_req: Request, res: Response): P
 
   Exit.match(findByFieldsResult, {
     onSuccess: (workouts: Workout[]) => res.status(HttpStatus.OK).send(workouts),
-    onFailure: ({ _tag, ...error }) => res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({ ...error }),
+    onFailure: ({ _tag, ...error }) => res.status(HttpStatus.INTERNAL_SERVER_ERROR).send({ error }),
   });
 };
 
@@ -43,7 +46,10 @@ export const handleCreateWorkout = async (req: Request, res: Response): Promise<
 
   Exit.match(createResult, {
     onSuccess: (workout: Workout) => res.status(HttpStatus.CREATED).send(workout),
-    onFailure: (cause) => handleFailureCauses(cause, res),
+    onFailure: (cause) => {
+      const [errorResponse, error] = handleFailureCauses(cause, res);
+      errorResponse.send({ error });
+    },
   });
 };
 
@@ -59,7 +65,10 @@ export const handleUpdateWorkout = async (req: Request<WorkoutRequestParams>, re
 
   Exit.match(updateResult, {
     onSuccess: (workout: Workout) => res.status(HttpStatus.OK).send(workout),
-    onFailure: (cause) => handleFailureCauses(cause, res),
+    onFailure: (cause) => {
+      const [errorResponse, error] = handleFailureCauses(cause, res);
+      errorResponse.send({ error });
+    },
   });
 };
 
@@ -74,6 +83,9 @@ export const handleDeleteWorkout = async (req: Request<WorkoutRequestParams>, re
 
   Exit.match(removeResult, {
     onSuccess: (workout: Workout) => res.status(HttpStatus.OK).send(workout),
-    onFailure: (cause) => handleFailureCauses(cause, res),
+    onFailure: (cause) => {
+      const [errorResponse, error] = handleFailureCauses(cause, res);
+      errorResponse.send({ error });
+    },
   });
 };
