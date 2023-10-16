@@ -9,6 +9,7 @@ on:
 env:
   ENV: e2e
   DATABASE_URL: postgresql://trainix:trainix@localhost:5433/trainix-e2e
+  NEXT_PUBLIC_API_ENDPOINT: http://localhost:5000
   PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
   PLAYWRIGHT_BROWSERS_PATH: 0
 
