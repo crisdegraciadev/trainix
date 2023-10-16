@@ -7,7 +7,7 @@
     "start:dev": "pnpm set:env:dev && ts-node --files src/index.ts",
     "start:test": "pnpm set:env:test && ts-node --files src/index.ts",
     "dev": "cp .env.dev .env && pnpm prisma:update:dev && nodemon --files src/index.ts",
-    "build": "tsc",
+    "build": "pnpm prisma:generate && tsc",
     "lint": "eslint --fix src test",
     "set:env:dev": "cp .env.dev .env",
     "set:env:test": "cp .env.test .env",
