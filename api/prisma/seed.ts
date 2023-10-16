@@ -12,7 +12,7 @@ async function main(): Promise<void> {
 
   if (env === 'e2e') {
     try {
-      await prisma.user.create({
+      const userCreated = await prisma.user.create({
         data: {
           username: 'test',
           email: 'test@email.com',
@@ -20,6 +20,8 @@ async function main(): Promise<void> {
           role: Role.admin,
         },
       });
+
+      console.log({ userCreated });
     } catch (e) {
       console.log('CANNOT INSERT test USER');
     }
