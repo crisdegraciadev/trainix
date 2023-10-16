@@ -1,0 +1,20 @@
+name: Tests
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize]
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch repository
+        uses: actions/checkout@v4
+
+      - name: Setup repository
+      - uses: ./.github/actions/build
+
+      - name: Run tests
+        run: pnpm run api:test:unit
