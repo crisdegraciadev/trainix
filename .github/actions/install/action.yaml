@@ -1,4 +1,4 @@
-name: "Build"
+name: "Install"
 description: "Sets up the repository"
 runs:
   using: "composite"
