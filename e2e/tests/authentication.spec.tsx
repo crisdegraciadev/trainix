@@ -137,7 +137,7 @@ test("should navigate to dashboard with correct credentials", async ({
   const emailInput = page.getByPlaceholder("jhon.doe@email.com");
   const passwordInput = page.getByPlaceholder("Your password");
 
-  await emailInput.fill("cris@gmail.com");
+  await emailInput.fill("test@email.com");
   await passwordInput.fill("123456789");
 
   const submitButton = page.getByRole("button", { name: "Login" });

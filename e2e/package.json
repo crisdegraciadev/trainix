@@ -1,0 +1,25 @@
+{
+  "name": "e2e",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "scripts": {
+    "playwright:ui": "playwright test --ui",
+    "test": "../scripts/run-e2e.sh",
+    "test:headed": "../scripts/run-e2e.sh --headed"
+  },
+  "prisma": {
+    "schema": "../api/prisma/schema.prisma"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.38.1",
+    "@types/node": "^20.8.6"
+  },
+  "dependencies": {
+    "typescript": "^5.2.2"
+  }
+}

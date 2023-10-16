@@ -3,10 +3,10 @@
   "scripts": {
     "build": "pnpm run -r build",
     "lint": "pnpm run -r lint",
-    "api:lint": "pnpm run --filter=api lint",
     "api:test:unit": "pnpm run --filter=api test:unit",
-    "api:test:e2e": "pnpm run --filter=api test:e2e",
-    "web:test:e2e": "cd api && (pnpm start:test &) && cd ../web && pnpm run test:e2e",
+    "api:test:integration": "pnpm run --filter=api test:e2e",
+    "e2e:test": "pnpm run --filter=e2e test",
+    "e2e:test:headed": "pnpm run --filter=e2e test:headed",
     "format": "pnpm prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {
