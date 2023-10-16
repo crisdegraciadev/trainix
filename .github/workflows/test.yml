@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Fetch repository
         uses: actions/checkout@v4
+        with:
+          sparse-checkout: api
 
       - name: Setup repository
         uses: ./.github/actions/build
