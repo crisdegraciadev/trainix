@@ -6,7 +6,7 @@
   "scripts": {
     "start:dev": "pnpm set:env:dev && ts-node --files src/index.ts",
     "start:test": "pnpm set:env:test && pnpm prisma:seed:test && ts-node --files src/index.ts",
-    "start:e2e": "pnpm set:env:test && pnpm prisma:seed:e2e && ts-node --files src/index.ts",
+    "start:e2e": "pnpm set:env:e2e && pnpm prisma:seed:e2e && ts-node --files src/index.ts",
     "dev": "cp .env.dev .env && pnpm prisma:update:dev && nodemon --files src/index.ts",
     "build": "pnpm prisma:generate && tsc",
     "lint": "eslint --fix src test",
