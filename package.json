@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "api:install": "pnpm --filter=api install",
+    "api:install": "cd api && pnpm install",
     "api:build": "cd api && pnpm run prisma:generate && pnpm run build",
     "api:lint": "cd api && pnpm run lint",
     "api:test:u": "cd api && pnpm run test:u",
