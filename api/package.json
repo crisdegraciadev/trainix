@@ -1,10 +1,11 @@
 {
-  "name": "express-api-starter-ts",
+  "name": "api",
   "version": "1.2.0",
   "description": " A basic starter for an express.js API with Typescript",
   "main": "src/index.ts",
   "scripts": {
-    "start": "cp .env.dev .env && ts-node --files src/index.ts",
+    "start:dev": "pnpm set:env:dev && ts-node --files src/index.ts",
+    "start:test": "pnpm set:env:test && ts-node --files src/index.ts",
     "dev": "cp .env.dev .env && pnpm prisma:update:dev && nodemon --files src/index.ts",
     "build": "tsc",
     "lint": "eslint --fix src test",

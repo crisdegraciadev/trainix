@@ -4,7 +4,6 @@ import { ColumnDef } from "@tanstack/react-table";
 
 import { DataTableColumnHeader } from "@/components/tables/data-table-column-header";
 import { Checkbox } from "@/components/ui/checkbox";
-import ActionsCell from "../../../../../components/tables/cells/actions-cell";
 import DifficultyCell from "../../../../../components/tables/cells/difficulty-cell";
 import MuscleGroupsCell from "../../../../../components/tables/cells/muscle-groups-cell";
 import { Workout } from "../../../../../types/entities";
@@ -81,8 +80,8 @@ export const WORKOUT_COLUMNS: ColumnDef<Workout>[] = [
       );
     },
   },
-  {
-    id: "actions",
-    cell: ({ row }) => <ActionsCell row={row} />,
-  },
+  // {
+  //   id: "actions",
+  //   cell: ({ row }) => <ActionsCell row={row} />,
+  // },
 ];

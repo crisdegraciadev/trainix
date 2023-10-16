@@ -1,11 +1,12 @@
 {
   "private": true,
   "scripts": {
-    "api:install": "cd api && pnpm install",
+    "api:install": "pnpm --filter=api install",
     "api:build": "cd api && pnpm run prisma:generate && pnpm run build",
     "api:lint": "cd api && pnpm run lint",
     "api:test:u": "cd api && pnpm run test:u",
     "api:test:e2e": "cd api && pnpm run test:e2e",
+    "web:test:e2e": "cd api && (pnpm start:test &) && cd ../web && pnpm run test:e2e",
     "format": "pnpm prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {

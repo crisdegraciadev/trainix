@@ -2,7 +2,6 @@
 
 import { Row } from "@tanstack/react-table";
 import { DifficultyIcons } from "../../../app/dashboard/workouts/components/tables/icons";
-import { WorkoutConsts } from "../../../app/dashboard/workouts/consts";
 import { capitalize } from "../../../utils/capitalize";
 
 type DifficultyCellProps<T> = {
