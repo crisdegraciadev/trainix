@@ -28,5 +28,8 @@ jobs:
         shell: bash
         run: pnpm install
 
+      - name: Generate Prisma schema
+        run: cd api && pnpm run prisma:generate
+
       - name: Run tests
         run: pnpm run api:test:unit
