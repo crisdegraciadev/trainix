@@ -45,7 +45,7 @@ export default defineConfig({
   /* Run your local dev server before starting the tests */
   webServer: [
     {
-      command: "pnpm run --filter=api start:test",
+      command: "pnpm run --filter=api start:e2e",
       port: 5000,
       reuseExistingServer: true,
     },

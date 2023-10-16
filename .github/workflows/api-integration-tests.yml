@@ -1,4 +1,4 @@
-name: Api integration Tests
+name: API integration Tests
 on:
   push:
     branches: [main]

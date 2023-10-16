@@ -1,4 +1,4 @@
-name: Api Unit Tests
+name: API Unit Tests
 on:
   push:
     branches: [main]

@@ -8,8 +8,7 @@ const prisma = new PrismaClient();
 async function main(): Promise<void> {
   const env = process.env.ENV;
 
-  console.log({ env });
-  if (env === 'test') {
+  if (env === 'e2e') {
     try {
       await prisma.user.create({
         data: {

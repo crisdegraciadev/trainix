@@ -6,11 +6,13 @@
   "scripts": {
     "start:dev": "pnpm set:env:dev && ts-node --files src/index.ts",
     "start:test": "pnpm set:env:test && pnpm prisma:seed:test && ts-node --files src/index.ts",
+    "start:e2e": "pnpm set:env:test && pnpm prisma:seed:e2e && ts-node --files src/index.ts",
     "dev": "cp .env.dev .env && pnpm prisma:update:dev && nodemon --files src/index.ts",
     "build": "pnpm prisma:generate && tsc",
     "lint": "eslint --fix src test",
     "set:env:dev": "cp .env.dev .env",
     "set:env:test": "cp .env.test .env",
+    "set:env:test": "cp .env.e2e .env",
     "test:unit": "pnpm set:env:test && jest --verbose ./test/unit/*",
     "test:e2e": "pnpm set:env:test && pnpm prisma:update:test && jest --verbose --maxWorkers=1 ./test/e2e/resources/*.test.ts",
     "prisma:generate": "pnpm prisma generate",
@@ -18,6 +20,7 @@
     "prisma:update:test": "pnpm set:env:test && pnpm dlx prisma migrate dev --name init",
     "prisma:seed:dev": "pnpm set:env:dev && pnpm dlx prisma db seed",
     "prisma:seed:test": "pnpm set:env:test && pnpm dlx prisma db seed",
+    "prisma:seed:test": "pnpm set:env:e2e && pnpm dlx prisma db seed",
     "db:up": "docker-compose -f containers/docker-compose.yml up -d"
   },
   "prisma": {
