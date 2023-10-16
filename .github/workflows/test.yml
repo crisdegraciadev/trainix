@@ -12,9 +12,12 @@ jobs:
     steps:
       - name: Fetch repository
         uses: actions/checkout@v3
+        with:
+          path: trainix
 
       - name: Setup repository
         uses: ./github/actions/build
 
       - name: Run tests
         run: pnpm run api:test:unit
+        working-directory: trainix
