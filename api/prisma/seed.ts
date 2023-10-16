@@ -8,6 +8,8 @@ const prisma = new PrismaClient();
 async function main(): Promise<void> {
   const env = process.env.ENV;
 
+  console.log({ env });
+
   if (env === 'e2e') {
     try {
       await prisma.user.create({
@@ -18,7 +20,9 @@ async function main(): Promise<void> {
           role: Role.admin,
         },
       });
-    } catch (e) {}
+    } catch (e) {
+      console.log('CANNOT INSERT test USER');
+    }
   }
 
   Promise.all(
