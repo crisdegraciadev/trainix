@@ -7,7 +7,7 @@ on:
     types: [opened, synchronize]
 
 jobs:
-  e2e-tests:
+  api-unit-tests:
     runs-on: ubuntu-latest
     steps:
       - name: Fetch repository
