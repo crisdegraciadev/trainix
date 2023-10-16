@@ -1,6 +1,8 @@
 {
   "private": true,
   "scripts": {
+    "build": "pnpm run -r build",
+    "lint": "pnpm run -r lint",
     "api:lint": "pnpm run --filter=api lint",
     "api:test:unit": "pnpm run --filter=api test:unit",
     "api:test:e2e": "pnpm run --filter=api test:e2e",
