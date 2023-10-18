@@ -49,17 +49,15 @@ export const useUserLoginForm = () => {
         description:
           "Your credentials seems to be invalid, try it again with valid credentials.",
       });
-
-      console.log({ error });
     }
   }, [isError, error, mutationReset, toast]);
 
   useEffect(() => {
-    if (email && users?.length === 1) {
+    if (isSuccess && email && users?.length === 1) {
       const [loggedUser] = users;
       setLoggedUser(loggedUser);
     }
-  }, [email, setLoggedUser, users]);
+  }, [isSuccess, email, setLoggedUser, users]);
 
   const onSubmit = (values: UserLoginSchema) => {
     mutate({ ...values });

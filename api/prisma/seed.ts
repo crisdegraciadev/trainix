@@ -8,11 +8,9 @@ const prisma = new PrismaClient();
 async function main(): Promise<void> {
   const env = process.env.ENV;
 
-  console.log({ env });
-
   if (env === 'e2e') {
     try {
-      const userCreated = await prisma.user.create({
+      await prisma.user.create({
         data: {
           username: 'test',
           email: 'test@email.com',
@@ -20,11 +18,7 @@ async function main(): Promise<void> {
           role: Role.admin,
         },
       });
-
-      console.log({ userCreated });
-    } catch (e) {
-      console.log('CANNOT INSERT test USER');
-    }
+    } catch (e) {}
   }
 
   Promise.all(
