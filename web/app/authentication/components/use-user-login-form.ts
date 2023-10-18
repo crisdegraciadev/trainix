@@ -22,6 +22,7 @@ export const useUserLoginForm = () => {
     isLoading,
     isSuccess,
     isError,
+    error,
     reset: mutationReset,
   } = useLogin();
 
@@ -48,8 +49,10 @@ export const useUserLoginForm = () => {
         description:
           "Your credentials seems to be invalid, try it again with valid credentials.",
       });
+
+      console.log({ error });
     }
-  }, [isError, mutationReset, toast]);
+  }, [isError, error, mutationReset, toast]);
 
   useEffect(() => {
     if (email && users?.length === 1) {
