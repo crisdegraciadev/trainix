@@ -10,7 +10,7 @@ import { handleFailureCauses } from '../errors/handlers';
 export const handleLogin = async (req: Request, res: Response): Promise<void> => {
   const { body } = req;
 
-  console.log({ body });
+  console.log({ body, Auth });
 
   const accessTokenResult = await pipe(
     Effect.all([isValidLoginDto(body)]),
