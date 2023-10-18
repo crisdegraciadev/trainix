@@ -48,11 +48,13 @@ export default defineConfig({
       command: "pnpm run --filter=api start:e2e",
       port: 5000,
       reuseExistingServer: true,
+      stdout: "pipe",
     },
     {
       command: "pnpm run --filter=web dev",
       port: 3000,
       reuseExistingServer: true,
+      stdout: "pipe",
     },
   ],
 });
