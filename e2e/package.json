@@ -8,7 +8,7 @@
   "author": "",
   "license": "ISC",
   "scripts": {
-    "playwright:ui": "playwright test --ui",
+    "playwright": "playwright test",
     "test": "../scripts/run-e2e.sh",
     "test:headed": "../scripts/run-e2e.sh --headed"
   },

@@ -2,6 +2,7 @@ import { expect, test } from "@playwright/test";
 
 test.beforeEach(async ({ page }) => {
   await page.goto("http://localhost:3000/authentication");
+  await page.waitForURL("http://localhost:3000/authentication");
 });
 
 test("should navigate to the authentication page", async ({ page }) => {
@@ -143,5 +144,6 @@ test("should navigate to dashboard with correct credentials", async ({
   const submitButton = page.getByRole("button", { name: "Login" });
   await submitButton.click();
 
+  await page.waitForURL("http://localhost:3000/dashboard");
   await expect(page).toHaveURL("http://localhost:3000/dashboard");
 });
