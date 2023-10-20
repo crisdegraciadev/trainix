@@ -1,21 +1,21 @@
-import { CREATE_EXERCISE_INITIAL_VALUES } from "../../components/forms/exercise-form-data";
-import { useCreateExercise } from "../../../../../hooks/exercises/use-create-exercise";
-import { useEffect } from "react";
-import { useToast } from "../../../../../components/ui/use-toast";
-import {
-  CreateExerciseSchema,
-  createExerciseSchema,
-} from "../../components/forms/exercise-form-schema";
+import { useToast } from "@/components/ui/use-toast";
+import { useCreateWorkout } from "../crud/use-create-workout";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  CreateWorkoutSchema,
+  createWorkoutSchema,
+} from "../../components/forms/workout-form-schema";
+import { CREATE_WORKOUT_INITIAL_VALUES } from "../../components/forms/workout-form-data";
+import { useEffect } from "react";
 
-type UseCreateExerciseFormProps = {
+type UseCreateWorkoutFormProps = {
   setIsFormOpen: (isFormOpen: boolean) => void;
 };
 
-export const useCreateExerciseForm = ({
+export const useCreateWorkoutForm = ({
   setIsFormOpen,
-}: UseCreateExerciseFormProps) => {
+}: UseCreateWorkoutFormProps) => {
   const { toast } = useToast();
 
   const {
@@ -24,11 +24,11 @@ export const useCreateExerciseForm = ({
     isSuccess,
     isError,
     reset: mutationReset,
-  } = useCreateExercise();
+  } = useCreateWorkout();
 
-  const form = useForm<CreateExerciseSchema>({
-    resolver: zodResolver(createExerciseSchema),
-    defaultValues: CREATE_EXERCISE_INITIAL_VALUES,
+  const form = useForm<CreateWorkoutSchema>({
+    resolver: zodResolver(createWorkoutSchema),
+    defaultValues: CREATE_WORKOUT_INITIAL_VALUES,
   });
 
   useEffect(() => {
@@ -51,8 +51,10 @@ export const useCreateExerciseForm = ({
     }
   }, [isError, mutationReset, toast]);
 
-  const onSubmit = (values: CreateExerciseSchema) => {
-    mutate({ createExerciseDto: values });
+  const onSubmit = (values: CreateWorkoutSchema) => {
+    // TODO: Create activities and link them
+    const { activities, ...workout } = values;
+    mutate({ createWorkoutDto: { ...workout, activityIds: [] } });
   };
 
   return {

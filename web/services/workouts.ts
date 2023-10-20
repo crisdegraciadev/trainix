@@ -1,5 +1,23 @@
-import { Workout } from "../types/entities";
+import { sendPostRequest } from "@/lib/axios";
+import { CreateWorkoutDto, Workout } from "../types/entities";
 import { Category, Difficulty, Muscle } from "../types/enums";
+import { ApiPaths } from "@/consts/api-paths";
+
+type CreateWorkoutArgs = {
+  createWorkoutDto: CreateWorkoutDto;
+};
+
+export async function createWorkout({
+  createWorkoutDto,
+}: CreateWorkoutArgs): Promise<Workout> {
+  const res = await sendPostRequest<Workout>({
+    path: ApiPaths.WORKOUTS,
+    data: createWorkoutDto,
+  });
+
+  const { data } = res;
+  return data;
+}
 
 export async function fetchWorkouts(): Promise<Workout[]> {
   return [
@@ -9,6 +27,7 @@ export async function fetchWorkouts(): Promise<Workout[]> {
       description: "A workout focused on building strength in your upper body.",
       difficulty: Difficulty.MEDIUM,
       category: Category.UPPER,
+      activities: [],
       muscles: [Muscle.CHEST, Muscle.BICEPS, Muscle.SHOULDERS],
     },
     {
@@ -18,6 +37,7 @@ export async function fetchWorkouts(): Promise<Workout[]> {
         "A challenging leg workout to build powerful quads and hamstrings.",
       difficulty: Difficulty.HARD,
       category: Category.LOWER,
+      activities: [],
       muscles: [Muscle.QUADS, Muscle.HAMSTRINGS, Muscle.GLUTEUS],
     },
     {
@@ -27,6 +47,7 @@ export async function fetchWorkouts(): Promise<Workout[]> {
         "A core-focused workout to strengthen your abs and obliques.",
       difficulty: Difficulty.MEDIUM,
       category: Category.ABS,
+      activities: [],
       muscles: [Muscle.CORE],
     },
     {
@@ -36,6 +57,7 @@ export async function fetchWorkouts(): Promise<Workout[]> {
         "A high-intensity cardio workout to boost your cardiovascular endurance.",
       difficulty: Difficulty.HARD,
       category: Category.CARDIO,
+      activities: [],
       muscles: [Muscle.CALVES],
     },
     {
@@ -45,6 +67,7 @@ export async function fetchWorkouts(): Promise<Workout[]> {
         "An intense full-body circuit training to target multiple muscle groups.",
       difficulty: Difficulty.MEDIUM,
       category: Category.FULL_BODY,
+      activities: [],
       muscles: [Muscle.CHEST, Muscle.BACK, Muscle.SHOULDERS, Muscle.TRICEPS],
     },
     {
@@ -54,6 +77,7 @@ export async function fetchWorkouts(): Promise<Workout[]> {
         "A workout designed to build strength and tone your muscles.",
       difficulty: Difficulty.MEDIUM,
       category: Category.UPPER,
+      activities: [],
       muscles: [Muscle.CHEST, Muscle.BICEPS, Muscle.SHOULDERS],
     },
     {
@@ -62,6 +86,7 @@ export async function fetchWorkouts(): Promise<Workout[]> {
       description: "A lower body workout for sculpting your legs and gluteus.",
       difficulty: Difficulty.HARD,
       category: Category.LOWER,
+      activities: [],
       muscles: [Muscle.QUADS, Muscle.HAMSTRINGS, Muscle.GLUTEUS],
     },
     {
@@ -71,6 +96,7 @@ export async function fetchWorkouts(): Promise<Workout[]> {
         "An intense abdominal workout to burn those stubborn belly fats.",
       difficulty: Difficulty.HARD,
       category: Category.ABS,
+      activities: [],
       muscles: [Muscle.CORE],
     },
     {
@@ -80,6 +106,7 @@ export async function fetchWorkouts(): Promise<Workout[]> {
         "A high-intensity cardio session to boost your fitness level.",
       difficulty: Difficulty.HARD,
       category: Category.CARDIO,
+      activities: [],
       muscles: [Muscle.CALVES],
     },
     {
@@ -89,6 +116,7 @@ export async function fetchWorkouts(): Promise<Workout[]> {
         "A total body conditioning workout for a fit and healthy body.",
       difficulty: Difficulty.MEDIUM,
       category: Category.FULL_BODY,
+      activities: [],
       muscles: [Muscle.CHEST, Muscle.BACK, Muscle.SHOULDERS, Muscle.TRICEPS],
     },
   ];

@@ -24,13 +24,13 @@ import {
   FormMessage,
 } from "../../../../../components/ui/form";
 import { UseFormReturn } from "react-hook-form";
-import { ExerciseSchema } from "./exercise-form-schema";
+import { CreateExerciseSchema } from "./exercise-form-schema";
 
 export type ExerciseFormDialogProps = {
-  form: UseFormReturn<ExerciseSchema>;
+  form: UseFormReturn<CreateExerciseSchema>;
   isLoading: boolean;
   submitText: string;
-  onSubmit: (values: ExerciseSchema) => void;
+  onSubmit: (values: CreateExerciseSchema) => void;
 };
 
 export default function ExerciseForm({
@@ -84,7 +84,7 @@ export default function ExerciseForm({
           name="difficulty"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Difficulty</FormLabel>
+              <FormLabel>Difficulties</FormLabel>
               <FormControl>
                 <Select
                   onValueChange={field.onChange}

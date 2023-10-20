@@ -1,6 +1,6 @@
+import { ReactQueryKeys } from "@/lib/react-queries";
+import { createExercise } from "@/services/exercises";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createExercise } from "../../../../../services/exercises";
-import { ReactQueryKeys } from "../../../../../lib/react-queries";
 
 export const useCreateExercise = () => {
   const queryClient = useQueryClient();

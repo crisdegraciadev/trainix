@@ -1,4 +1,8 @@
-import { Exercise } from "../types/entities";
+import {
+  CreateExerciseDto,
+  Exercise,
+  UpdateExerciseDto,
+} from "../types/entities";
 import { ApiPaths } from "../consts/api-paths";
 import {
   sendDeleteRequest,
@@ -8,15 +12,15 @@ import {
 } from "../lib/axios";
 
 type CreateExerciseArgs = {
-  exercise: Omit<Exercise, "id">;
+  createExerciseDto: CreateExerciseDto;
 };
 
 export async function createExercise({
-  exercise,
+  createExerciseDto,
 }: CreateExerciseArgs): Promise<Exercise> {
   const res = await sendPostRequest<Exercise>({
     path: ApiPaths.EXERCISES,
-    data: exercise,
+    data: createExerciseDto,
   });
 
   const { data } = res;
@@ -41,14 +45,17 @@ export async function deleteExercise({
 
 type EditExerciseArgs = {
   id: string;
-  exercise: Partial<Omit<Exercise, "id">>;
+  updateExerciseDto: UpdateExerciseDto;
 };
 
-export async function editExercise({ id, exercise }: EditExerciseArgs) {
+export async function editExercise({
+  id,
+  updateExerciseDto,
+}: EditExerciseArgs) {
   const res = await sendPutRequest<Exercise>({
     id,
     path: ApiPaths.EXERCISES,
-    data: exercise,
+    data: updateExerciseDto,
   });
 
   const { data } = res;
