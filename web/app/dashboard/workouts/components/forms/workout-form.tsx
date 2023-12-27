@@ -53,8 +53,6 @@ export function WorkoutForm({
   const [isExercisePopoverOpen, setIsExercisePopoverOpen] = useState(false);
   const [selectedExerciseIds, setSelectedExerciseIds] = useState<string[]>([]);
 
-  console.log({ selectedExerciseIds });
-
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -246,7 +244,7 @@ export function WorkoutForm({
                   </Popover>
                   <div className="mt-4">
                     {selectedExerciseIds.map((id) => (
-                      <ActivityCard key={id} />
+                      <ActivityCard key={id} exerciseId={id} />
                     ))}
                   </div>
                   <FormMessage />
@@ -255,6 +253,7 @@ export function WorkoutForm({
             />
           </section>
         </section>
+
         <div className="flex justify-end">
           <Button disabled={isLoading} type="submit">
             {isLoading && (

@@ -9,7 +9,7 @@ import {
 } from "../../../../../components/ui/alert-dialog";
 import { Button } from "../../../../../components/ui/button";
 import { toast } from "../../../../../components/ui/use-toast";
-import { useDeleteExercise } from "../../hooks/crud/use-delete-exercise";
+import { useDeleteExercise } from "../../../../../hooks/exercises/use-delete-exercise";
 
 type DeleteExerciseDialogProps = {
   exerciseId: string;

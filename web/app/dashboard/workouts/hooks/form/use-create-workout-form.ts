@@ -54,6 +54,9 @@ export const useCreateWorkoutForm = ({
   const onSubmit = (values: CreateWorkoutSchema) => {
     // TODO: Create activities and link them
     const { activities, ...workout } = values;
+
+    console.log({ values });
+
     mutate({ createWorkoutDto: { ...workout, activityIds: [] } });
   };
 

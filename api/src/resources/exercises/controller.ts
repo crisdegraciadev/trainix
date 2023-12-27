@@ -10,6 +10,8 @@ import { createResponseExerciseDto, isValidCreateExerciseDto, isValidUpdateExerc
 import { insertExercise } from './services/insert';
 import { updateExercise } from './services/update';
 import { deleteExercise } from './services/delete';
+import { Paginated } from '../../types/paginated';
+import { Exercise } from '@prisma/client';
 
 export const handleFindExerciseById = async (
   req: Request<ExerciseRequestParams>,
@@ -33,13 +35,13 @@ export const handleFindExerciseById = async (
   });
 };
 
-export const handleFindExerciseByFields = async (
-  _req: Request,
-  res: Response<ResponseExerciseDto[]>
-): Promise<void> => {
+export const handleFindExerciseByFields = async (req: Request, res: Response<Paginated<Exercise[]>>): Promise<void> => {
+  const { query } = req;
+
+  const { skip, take } = query;
+
   const findByFieldsResult = await pipe(
-    Effect.all([filterExercises({})]),
-    Effect.map(([exercises]) => exercises.map((user) => Effect.runSync(createResponseExerciseDto(user)))),
+    filterExercises({ skip: Number(skip), take: Number(take) }),
     Effect.runPromiseExit
   );
 

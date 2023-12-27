@@ -14,6 +14,7 @@ import {
   retrieveExercise,
 } from '../helpers/exercise';
 import { EXERCISE_PULL_UP, EXERCISE_PUSH_UP, EXERCISE_SQUAT } from '../fixtures/exercise';
+import { Paginated } from '../../../src/types/paginated';
 
 beforeAll(async () => {
   await insertAdminUser();
@@ -56,7 +57,7 @@ describe('EXERCISES', () => {
   });
 
   describe('GET /', () => {
-    it('list with 3 elements', async () => {
+    it('page with 3 elements', async () => {
       const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
       const createExercisePayloads = [EXERCISE_PUSH_UP, EXERCISE_PULL_UP, EXERCISE_SQUAT];
@@ -68,13 +69,20 @@ describe('EXERCISES', () => {
       const { statusCode, body } = await getRequest({
         url: `${BASE_EXERCISE_PATH}/`,
         headers: { Cookie: ACCESS_TOKEN_COOKIE },
+        query: { skip: 0, take: 5 },
       });
 
       expect(statusCode).toBe(HttpStatus.OK);
-      expect(body.length).toBe(3);
 
-      const exercises = body as ExerciseResponse[];
-      exercises.forEach((exercise) => expect(isValidExerciseResponse(exercise)).toBeTruthy());
+      const exercisesPage = body as Paginated<ExerciseResponse[]>;
+
+      const { count, pages, current, resource } = exercisesPage;
+
+      expect(count).toBe(3);
+      expect(pages).toBe(1);
+      expect(current).toBe(0);
+
+      resource.forEach((exercise) => expect(isValidExerciseResponse(exercise)).toBeTruthy());
 
       await Promise.all(createdExercises.map(({ id }) => deleteExercise(id, ACCESS_TOKEN_COOKIE)));
     });
@@ -85,10 +93,19 @@ describe('EXERCISES', () => {
       const { statusCode, body } = await getRequest({
         url: `${BASE_EXERCISE_PATH}/`,
         headers: { Cookie: ACCESS_TOKEN_COOKIE },
+        query: { skip: 0, take: 5 },
       });
 
       expect(statusCode).toBe(HttpStatus.OK);
-      expect(body.length).toBe(0);
+
+      const exercisesPage = body as Paginated<ExerciseResponse[]>;
+
+      const { count, pages, current, resource } = exercisesPage;
+
+      expect(count).toBe(0);
+      expect(pages).toBe(0);
+      expect(current).toBe(0);
+      expect(resource.length).toBe(0);
     });
 
     it.todo('filter with params');

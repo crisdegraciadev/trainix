@@ -7,12 +7,13 @@ export const INEXISTENT_ID = 99999;
 type RequestArgs = {
   url: string;
   headers?: Record<string, string> | {};
+  query?: Record<string, string> | {};
 };
 
 type GetRequestArgs = RequestArgs;
 
-export const getRequest = async ({ url, headers = {} }: GetRequestArgs): Promise<request.Test> => {
-  return request(app).get(url).set(headers).send();
+export const getRequest = async ({ url, headers = {}, query = {} }: GetRequestArgs): Promise<request.Test> => {
+  return request(app).get(url).set(headers).query(query).send();
 };
 
 type PostRequestArgs = RequestArgs & {

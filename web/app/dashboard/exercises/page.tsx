@@ -5,7 +5,7 @@ import { EXERCISES_COLUMNS } from "./components/tables/columns";
 import { FACETED_FILTERS } from "./data/faceted-filter";
 import { useState } from "react";
 import CreateExerciseDialog from "./components/dialogs/create";
-import { useFetchExercises } from "./hooks/crud/use-fetch-exercises";
+import { useFetchExercises } from "../../../hooks/exercises/use-fetch-exercises";
 
 export default function ExercisesPage() {
   const { data } = useFetchExercises();

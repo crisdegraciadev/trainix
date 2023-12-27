@@ -8,6 +8,19 @@ const prisma = new PrismaClient();
 async function main(): Promise<void> {
   const env = process.env.ENV;
 
+  if (env === 'dev') {
+    try {
+      await prisma.user.create({
+        data: {
+          username: 'admin',
+          email: 'admin@gmail.com',
+          passwordHash: Effect.runSync(hashPassword({ password: '123456789' })),
+          role: Role.admin,
+        },
+      });
+    } catch (e) {}
+  }
+
   if (env === 'e2e') {
     try {
       await prisma.user.create({
