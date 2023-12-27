@@ -6,10 +6,16 @@ import { FACETED_FILTERS } from "./data/faceted-filter";
 import { useState } from "react";
 import CreateExerciseDialog from "./components/dialogs/create";
 import { useFetchExercises } from "../../../hooks/exercises/use-fetch-exercises";
+import { PaginationState } from "@tanstack/react-table";
 
 export default function ExercisesPage() {
-  const { data } = useFetchExercises();
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10,
+  });
+
+  const { data } = useFetchExercises(pagination);
 
   return (
     <section className="mt-1">
@@ -25,6 +31,8 @@ export default function ExercisesPage() {
         searchBarPlaceholder="Search by exercise name..."
         data={data}
         facetedFilters={FACETED_FILTERS}
+        setPagination={setPagination}
+        pagination={pagination}
       />
     </section>
   );

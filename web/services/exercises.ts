@@ -10,6 +10,7 @@ import {
   sendPostRequest,
   sendPutRequest,
 } from "../lib/axios";
+import { Paginated } from "../types/utils";
 
 type CreateExerciseArgs = {
   createExerciseDto: CreateExerciseDto;
@@ -62,8 +63,20 @@ export async function editExercise({
   return data;
 }
 
-export async function fetchExercises(): Promise<Exercise[]> {
-  const res = await sendGetRequest<Exercise[]>({ path: ApiPaths.EXERCISES });
+type FetchExercisesArgs = {
+  skip: number;
+  take: number;
+};
+
+export async function fetchExercises({
+  skip,
+  take,
+}: FetchExercisesArgs): Promise<Paginated<Exercise[]>> {
+  const res = await sendGetRequest<Paginated<Exercise[]>>({
+    path: ApiPaths.EXERCISES,
+    params: { skip, take },
+  });
+
   const { data } = res;
   return data;
 }
