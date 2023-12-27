@@ -26,10 +26,24 @@ export const filterExercises = ({ facetedFilters, skip, take }: FilterArgs): Fil
   );
 };
 
-const buildFilters = ({ name, muscles, difficulty }: ExerciseFacetedFilter): Prisma.ExerciseWhereInput => {
-  return {
-    name,
-    difficulty,
-    muscles: { hasSome: muscles },
-  };
+const buildFilters = ({ name, description, muscles, difficulty }: ExerciseFacetedFilter): Prisma.ExerciseWhereInput => {
+  const filters: Prisma.ExerciseWhereInput = {};
+
+  if (name) {
+    filters.name = { contains: name };
+  }
+
+  if (description) {
+    filters.name = { contains: description };
+  }
+
+  if (difficulty) {
+    filters.difficulty = difficulty;
+  }
+
+  if (muscles?.length) {
+    filters.muscles = { hasSome: muscles };
+  }
+
+  return filters;
 };

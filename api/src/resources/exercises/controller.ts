@@ -3,7 +3,7 @@ import { HttpStatus } from '../../consts';
 import { Effect, Exit, pipe } from 'effect';
 import { mapIdToNumber } from '../../utils';
 import { handleFailureCauses } from '../../errors/handlers';
-import { ExerciseRequestParams, ResponseExerciseDto, UpdateExerciseDto } from './types';
+import { ExerciseFacetedFilter, ExerciseRequestParams, ResponseExerciseDto, UpdateExerciseDto } from './types';
 import { retrieveExercise } from './services/retrieve';
 import { filterExercises } from './services/filter';
 import { createResponseExerciseDto, isValidCreateExerciseDto, isValidUpdateExerciseDto } from './utils';
@@ -38,10 +38,11 @@ export const handleFindExerciseById = async (
 export const handleFindExerciseByFields = async (req: Request, res: Response<Paginated<Exercise[]>>): Promise<void> => {
   const { query } = req;
 
-  const { skip, take } = query;
+  const { skip, take, ...params } = query;
+  const facetedFilters: ExerciseFacetedFilter = { ...params };
 
   const findByFieldsResult = await pipe(
-    filterExercises({ skip: Number(skip), take: Number(take) }),
+    filterExercises({ facetedFilters, skip: Number(skip), take: Number(take) }),
     Effect.runPromiseExit
   );
 

@@ -27,7 +27,7 @@ afterAll(async () => {
 
 describe('EXERCISES', () => {
   describe('GET /:id', () => {
-    it('retrieve', async () => {
+    it('should retrieve the exercise', async () => {
       const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
       const { id: exerciseId } = await insertExercise(EXERCISE_PUSH_UP, ACCESS_TOKEN_COOKIE);
@@ -43,7 +43,7 @@ describe('EXERCISES', () => {
       await deleteExercise(exerciseId, ACCESS_TOKEN_COOKIE);
     });
 
-    it('not found', async () => {
+    it('should NOT found the exercise', async () => {
       const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
       const { statusCode, body } = await getRequest({
@@ -57,7 +57,7 @@ describe('EXERCISES', () => {
   });
 
   describe('GET /', () => {
-    it('page with 3 elements', async () => {
+    it('should retrieve a page with 3 elements', async () => {
       const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
       const createExercisePayloads = [EXERCISE_PUSH_UP, EXERCISE_PULL_UP, EXERCISE_SQUAT];
@@ -87,7 +87,7 @@ describe('EXERCISES', () => {
       await Promise.all(createdExercises.map(({ id }) => deleteExercise(id, ACCESS_TOKEN_COOKIE)));
     });
 
-    it('empty list', async () => {
+    it('should retrieve empty list', async () => {
       const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
 
       const { statusCode, body } = await getRequest({
@@ -108,7 +108,109 @@ describe('EXERCISES', () => {
       expect(resource.length).toBe(0);
     });
 
-    it.todo('filter with params');
+    it('should filter by name', async () => {
+      const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
+
+      const createExercisePayloads = [EXERCISE_PUSH_UP, EXERCISE_PULL_UP, EXERCISE_SQUAT];
+
+      const createdExercises = await Promise.all(
+        createExercisePayloads.map(async (payload) => insertExercise(payload, ACCESS_TOKEN_COOKIE))
+      );
+
+      const { statusCode, body } = await getRequest({
+        url: `${BASE_EXERCISE_PATH}/`,
+        headers: { Cookie: ACCESS_TOKEN_COOKIE },
+        query: { skip: 0, take: 5, name: EXERCISE_PUSH_UP.name },
+      });
+
+      expect(statusCode).toBe(HttpStatus.OK);
+
+      const exercisesPage = body as Paginated<ExerciseResponse[]>;
+
+      const { resource } = exercisesPage;
+
+      expect(resource.length).toBe(1);
+
+      await Promise.all(createdExercises.map(({ id }) => deleteExercise(id, ACCESS_TOKEN_COOKIE)));
+    });
+
+    it('should NOT filter by name', async () => {
+      const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
+
+      const createExercisePayloads = [EXERCISE_PUSH_UP, EXERCISE_PULL_UP, EXERCISE_SQUAT];
+
+      const createdExercises = await Promise.all(
+        createExercisePayloads.map(async (payload) => insertExercise(payload, ACCESS_TOKEN_COOKIE))
+      );
+
+      const { statusCode, body } = await getRequest({
+        url: `${BASE_EXERCISE_PATH}/`,
+        headers: { Cookie: ACCESS_TOKEN_COOKIE },
+        query: { skip: 0, take: 5, name: 'Str4ng3 Ex3rc1se' },
+      });
+
+      expect(statusCode).toBe(HttpStatus.OK);
+
+      const exercisesPage = body as Paginated<ExerciseResponse[]>;
+
+      const { resource } = exercisesPage;
+
+      expect(resource.length).toBe(0);
+
+      await Promise.all(createdExercises.map(({ id }) => deleteExercise(id, ACCESS_TOKEN_COOKIE)));
+    });
+
+    it('should filter by muscles', async () => {
+      const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
+
+      const createExercisePayloads = [EXERCISE_PUSH_UP, EXERCISE_PULL_UP, EXERCISE_SQUAT];
+
+      const createdExercises = await Promise.all(
+        createExercisePayloads.map(async (payload) => insertExercise(payload, ACCESS_TOKEN_COOKIE))
+      );
+
+      const { statusCode, body } = await getRequest({
+        url: `${BASE_EXERCISE_PATH}/`,
+        headers: { Cookie: ACCESS_TOKEN_COOKIE },
+        query: { skip: 0, take: 5, muscles: [...EXERCISE_PULL_UP.muscles] },
+      });
+
+      expect(statusCode).toBe(HttpStatus.OK);
+
+      const exercisesPage = body as Paginated<ExerciseResponse[]>;
+
+      const { resource } = exercisesPage;
+
+      expect(resource.length).toBe(1);
+
+      await Promise.all(createdExercises.map(({ id }) => deleteExercise(id, ACCESS_TOKEN_COOKIE)));
+    });
+
+    it('should NOT filter by muscles', async () => {
+      const ACCESS_TOKEN_COOKIE = await loginUser(ADMIN_CREDENTIALS);
+
+      const createExercisePayloads = [EXERCISE_PUSH_UP, EXERCISE_PULL_UP, EXERCISE_SQUAT];
+
+      const createdExercises = await Promise.all(
+        createExercisePayloads.map(async (payload) => insertExercise(payload, ACCESS_TOKEN_COOKIE))
+      );
+
+      const { statusCode, body } = await getRequest({
+        url: `${BASE_EXERCISE_PATH}/`,
+        headers: { Cookie: ACCESS_TOKEN_COOKIE },
+        query: { skip: 0, take: 5, muscles: ['abs'] },
+      });
+
+      expect(statusCode).toBe(HttpStatus.OK);
+
+      const exercisesPage = body as Paginated<ExerciseResponse[]>;
+
+      const { resource } = exercisesPage;
+
+      expect(resource.length).toBe(0);
+
+      await Promise.all(createdExercises.map(({ id }) => deleteExercise(id, ACCESS_TOKEN_COOKIE)));
+    });
   });
 
   describe('POST /', () => {
