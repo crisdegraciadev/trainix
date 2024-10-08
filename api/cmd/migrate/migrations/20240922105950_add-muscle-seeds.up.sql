@@ -1,0 +1,16 @@
+INSERT INTO muscles (label, value) VALUES
+('chest', 1),
+('triceps', 2),
+('biceps', 3),
+('shoulders', 4),
+('upper back', 5),
+('dorsals', 6),
+('lower back', 7),
+('trapezius', 8),
+('deltoid', 9),
+('forearms', 10),
+('core', 11),
+('quadriceps', 12),
+('gluteus', 13),
+('hamstrings', 14),
+('calf', 15);

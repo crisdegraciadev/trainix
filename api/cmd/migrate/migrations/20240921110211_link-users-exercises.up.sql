@@ -1,0 +1,4 @@
+ALTER TABLE exercises ADD COLUMN `userId` INT UNSIGNED;
+
+ALTER TABLE exercises ADD CONSTRAINT fk_user_exercise
+FOREIGN KEY (`userId`) REFERENCES users (`id`) ON DELETE CASCADE;
