@@ -159,6 +159,8 @@ func (h *Handler) handleFilter(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+  log.Printf("take = %d skip = %d",take,skip)
+
 	exercises, err := h.exerciseStore.FilterExercises(filter, skip, take)
 
 	if err != nil {

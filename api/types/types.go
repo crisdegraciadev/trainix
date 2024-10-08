@@ -144,7 +144,7 @@ type MuscleStore interface {
 type Muscle struct {
 	ID    int    `json:"id"`
 	Label string `json:"label"`
-	Value string `json:"value"`
+	Value int `json:"value"`
 }
 
 // Difficulty
@@ -156,5 +156,5 @@ type DifficultyStore interface {
 type Difficulty struct {
 	ID    int    `json:"id"`
 	Label string `json:"label"`
-	Value string `json:"value"`
+	Value int `json:"value"`
 }

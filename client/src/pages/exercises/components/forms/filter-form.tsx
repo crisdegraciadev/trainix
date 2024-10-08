@@ -18,7 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Difficulty, Muscle } from '@/core/types';
+import { DifficultyLabels, MuscleLabels } from '@/core/types';
 import { formatString, StrFormat } from '@/core/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -32,8 +32,8 @@ const formSchema = z.object({
   favourite: z
     .union([z.literal('all'), z.literal('fav'), z.literal('non-fav')])
     .optional(),
-  difficulty: z.nativeEnum(Difficulty).optional(),
-  muscles: z.array(z.nativeEnum(Muscle)).optional(),
+  difficulty: z.nativeEnum(DifficultyLabels).optional(),
+  muscles: z.array(z.nativeEnum(MuscleLabels)).optional(),
 });
 
 function calcFavouriteValue(val?: string) {
@@ -169,9 +169,9 @@ export default function ExerciseFilterForm() {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value={Difficulty.EASY}>Easy</SelectItem>
-                    <SelectItem value={Difficulty.MEDIUM}>Medium</SelectItem>
-                    <SelectItem value={Difficulty.HARD}>Hard</SelectItem>
+                    <SelectItem value={DifficultyLabels.EASY}>Easy</SelectItem>
+                    <SelectItem value={DifficultyLabels.MEDIUM}>Medium</SelectItem>
+                    <SelectItem value={DifficultyLabels.HARD}>Hard</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -188,11 +188,11 @@ export default function ExerciseFilterForm() {
                 <FormControl>
                   <FacetedFilter
                     onChange={(muscles: string[]) =>
-                      form.setValue('muscles', muscles as Muscle[])
+                      form.setValue('muscles', muscles as MuscleEnum[])
                     }
                     defaultValues={filter.muscles as string[]}
                     title="Muscles"
-                    options={Object.values(Muscle).map((muscle) => ({
+                    options={Object.values(MuscleEnum).map((muscle) => ({
                       label: formatString(muscle, StrFormat.TITLE_CASE),
                       value: muscle,
                     }))}

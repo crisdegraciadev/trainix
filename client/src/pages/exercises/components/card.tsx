@@ -1,25 +1,27 @@
+import HybridView from '@/components/hybrid-view';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { useResolutionStore } from '@/core/state/resolution-store';
+import { Exercise } from '@/core/types';
+import { extractYoutubeVideoId, formatString, StrFormat } from '@/core/utils';
+import { HeartIcon } from 'lucide-react';
+import { ComponentProps, forwardRef, PropsWithChildren } from 'react';
+import { useExerciseHybridViewStore } from '../state/exercise-hybrid-view-store';
+import { ExerciseDifficultyBadge } from './difficulty-badge';
+import ExerciseDetails from './details';
 
-import HybridView from "@/components/hybrid-view";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { useResolutionStore } from "@/core/state/resolution-store";
-import { Exercise } from "@/core/types";
-import { extractYoutubeVideoId, formatString, StrFormat } from "@/core/utils";
-import { HeartIcon } from "lucide-react";
-import { ComponentProps, forwardRef, PropsWithChildren } from "react";
-import { useExerciseHybridViewStore } from "../state/exercise-hybrid-view-store";
-import { ExerciseDifficultyBadge } from "./difficulty-badge";
-import ExerciseDetails from "./details";
-
-
-function MuscleList({ muscles }: Pick<Exercise, "muscles">) {
+function MuscleList({ muscles }: Pick<Exercise, 'muscles'>) {
   const [primary, ...rest] = muscles;
+
+  console.log({ muscles });
 
   const musclesRemaining = rest.length;
 
   const BaseList = ({ children }: PropsWithChildren) => (
     <div className="flex gap-1">
-      <Badge className="h-fit">{formatString(primary, StrFormat.TITLE_CASE)}</Badge>
+      <Badge className="h-fit">
+        {formatString(primary.label, StrFormat.TITLE_CASE)}
+      </Badge>
       {children}
     </div>
   );
@@ -28,7 +30,7 @@ function MuscleList({ muscles }: Pick<Exercise, "muscles">) {
     return (
       <BaseList>
         <Badge className="h-fit" variant="secondary">
-          {formatString(rest[0], StrFormat.TITLE_CASE)}
+          {formatString(rest[0].label, StrFormat.TITLE_CASE)}
         </Badge>
         <Badge className="h-fit text-nowrap" variant="secondary">
           {`+ ${musclesRemaining - 1} more`}
@@ -40,15 +42,18 @@ function MuscleList({ muscles }: Pick<Exercise, "muscles">) {
   return (
     <BaseList>
       {rest.map((muscle) => (
-        <Badge key={muscle} className="h-fit" variant="secondary">
-          {formatString(muscle, StrFormat.TITLE_CASE)}
+        <Badge key={muscle.label} className="h-fit" variant="secondary">
+          {formatString(muscle.label, StrFormat.TITLE_CASE)}
         </Badge>
       ))}
     </BaseList>
   );
 }
 
-const ExerciseTrigger = forwardRef<HTMLDivElement, ComponentProps<"div"> & Exercise>(function(
+const ExerciseTrigger = forwardRef<
+  HTMLDivElement,
+  ComponentProps<'div'> & Exercise
+>(function (
   { name, description, muscles, difficulty, favourite, video, ...rest },
   ref,
 ) {
@@ -62,7 +67,7 @@ const ExerciseTrigger = forwardRef<HTMLDivElement, ComponentProps<"div"> & Exerc
             src={
               video
                 ? `https://i3.ytimg.com/vi/${extractYoutubeVideoId(video)}/maxresdefault.jpg`
-                : "/placeholder.svg"
+                : '/placeholder.svg'
             }
             alt="Project Image"
             className={`aspect-video object-cover rounded-t-lg`}

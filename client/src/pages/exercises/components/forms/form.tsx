@@ -11,7 +11,7 @@ import {
 import { Input } from '@/components/ui/input';
 
 import { useCreateExerciseMutation } from '@/core/api/mutations/use-create-exercise-mutation';
-import { Difficulty, Muscle } from '@/core/types';
+import { DifficultyLabels, MuscleLabels } from '@/core/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { LoaderCircle } from 'lucide-react';
 import { useEffect } from 'react';
@@ -21,11 +21,17 @@ import { z } from 'zod';
 import { useExerciseHybridViewStore } from '../../state/exercise-hybrid-view-store';
 import { useToast } from '@/hooks/use-toast';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { MultiSelect } from '@/components/ui/multi-select';
 import { Checkbox } from '@/components/ui/checkbox';
 
-const muscles = Object.values(Muscle).map((value) => ({
+const muscles = Object.values(MuscleLabels).map((value) => ({
   value,
   label: value.charAt(0).toUpperCase() + value.slice(1).toLowerCase(),
 }));
@@ -35,11 +41,11 @@ const formSchema = z.object({
     .string({ required_error: 'Exercise name is required' })
     .min(1, 'Exercise name is required'),
   description: z.string().optional(),
-  difficulty: z.nativeEnum(Difficulty, {
+  difficulty: z.nativeEnum(DifficultyLabels, {
     required_error: 'Difficulty is required',
   }),
   muscles: z
-    .array(z.nativeEnum(Muscle))
+    .array(z.nativeEnum(MuscleLabels))
     .min(1, 'At least 1 muscle must be selected'),
   favourite: z.boolean(),
   video: z.union([z.string().url(), z.string().length(0)]).optional(),
@@ -175,9 +181,11 @@ export default function ExerciseForm() {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value={Difficulty.EASY}>Easy</SelectItem>
-                    <SelectItem value={Difficulty.MEDIUM}>Medium</SelectItem>
-                    <SelectItem value={Difficulty.HARD}>Hard</SelectItem>
+                    <SelectItem value={DifficultyLabels.EASY}>Easy</SelectItem>
+                    <SelectItem value={DifficultyLabels.MEDIUM}>
+                      Medium
+                    </SelectItem>
+                    <SelectItem value={DifficultyLabels.HARD}>Hard</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />

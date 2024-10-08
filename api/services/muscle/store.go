@@ -30,6 +30,8 @@ func (s *Store) FindMuscleByID(id int) (*types.Muscle, error) {
 		}
 	}
 
+	rows.Close()
+
 	if m.ID == 0 {
 		return nil, fmt.Errorf("muscle not found")
 	}
@@ -56,6 +58,8 @@ func (s *Store) FindAll() ([]types.Muscle, error) {
 		muscles = append(muscles, *muscle)
 	}
 
+	rows.Close()
+
 	return muscles, nil
 }
 
@@ -79,6 +83,8 @@ func (s *Store) FindMusclesRelatedWithExercise(exerciseId int) ([]types.Muscle, 
 
 		muscles = append(muscles, *m)
 	}
+
+	rows.Close()
 
 	return muscles, nil
 }

@@ -25,10 +25,10 @@ export default function ExerciseList() {
     return <p>Loading</p>;
   }
 
-  console.log({ data });
-
   const totalExercises = data.pages[0].totalItems;
   const exercises = data.pages.flatMap(({ values }) => values);
+
+  console.log({ data, totalExercises, exercisesLength: exercises.length });
 
   return (
     <>

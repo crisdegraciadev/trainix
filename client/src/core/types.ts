@@ -22,28 +22,40 @@ export type RegisterUserDTO = Omit<UserDTO, 'id'> & {
 };
 
 // Difficulty
-export enum Difficulty {
-  EASY = 'EASY',
-  MEDIUM = 'MEDIUM',
-  HARD = 'HARD',
+export type Difficulty = {
+  id: number;
+  label: DifficultyLabels;
+  value: number;
+};
+
+export enum DifficultyLabels {
+  EASY = 'easy',
+  MEDIUM = 'medium',
+  HARD = 'hard',
 }
 
 // Muscle
-export enum Muscle {
-  CHEST = 'CHEST',
-  TRICEPS = 'TRICEPS',
-  BICEPS = 'BICEPS',
-  DELTOIDS = 'DELTOIDS',
-  TRAPEZIUS = 'TRAPEZIUS',
-  RHOMBOIDS = 'RHOMBOIDS',
-  CORE = 'CORE',
-  GLUTEUS = 'GLUTEUS',
-  HAMSTRINGS = 'HAMSTRINGS',
-  QUADRICEPS = 'QUADRICEPS',
-  ADDUCTORS = 'ADDUCTORS',
-  ABDUCTORS = 'ABDUCTORS',
-  TIBIALIS_ANTERIOR = 'TIBIALIS_ANTERIOR',
-  FOREARM = 'FOREARM',
+export type Muscle = {
+  id: number;
+  label: MuscleLabels;
+  value: number;
+};
+
+export enum MuscleLabels {
+  CHEST = 'chest',
+  TRICEPS = 'triceps',
+  BICEPS = 'biceps',
+  DELTOIDS = 'deltoids',
+  TRAPEZIUS = 'trapezius',
+  RHOMBOIDS = 'rhomboids',
+  CORE = 'core',
+  GLUTEUS = 'gluteus',
+  HAMSTRINGS = 'hamstrings',
+  QUADRICEPS = 'quadriceps',
+  ADDUCTORS = 'adductors',
+  ABDUCTORS = 'abductors',
+  TIBIALIS_ANTERIOR = 'tibialis_anterior',
+  FOREARM = 'forearm',
 }
 
 // Exercise
@@ -62,7 +74,7 @@ export type ExerciseDTO = {
   name: string;
   description?: string;
   userId: string;
-  difficulty: Difficulty;
+  difficulty: DifficultyLabels;
   muscles: Muscle[];
   favourite: boolean;
   video?: string;
@@ -76,8 +88,8 @@ export type FilterExercisesDTO = Partial<{
   name: string;
   userId: string;
   favourite: string;
-  muscles: Muscle[];
-  difficulty: Difficulty;
+  muscles: number[];
+  difficulty: DifficultyLabels;
 }>;
 
 export type OrderExercisesDTO = Partial<{
@@ -93,8 +105,8 @@ export type QueryExercisesDTO = Partial<{
 
 // Common
 export type PageParams = {
-  offset: number;
-  limit: number;
+  take: number;
+  skip: number;
 };
 
 export type Page<T> = {

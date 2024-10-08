@@ -117,7 +117,6 @@ func (s *Store) DeleteExercise(id int) error {
 }
 
 func (s *Store) UpdateExercise(id int, exercise types.Exercise, muscleIDs []int, difficultyID int) error {
-
 	baseQuery := "UPDATE exercises SET"
 	updates := []string{}
 
@@ -165,6 +164,8 @@ func (s *Store) FindExercise(id int) (exercise *types.Exercise, err error) {
 			return nil, err
 		}
 	}
+
+	rows.Close()
 
 	if exercise.ID == 0 {
 		log.Printf("%s", "Exercise ID is 0")
@@ -218,6 +219,8 @@ func (s *Store) FilterExercises(filter types.ExerciseFilter, skip int, take int)
 		exercises = append(exercises, *exercise)
 	}
 
+	rows.Close()
+
 	return exercises, nil
 }
 
@@ -259,6 +262,8 @@ func (s *Store) CountExercises(filter types.ExerciseFilter) (count int, err erro
 	}
 
 	err = rows.Scan(&count)
+
+rows.Close()
 
 	if err != nil {
 		return 0, err

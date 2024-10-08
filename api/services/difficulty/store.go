@@ -3,7 +3,6 @@ package difficulty
 import (
 	"database/sql"
 	"fmt"
-	"log"
 	"trainix/types"
 )
 
@@ -31,6 +30,8 @@ func (s *Store) FindDifficultyByID(id int) (*types.Difficulty, error) {
 		}
 	}
 
+	rows.Close()
+
 	if d.ID == 0 {
 		return nil, fmt.Errorf("difficulty not found")
 	}
@@ -50,13 +51,14 @@ func (s *Store) FindDifficultyRelatedWithExercise(exerciseId int) (*types.Diffic
 
 	for rows.Next() {
 		rows.Scan(&difficultyID)
-		log.Printf("DifficultyID = %d", difficultyID)
 		d, err = s.FindDifficultyByID(difficultyID)
 
 		if err != nil {
 			return nil, err
 		}
 	}
+
+	rows.Close()
 
 	if d.ID == 0 {
 		return nil, fmt.Errorf("difficulty not found")
