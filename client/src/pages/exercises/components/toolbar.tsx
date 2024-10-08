@@ -23,7 +23,6 @@ export default function ExerciseToolbar() {
     ...views,
   }));
 
-  console.log({ orderOpen });
 
   return (
     <div className="flex items-center justify-between w-full gap-2">

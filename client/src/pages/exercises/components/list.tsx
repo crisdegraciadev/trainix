@@ -28,14 +28,12 @@ export default function ExerciseList() {
   const totalExercises = data.pages[0].totalItems;
   const exercises = data.pages.flatMap(({ values }) => values);
 
-  console.log({ data, totalExercises, exercisesLength: exercises.length });
-
   return (
     <>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {exercises.map((exercise, idx) => (
+        {exercises.map((exercise) => (
           <ExerciseCard
-            key={exercise.id + idx}
+            key={exercise.name}
             id={exercise.id}
             name={exercise.name}
             description={exercise.description}

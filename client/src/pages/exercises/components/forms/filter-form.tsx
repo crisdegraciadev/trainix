@@ -188,11 +188,11 @@ export default function ExerciseFilterForm() {
                 <FormControl>
                   <FacetedFilter
                     onChange={(muscles: string[]) =>
-                      form.setValue('muscles', muscles as MuscleEnum[])
+                      form.setValue('muscles', muscles as MuscleLabels[])
                     }
                     defaultValues={filter.muscles as string[]}
                     title="Muscles"
-                    options={Object.values(MuscleEnum).map((muscle) => ({
+                    options={Object.values(MuscleLabels).map((muscle) => ({
                       label: formatString(muscle, StrFormat.TITLE_CASE),
                       value: muscle,
                     }))}

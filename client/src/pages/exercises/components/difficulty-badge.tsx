@@ -8,7 +8,7 @@ export function ExerciseDifficultyBadge({
   const label = formatString(difficulty.label, StrFormat.TITLE_CASE);
 
   if (difficulty.label === DifficultyLabels.HARD) {
-    return <Badge className="text-white bg-red">{label}</Badge>;
+    return <Badge className="text-white bg-hard">{label}</Badge>;
   }
 
   if (difficulty.label === DifficultyLabels.MEDIUM) {

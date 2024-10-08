@@ -22,7 +22,6 @@ type OrderSchema = z.infer<typeof ORDER_SCHEMA>;
 
 const formSchema = z.object({
   name: ORDER_SCHEMA,
-  favourite: ORDER_SCHEMA,
   createdAt: ORDER_SCHEMA,
 });
 
@@ -30,10 +29,6 @@ const SortOptions = {
   NAME: [
     { label: 'Alphabetical', value: 'asc' },
     { label: 'Reverse', value: 'desc' },
-  ],
-  FAVOURITE: [
-    { label: 'Regular exercises', value: 'asc' },
-    { label: 'Marked as favourite', value: 'desc' },
   ],
   CREATION: [
     { label: 'Newer', value: 'desc' },
@@ -59,7 +54,6 @@ export default function ExerciseSortForm() {
   function reset(e: FormEvent) {
     e.preventDefault();
     form.setValue('name', undefined);
-    form.setValue('favourite', undefined);
     form.setValue('createdAt', 'desc');
     setOrderOpen(false);
   }
@@ -93,25 +87,6 @@ export default function ExerciseSortForm() {
             )}
           />
 
-          <FormField
-            control={form.control}
-            name="favourite"
-            render={() => (
-              <FormItem>
-                <FormLabel>Favourite</FormLabel>
-                <FormControl>
-                  <Unselect
-                    options={SortOptions.FAVOURITE}
-                    onChange={(value) =>
-                      form.setValue('favourite', value as OrderSchema)
-                    }
-                    defaultValue={order.favourite}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
 
           <FormField
             control={form.control}

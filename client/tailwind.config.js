@@ -10,9 +10,9 @@ module.exports = {
         sm: 'calc(var(--radius) - 4px)',
       },
       colors: {
-        easy: "hsl(142.1 76.2% 36.3%)",
-        medium: "hsl(24.6 95% 53.1%)",
-        hard: "hsl(0 72.2% 50.6%)",
+        easy: 'hsl(142.1 76.2% 36.3%)',
+        medium: 'hsl(24.6 95% 53.1%)',
+        hard: 'hsl(0 72.2% 50.6%)',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: {
@@ -56,5 +56,18 @@ module.exports = {
       },
     },
   },
-  plugins: [require('tailwindcss-animate')],
+  plugins: [
+    require('tailwindcss-animate'),
+    function ({ addUtilities }) {
+      addUtilities({
+        '.line-clamp-2': {
+          display: '-webkit-box',
+          '-webkit-line-clamp': '2',
+          '-webkit-box-orient': 'vertical',
+          overflow: 'hidden',
+          'text-overflow': 'ellipsis',
+        },
+      });
+    },
+  ],
 };

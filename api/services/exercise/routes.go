@@ -124,27 +124,32 @@ func (h *Handler) handleFilter(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	rawFilter, _ := payload.Filter, payload.Order
+	rawFilter, rawOrder := payload.Filter, payload.Order
 
-	// check if muscles exists
+	// setup filter
 	if _, err := h.checkMuscleIDs(rawFilter.MuscleIDs); err != nil && len(rawFilter.MuscleIDs) != 0 {
 		utils.WriteError(w, http.StatusNotFound, err)
 		return
 	}
 
-	// check if difficulties exists
 	if _, err := h.checkDifficultyIDs(rawFilter.DifficultyIDs); err != nil && len(rawFilter.DifficultyIDs) != 0 {
 		utils.WriteError(w, http.StatusNotFound, err)
 		return
 	}
 
-	// filter exercises
 	filter := types.ExerciseFilter{
 		Name:          rawFilter.Name,
 		MuscleIDs:     rawFilter.MuscleIDs,
 		DifficultyIDs: rawFilter.DifficultyIDs,
 	}
 
+	// setup order
+	order := types.ExerciseOrder{
+		Name:      rawOrder.Name,
+		CreatedAt: rawOrder.CreatedAt,
+	}
+
+	// setup pagination
 	skip, err := utils.ParseQueryParam(r, "skip", 0)
 
 	if err != nil {
@@ -159,9 +164,12 @@ func (h *Handler) handleFilter(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-  log.Printf("take = %d skip = %d",take,skip)
+	pagination := types.Pagination{
+		Take: take,
+		Skip: skip,
+	}
 
-	exercises, err := h.exerciseStore.FilterExercises(filter, skip, take)
+	exercises, err := h.exerciseStore.FilterExercises(filter, order, pagination)
 
 	if err != nil {
 		utils.WriteError(w, http.StatusInternalServerError, err)

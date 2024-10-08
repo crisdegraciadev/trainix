@@ -22,7 +22,6 @@ export function useLoginMutation() {
   }
 
   function onLoginSuccess(token: string) {
-    console.log({ token });
     setAccessToken(token);
     setIsLoggedIn(true);
   }

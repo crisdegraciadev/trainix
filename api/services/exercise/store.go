@@ -175,7 +175,11 @@ func (s *Store) FindExercise(id int) (exercise *types.Exercise, err error) {
 	return exercise, nil
 }
 
-func (s *Store) FilterExercises(filter types.ExerciseFilter, skip int, take int) (exercises []types.Exercise, err error) {
+func (s *Store) FilterExercises(
+	filter types.ExerciseFilter,
+	order types.ExerciseOrder,
+	pagination types.Pagination,
+) (exercises []types.Exercise, err error) {
 	var queryBuilder strings.Builder
 
 	queryBuilder.WriteString(`
@@ -200,9 +204,17 @@ func (s *Store) FilterExercises(filter types.ExerciseFilter, skip int, take int)
 		queryBuilder.WriteString(condition)
 	}
 
-	queryBuilder.WriteString(fmt.Sprintf(" LIMIT %d OFFSET %d", take, skip))
+	if order.Name != "" || order.CreatedAt != "" {
+		order := utils.MapOrdersToSQL(map[string]string{"name": order.Name, "createdAt": order.CreatedAt})
+		queryBuilder.WriteString(order)
+	}
+
+	queryBuilder.WriteString(fmt.Sprintf(" LIMIT %d OFFSET %d", pagination.Take, pagination.Skip))
 
 	query := queryBuilder.String()
+
+	log.Printf("%s", query)
+
 	rows, err := s.db.Query(query)
 
 	if err != nil {
@@ -263,7 +275,7 @@ func (s *Store) CountExercises(filter types.ExerciseFilter) (count int, err erro
 
 	err = rows.Scan(&count)
 
-rows.Close()
+	rows.Close()
 
 	if err != nil {
 		return 0, err

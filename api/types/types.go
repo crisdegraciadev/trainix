@@ -17,7 +17,10 @@ type Page[T any] struct {
 	TotalPages int `json:"totaPages"`
 }
 
-type Order string
+type Pagination struct {
+	Skip int
+	Take int
+}
 
 // Auth
 type PasswordService interface {
@@ -67,7 +70,7 @@ type RegisterUserDTO struct {
 type ExerciseStore interface {
 	CreateExercise(ctx context.Context, exercise Exercise, muscleIDS []int, difficultyID int) error
 	IsExerciseDuplicated(name string) (v bool, err error)
-	FilterExercises(filter ExerciseFilter, skip int, take int) (exercises []Exercise, err error)
+	FilterExercises(filter ExerciseFilter, order ExerciseOrder, pagination Pagination) (exercises []Exercise, err error)
 	CountExercises(filter ExerciseFilter) (count int, err error)
 	FindExercise(id int) (exercise *Exercise, err error)
 	UpdateExercise(id int, exercise Exercise, muscleIDs []int, difficultyID int) error
@@ -100,6 +103,11 @@ type ExerciseFilter struct {
 	DifficultyIDs []int
 }
 
+type ExerciseOrder struct {
+	Name      string
+	CreatedAt string
+}
+
 type CreateExerciseDTO struct {
 	Name         string `json:"name" validate:"required"`
 	Description  string `json:"description"`
@@ -121,9 +129,8 @@ type FilterExercisesDTO struct {
 }
 
 type OrderExercisesDTO struct {
-	Name      Order
-	Favourite Order
-	CreatedAt Order
+	Name      string
+	CreatedAt string
 }
 
 type UpdateExerciseDTO struct {
@@ -144,7 +151,7 @@ type MuscleStore interface {
 type Muscle struct {
 	ID    int    `json:"id"`
 	Label string `json:"label"`
-	Value int `json:"value"`
+	Value int    `json:"value"`
 }
 
 // Difficulty
@@ -156,5 +163,5 @@ type DifficultyStore interface {
 type Difficulty struct {
 	ID    int    `json:"id"`
 	Label string `json:"label"`
-	Value int `json:"value"`
+	Value int    `json:"value"`
 }
