@@ -1,3 +1,5 @@
 export const QueryKeys = {
-  FIND_EXERCISES: ['exercises', 'find'],
+  FILTER_EXERCISES: ['exercises', 'find'],
+  FIND_ALL_MUSCLES: ['muscles', 'find', 'all'],
+  FIND_ALL_DIFFICULTIES: ['difficulties', 'find', 'all'],
 };

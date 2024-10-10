@@ -1,6 +1,8 @@
 export const ApiPaths = {
   LOGIN: '/auth/login',
   VALIDATE: '/auth/validate',
-  REGISTER: '/user',
+  REGISTER: '/users',
   EXERCISES: '/exercises',
+  MUSCLES: '/muscles',
+  DIFFICULTIES: '/difficulties',
 };

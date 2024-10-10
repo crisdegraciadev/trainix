@@ -39,7 +39,7 @@ func (s *Store) FindMuscleByID(id int) (*types.Muscle, error) {
 	return m, nil
 }
 
-func (s *Store) FindAll() ([]types.Muscle, error) {
+func (s *Store) FindAllMuscles() ([]types.Muscle, error) {
 	rows, err := s.db.Query("SELECT * FROM muscles")
 
 	if err != nil {

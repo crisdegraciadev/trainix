@@ -59,12 +59,6 @@ const ExerciseTrigger = forwardRef<
   { name, description, muscles, difficulty, favourite, video, ...rest },
   ref,
 ) {
-  const DEFAULT_IMG_COLOR = {
-    [DifficultyLabels.EASY]: '16a34a',
-    [DifficultyLabels.MEDIUM]: 'f97316',
-    [DifficultyLabels.HARD]: 'dc2626',
-  };
-
   return (
     <div ref={ref} {...rest}>
       <span className="sr-only">View Exercise</span>

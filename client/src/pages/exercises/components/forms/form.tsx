@@ -19,7 +19,7 @@ import { useForm } from 'react-hook-form';
 import { v4 as uuid } from 'uuid';
 import { z } from 'zod';
 import { useExerciseHybridViewStore } from '../../state/exercise-hybrid-view-store';
-import { useToast } from '@/hooks/use-toast';
+import { useToast } from '@/core/hooks/use-toast';
 import { Textarea } from '@/components/ui/textarea';
 import {
   Select,

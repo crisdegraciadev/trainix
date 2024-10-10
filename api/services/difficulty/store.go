@@ -67,6 +67,30 @@ func (s *Store) FindDifficultyRelatedWithExercise(exerciseId int) (*types.Diffic
 	return d, nil
 }
 
+func (s *Store) FindAllDifficulties() ([]types.Difficulty, error) {
+	rows, err := s.db.Query("SELECT * FROM difficulties")
+
+	if err != nil {
+		return nil, err
+	}
+
+	difficulties := []types.Difficulty{}
+
+	for rows.Next() {
+		muscle, err := scanRowIntoDifficulty(rows)
+
+		if err != nil {
+			return nil, err
+		}
+
+		difficulties = append(difficulties, *muscle)
+	}
+
+	rows.Close()
+
+	return difficulties, nil
+}
+
 func scanRowIntoDifficulty(rows *sql.Rows) (*types.Difficulty, error) {
 	difficulty := new(types.Difficulty)
 

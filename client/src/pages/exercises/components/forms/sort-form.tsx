@@ -76,9 +76,9 @@ export default function ExerciseSortForm() {
                 <FormControl>
                   <Unselect
                     options={SortOptions.NAME}
-                    onChange={(value) =>
-                      form.setValue('name', value as OrderSchema)
-                    }
+                    onChange={(value) => {
+                      form.setValue('name', value as OrderSchema);
+                    }}
                     defaultValue={order.name}
                   />
                 </FormControl>
@@ -86,7 +86,6 @@ export default function ExerciseSortForm() {
               </FormItem>
             )}
           />
-
 
           <FormField
             control={form.control}
@@ -98,7 +97,6 @@ export default function ExerciseSortForm() {
                   <Unselect
                     options={SortOptions.CREATION}
                     onChange={(value) => {
-                      console.log({ createdAtValue: value });
                       form.setValue('createdAt', value as OrderSchema);
                     }}
                     defaultValue={order.createdAt}

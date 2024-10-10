@@ -1,11 +1,11 @@
-import { ExerciseFilterDTO, OrderExerciseDTO } from '@/core/types';
+import { FilterExercisesDTO, OrderExercisesDTO } from '@/core/types';
 import { create } from 'zustand';
 
 type ExerciseQueryStore = {
-  order: OrderExerciseDTO;
-  setOrder: (order: OrderExerciseDTO) => void;
-  filter: ExerciseFilterDTO;
-  setFilter: (filter: ExerciseFilterDTO) => void;
+  order: OrderExercisesDTO;
+  setOrder: (order: OrderExercisesDTO) => void;
+  filter: FilterExercisesDTO;
+  setFilter: (filter: FilterExercisesDTO) => void;
 };
 
 export const useExerciseQueryStore = create<ExerciseQueryStore>((set) => ({

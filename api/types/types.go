@@ -144,7 +144,7 @@ type UpdateExerciseDTO struct {
 // Muscle
 type MuscleStore interface {
 	FindMuscleByID(id int) (*Muscle, error)
-	FindAll() ([]Muscle, error)
+	FindAllMuscles() ([]Muscle, error)
 	FindMusclesRelatedWithExercise(exerciseId int) ([]Muscle, error)
 }
 
@@ -157,6 +157,7 @@ type Muscle struct {
 // Difficulty
 type DifficultyStore interface {
 	FindDifficultyByID(id int) (*Difficulty, error)
+	FindAllDifficulties() ([]Difficulty, error)
 	FindDifficultyRelatedWithExercise(exerciseId int) (*Difficulty, error)
 }
 

@@ -33,11 +33,17 @@ func (s *APIServer) Run() error {
 	authRouter := mainRouter.PathPrefix("/auth").Subrouter()
 	setupAuthRoutes(s, authRouter)
 
-	userRouter := mainRouter.PathPrefix("/user").Subrouter()
+	userRouter := mainRouter.PathPrefix("/users").Subrouter()
 	setupUserRoutes(s, userRouter)
 
 	exerciseRouter := mainRouter.PathPrefix("/exercises").Subrouter()
 	setupExerciseRoutes(s, exerciseRouter)
+
+	muscleRouter := mainRouter.PathPrefix("/muscles").Subrouter()
+	setupMuscleRoutes(s, muscleRouter)
+
+	difficultyRouter := mainRouter.PathPrefix("/difficulties").Subrouter()
+	setupDifficultuRoutes(s, difficultyRouter)
 
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"http://localhost:5173"},
@@ -86,4 +92,22 @@ func setupExerciseRoutes(s *APIServer, exerciseRouter *mux.Router) {
 
 	exerciseHandler := exercise.NewHandler(di)
 	exerciseHandler.RegisterRoutes(exerciseRouter)
+}
+
+func setupMuscleRoutes(s *APIServer, muscleRouter *mux.Router) {
+	di := muscle.DI{
+		MuscleStore: muscle.NewStore(s.db),
+	}
+
+	muscleHandler := muscle.NewHandler(di)
+	muscleHandler.RegisterRoutes(muscleRouter)
+}
+
+func setupDifficultuRoutes(s *APIServer, difficultyRouter *mux.Router) {
+	di := difficulty.DI{
+		DifficultyStore: difficulty.NewStore(s.db),
+	}
+
+	difficultyHandler := difficulty.NewHandler(di)
+	difficultyHandler.RegisterRoutes(difficultyRouter)
 }

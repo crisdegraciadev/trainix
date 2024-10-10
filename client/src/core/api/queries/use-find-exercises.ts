@@ -17,7 +17,7 @@ export function useFindExercises(query: QueryExercisesDTO) {
   }
 
   return useInfiniteQuery({
-    queryKey: QueryKeys.FIND_EXERCISES,
+    queryKey: QueryKeys.FILTER_EXERCISES,
     queryFn: ({ pageParam }) => fetchData(pageParam),
     initialPageParam,
     getNextPageParam: ({ pageOffset: lastOffset }) => ({
