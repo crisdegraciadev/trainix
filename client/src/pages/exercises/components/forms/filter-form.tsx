@@ -42,6 +42,7 @@ export default function ExerciseFilterForm() {
     form.setValue("name", undefined);
     form.setValue("difficultyId", undefined);
     form.setValue("muscleIds", undefined);
+    setFilter({});
   }
 
   function onSubmit(values: z.infer<typeof formSchema>) {
@@ -52,8 +53,6 @@ export default function ExerciseFilterForm() {
   if (!difficulties || !muscles) {
     return <p>Loading form...</p>;
   }
-
-  console.log({ difficulties });
 
   return (
     <Form {...form}>

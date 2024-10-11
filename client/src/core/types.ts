@@ -16,7 +16,7 @@ export type UserDTO = {
   email: string;
 };
 
-export type RegisterUserDTO = Omit<UserDTO, 'id'> & {
+export type RegisterUserDTO = Omit<UserDTO, "id"> & {
   password: string;
   confirmPassword: string;
 };
@@ -29,9 +29,9 @@ export type Difficulty = {
 };
 
 export enum DifficultyLabels {
-  EASY = 'easy',
-  MEDIUM = 'medium',
-  HARD = 'hard',
+  EASY = "easy",
+  MEDIUM = "medium",
+  HARD = "hard",
 }
 
 // Muscle
@@ -42,20 +42,20 @@ export type Muscle = {
 };
 
 export enum MuscleLabels {
-  CHEST = 'chest',
-  TRICEPS = 'triceps',
-  BICEPS = 'biceps',
-  DELTOIDS = 'deltoids',
-  TRAPEZIUS = 'trapezius',
-  RHOMBOIDS = 'rhomboids',
-  CORE = 'core',
-  GLUTEUS = 'gluteus',
-  HAMSTRINGS = 'hamstrings',
-  QUADRICEPS = 'quadriceps',
-  ADDUCTORS = 'adductors',
-  ABDUCTORS = 'abductors',
-  TIBIALIS_ANTERIOR = 'tibialis_anterior',
-  FOREARM = 'forearm',
+  CHEST = "chest",
+  TRICEPS = "triceps",
+  BICEPS = "biceps",
+  DELTOIDS = "deltoids",
+  TRAPEZIUS = "trapezius",
+  RHOMBOIDS = "rhomboids",
+  CORE = "core",
+  GLUTEUS = "gluteus",
+  HAMSTRINGS = "hamstrings",
+  QUADRICEPS = "quadriceps",
+  ADDUCTORS = "adductors",
+  ABDUCTORS = "abductors",
+  TIBIALIS_ANTERIOR = "tibialis_anterior",
+  FOREARM = "forearm",
 }
 
 // Exercise
@@ -66,7 +66,7 @@ export type Exercise = {
   muscles: Muscle[];
   difficulty: Difficulty;
   favourite: boolean;
-  video?: string;
+  videoUrl?: string;
 };
 
 export type ExerciseDTO = {
@@ -74,13 +74,15 @@ export type ExerciseDTO = {
   name: string;
   description?: string;
   userId: string;
-  difficulty: DifficultyLabels;
+  difficulty: Difficulty;
   muscles: Muscle[];
-  favourite: boolean;
-  video?: string;
+  videoUrl?: string;
 };
 
-export type CreateExerciseDTO = ExerciseDTO;
+export type CreateExerciseDTO = Omit<ExerciseDTO, "id" | "difficulty" | "muscles" | "userId"> & {
+  difficultyId: number;
+  muscleIds: number[];
+};
 
 export type UpdateExerciseDTO = Partial<ExerciseDTO>;
 
@@ -117,4 +119,4 @@ export type Page<T> = {
   pageOffset: number;
 };
 
-export type Order = 'asc' | 'desc';
+export type Order = "asc" | "desc";

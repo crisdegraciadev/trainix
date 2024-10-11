@@ -1,60 +1,36 @@
-import { Button } from '@/components/ui/button';
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+import { Button } from "@/components/ui/button";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 
-import { useCreateExerciseMutation } from '@/core/api/mutations/use-create-exercise-mutation';
-import { DifficultyLabels, MuscleLabels } from '@/core/types';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { LoaderCircle } from 'lucide-react';
-import { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { v4 as uuid } from 'uuid';
-import { z } from 'zod';
-import { useExerciseHybridViewStore } from '../../state/exercise-hybrid-view-store';
-import { useToast } from '@/core/hooks/use-toast';
-import { Textarea } from '@/components/ui/textarea';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { MultiSelect } from '@/components/ui/multi-select';
-import { Checkbox } from '@/components/ui/checkbox';
-
-const muscles = Object.values(MuscleLabels).map((value) => ({
-  value,
-  label: value.charAt(0).toUpperCase() + value.slice(1).toLowerCase(),
-}));
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { useCreateExerciseMutation } from "@/core/api/mutations/use-create-exercise-mutation";
+import { useFindAllDifficulties } from "@/core/api/queries/use-find-all-difficulties";
+import { useFindAllMuscles } from "@/core/api/queries/use-find-all-muscles";
+import { useToast } from "@/core/hooks/use-toast";
+import { Difficulty, Muscle } from "@/core/types";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { LoaderCircle } from "lucide-react";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { useExerciseHybridViewStore } from "../../state/exercise-hybrid-view-store";
+import { MultiSelect } from "@/components/ui/multi-select";
+import { formatString, StrFormat } from "@/core/utils";
 
 const formSchema = z.object({
-  name: z
-    .string({ required_error: 'Exercise name is required' })
-    .min(1, 'Exercise name is required'),
+  name: z.string({ required_error: "Exercise name is required" }).min(1, "Exercise name is required"),
   description: z.string().optional(),
-  difficulty: z.nativeEnum(DifficultyLabels, {
-    required_error: 'Difficulty is required',
-  }),
-  muscles: z
-    .array(z.nativeEnum(MuscleLabels))
-    .min(1, 'At least 1 muscle must be selected'),
-  favourite: z.boolean(),
-  video: z.union([z.string().url(), z.string().length(0)]).optional(),
+  difficultyId: z.number({ required_error: "Difficulty is required" }),
+  muscleIds: z.array(z.number()).min(1, "At least 1 muscle must be selected"),
+  videoUrl: z.union([z.string().url(), z.string().length(0)]).optional(),
 });
 
 export default function ExerciseForm() {
-  const setFormOpen = useExerciseHybridViewStore(
-    ({ setFormOpen }) => setFormOpen,
-  );
+  const { data: muscles } = useFindAllMuscles();
+  const { data: difficulties } = useFindAllDifficulties();
+
+  const setFormOpen = useExerciseHybridViewStore(({ setFormOpen }) => setFormOpen);
 
   const { mutate, isSuccess, isError, isPending } = useCreateExerciseMutation();
 
@@ -63,23 +39,23 @@ export default function ExerciseForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: '',
-      description: '',
-      difficulty: undefined,
-      muscles: [],
-      favourite: false,
+      name: "",
+      description: "",
+      difficultyId: undefined,
+      muscleIds: [],
     },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    mutate({ id: uuid(), ...values });
+    console.log({ values });
+    mutate({ ...values });
   }
 
   useEffect(() => {
     if (isSuccess) {
       toast({
-        title: 'Exercise created!',
-        description: 'Your exercise has been created successfully.',
+        title: "Exercise created!",
+        description: "Your exercise has been created successfully.",
       });
 
       setFormOpen(false);
@@ -89,12 +65,16 @@ export default function ExerciseForm() {
   useEffect(() => {
     if (isError) {
       toast({
-        title: 'Whoops! Something went wrong.',
+        title: "Whoops! Something went wrong.",
         description: "Your exercise hasn't been created.",
-        variant: 'destructive',
+        variant: "destructive",
       });
     }
   });
+
+  if (!muscles || !difficulties) {
+    return <p>Loading...</p>;
+  }
 
   return (
     <Form {...form}>
@@ -107,12 +87,7 @@ export default function ExerciseForm() {
               <FormItem>
                 <FormLabel>Name</FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder="Push Up"
-                    disabled={isPending}
-                    autoComplete="off"
-                    {...field}
-                  />
+                  <Input placeholder="Push Up" disabled={isPending} autoComplete="off" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -121,18 +96,12 @@ export default function ExerciseForm() {
 
           <FormField
             control={form.control}
-            name="video"
+            name="videoUrl"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Video URL</FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder="Explanatory Youtube video"
-                    type="url"
-                    disabled={isPending}
-                    autoComplete="off"
-                    {...field}
-                  />
+                  <Input placeholder="Explanatory Youtube video" type="url" disabled={isPending} autoComplete="off" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -144,17 +113,10 @@ export default function ExerciseForm() {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  Description{' '}
-                  <span className="text-muted-foreground">(Optional)</span>
+                  Description <span className="text-muted-foreground">(Optional)</span>
                 </FormLabel>
                 <FormControl>
-                  <Textarea
-                    placeholder="The perfect exercise to train your chest."
-                    className="resize-none"
-                    autoComplete="off"
-                    disabled={isPending}
-                    {...field}
-                  />
+                  <Textarea placeholder="The perfect exercise to train your chest." className="resize-none" autoComplete="off" disabled={isPending} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -163,29 +125,22 @@ export default function ExerciseForm() {
 
           <FormField
             control={form.control}
-            name="difficulty"
-            render={({ field }) => (
+            name="difficultyId"
+            render={() => (
               <FormItem>
                 <FormLabel>Difficulty</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  disabled={isPending}
-                >
+                <Select onValueChange={(value) => form.setValue("difficultyId", Number(value))} disabled={isPending}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue
-                        className="placeholder:text-muted-foreground"
-                        placeholder="Select difficulty level"
-                      />
+                      <SelectValue className="placeholder:text-muted-foreground" placeholder="Select difficulty level" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value={DifficultyLabels.EASY}>Easy</SelectItem>
-                    <SelectItem value={DifficultyLabels.MEDIUM}>
-                      Medium
-                    </SelectItem>
-                    <SelectItem value={DifficultyLabels.HARD}>Hard</SelectItem>
+                    {difficulties.map(({ value, label }: Difficulty) => (
+                      <SelectItem key={label} value={String(value)}>
+                        {formatString(label, StrFormat.TITLE_CASE)}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -195,45 +150,26 @@ export default function ExerciseForm() {
 
           <FormField
             control={form.control}
-            name="muscles"
+            name="muscleIds"
             disabled={isPending}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Muscles</FormLabel>
                 <FormControl>
                   <MultiSelect
-                    {...field}
-                    options={muscles}
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
+                    options={muscles.map((m: Muscle) => ({
+                      label: formatString(m.label, StrFormat.TITLE_CASE),
+                      value: String(m.value),
+                    }))}
+                    onValueChange={(muscles: string[]) => form.setValue("muscleIds", muscles?.map(Number))}
+                    value={form.getValues("muscleIds").map(String)}
+                    defaultValue={field.value.map(String)}
                     placeholder="Select muscles"
                     maxCount={3}
                     disabled={isPending}
                   />
                 </FormControl>
                 <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="favourite"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Favourite</FormLabel>
-                <FormControl>
-                  <div className="flex flex-row gap-2 items-center">
-                    <Checkbox
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                      disabled={isPending}
-                    />
-                    <FormDescription className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                      Add this exercise to your favourite list
-                    </FormDescription>
-                  </div>
-                </FormControl>
               </FormItem>
             )}
           />

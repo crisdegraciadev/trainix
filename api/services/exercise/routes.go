@@ -95,7 +95,7 @@ func (h *Handler) handleCreate(w http.ResponseWriter, r *http.Request) {
 		Name:        payload.Name,
 		Description: payload.Description,
 		VideoURL:    payload.VideoURL,
-		UserID:      payload.UserID,
+		UserID:      auth.GetUserIDFromContext(r.Context()),
 	}
 
 	ctx := context.Background()

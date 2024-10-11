@@ -123,9 +123,9 @@ type QueryExercisesDTO struct {
 }
 
 type FilterExercisesDTO struct {
-	Name         string `json:"name"`
-	MuscleIDs    []int  `json:"muscleIds"`
-	DifficultyID int    `json:"difficultyId"`
+	Name          string `json:"name"`
+	MuscleIDs     []int  `json:"muscleIds"`
+	DifficultyID int  `json:"difficultyId"`
 }
 
 type OrderExercisesDTO struct {

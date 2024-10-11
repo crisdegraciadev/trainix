@@ -28,6 +28,8 @@ export default function ExerciseList() {
   const totalExercises = data.pages[0].totalItems;
   const exercises = data.pages.flatMap(({ values }) => values);
 
+  console.log({exercises})
+
   return (
     <>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -40,7 +42,7 @@ export default function ExerciseList() {
             muscles={exercise.muscles}
             difficulty={exercise.difficulty}
             favourite={exercise.favourite}
-            video={exercise.video}
+            videoUrl={exercise.videoUrl}
           />
         ))}
       </div>

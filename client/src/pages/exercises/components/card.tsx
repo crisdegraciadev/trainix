@@ -1,25 +1,23 @@
-import HybridView from '@/components/hybrid-view';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { useResolutionStore } from '@/core/state/resolution-store';
-import { DifficultyLabels, Exercise } from '@/core/types';
-import { extractYoutubeVideoId, formatString, StrFormat } from '@/core/utils';
-import { HeartIcon } from 'lucide-react';
-import { ComponentProps, forwardRef, PropsWithChildren } from 'react';
-import { useExerciseHybridViewStore } from '../state/exercise-hybrid-view-store';
-import { ExerciseDifficultyBadge } from './difficulty-badge';
-import ExerciseDetails from './details';
+import HybridView from "@/components/hybrid-view";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { useResolutionStore } from "@/core/state/resolution-store";
+import { Exercise } from "@/core/types";
+import { extractYoutubeVideoId, formatString, StrFormat } from "@/core/utils";
+import { HeartIcon } from "lucide-react";
+import { ComponentProps, forwardRef, PropsWithChildren } from "react";
+import { useExerciseHybridViewStore } from "../state/exercise-hybrid-view-store";
+import ExerciseDetails from "./details";
+import { ExerciseDifficultyBadge } from "./difficulty-badge";
 
-function MuscleList({ muscles }: Pick<Exercise, 'muscles'>) {
+function MuscleList({ muscles }: Pick<Exercise, "muscles">) {
   const [primary, ...rest] = muscles;
 
   const musclesRemaining = rest.length;
 
   const BaseList = ({ children }: PropsWithChildren) => (
     <div className="flex gap-1">
-      <Badge className="h-fit text-nowrap">
-        {formatString(primary.label, StrFormat.TITLE_CASE)}
-      </Badge>
+      <Badge className="h-fit text-nowrap">{formatString(primary.label, StrFormat.TITLE_CASE)}</Badge>
       {children}
     </div>
   );
@@ -40,11 +38,7 @@ function MuscleList({ muscles }: Pick<Exercise, 'muscles'>) {
   return (
     <BaseList>
       {rest.map((muscle) => (
-        <Badge
-          key={muscle.label}
-          className="h-fit text-nowrap"
-          variant="secondary"
-        >
+        <Badge key={muscle.label} className="h-fit text-nowrap" variant="secondary">
           {formatString(muscle.label, StrFormat.TITLE_CASE)}
         </Badge>
       ))}
@@ -52,11 +46,8 @@ function MuscleList({ muscles }: Pick<Exercise, 'muscles'>) {
   );
 }
 
-const ExerciseTrigger = forwardRef<
-  HTMLDivElement,
-  ComponentProps<'div'> & Exercise
->(function (
-  { name, description, muscles, difficulty, favourite, video, ...rest },
+const ExerciseTrigger = forwardRef<HTMLDivElement, ComponentProps<"div"> & Exercise>(function (
+  { name, description, muscles, difficulty, favourite, videoUrl, ...rest },
   ref,
 ) {
   return (
@@ -67,8 +58,8 @@ const ExerciseTrigger = forwardRef<
         <div className="relative">
           <img
             src={
-              video
-                ? `https://i3.ytimg.com/vi/${extractYoutubeVideoId(video)}/maxresdefault.jpg`
+              videoUrl
+                ? `https://i3.ytimg.com/vi/${extractYoutubeVideoId(videoUrl)}/maxresdefault.jpg`
                 : `https://placehold.co/600x400/2463EB/FFF?font=montserrat&text=${name[0]}`
             }
             alt="Project Image"
@@ -86,9 +77,7 @@ const ExerciseTrigger = forwardRef<
             <h3 className="text-xl font-bold">{name}</h3>
             <ExerciseDifficultyBadge difficulty={difficulty} />
           </div>
-          <p className="text-sm text-muted-foreground h-10 line-clamp-2">
-            {description}
-          </p>
+          <p className="text-sm text-muted-foreground h-10 line-clamp-2">{description}</p>
           <MuscleList muscles={muscles} />
         </div>
       </div>
@@ -103,12 +92,10 @@ export default function ExerciseCard(exercise: Exercise) {
     isDesktop,
   }));
 
-  const { detailsOpen, setDetailsOpen } = useExerciseHybridViewStore(
-    ({ detailsOpen, setDetailsOpen }) => ({
-      detailsOpen,
-      setDetailsOpen,
-    }),
-  );
+  const { detailsOpen, setDetailsOpen } = useExerciseHybridViewStore(({ detailsOpen, setDetailsOpen }) => ({
+    detailsOpen,
+    setDetailsOpen,
+  }));
 
   const isOpen = detailsOpen[id];
 

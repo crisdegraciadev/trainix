@@ -1,5 +1,5 @@
 import { ApiPaths } from '@/core/constants/api-paths';
-import { ExerciseDTO } from '@/core/types';
+import { CreateExerciseDTO } from '@/core/types';
 import { useMutation } from '@tanstack/react-query';
 import { queryClient } from '../client';
 import { QueryKeys } from '../query-keys';
@@ -7,10 +7,10 @@ import request from '../request';
 
 export function useCreateExerciseMutation() {
 
-  function mutationFn(dto: Omit<ExerciseDTO, 'userId'>) {
+  function mutationFn(dto: CreateExerciseDTO) {
     return request({
       url: ApiPaths.EXERCISES,
-      method: 'put',
+      method: 'post',
       data: { ...dto },
     });
   }
@@ -18,7 +18,7 @@ export function useCreateExerciseMutation() {
   return useMutation({
     mutationFn,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QueryKeys.FILTER_EXERCISES });
+      // queryClient.invalidateQueries({ queryKey: QueryKeys.FILTER_EXERCISES });
     },
   });
 }

@@ -1,22 +1,14 @@
-import { Button } from '@/components/ui/button';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { useExerciseQueryStore } from '../../state/exercise-query-store';
+import { Button } from "@/components/ui/button";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { useExerciseQueryStore } from "../../state/exercise-query-store";
 
-import Unselect from '@/components/unselect';
-import { FormEvent } from 'react';
-import { useExerciseHybridViewStore } from '../../state/exercise-hybrid-view-store';
+import Unselect from "@/components/unselect";
+import { useExerciseHybridViewStore } from "../../state/exercise-hybrid-view-store";
 
-const ORDER_SCHEMA = z.union([z.literal('asc'), z.literal('desc')]).optional();
+const ORDER_SCHEMA = z.union([z.literal("asc"), z.literal("desc")]).optional();
 
 type OrderSchema = z.infer<typeof ORDER_SCHEMA>;
 
@@ -27,19 +19,17 @@ const formSchema = z.object({
 
 const SortOptions = {
   NAME: [
-    { label: 'Alphabetical', value: 'asc' },
-    { label: 'Reverse', value: 'desc' },
+    { label: "Alphabetical", value: "asc" },
+    { label: "Reverse", value: "desc" },
   ],
   CREATION: [
-    { label: 'Newer', value: 'desc' },
-    { label: 'Older', value: 'asc' },
+    { label: "Newer", value: "desc" },
+    { label: "Older", value: "asc" },
   ],
 };
 
 export default function ExerciseSortForm() {
-  const setOrderOpen = useExerciseHybridViewStore(
-    ({ setOrderOpen }) => setOrderOpen,
-  );
+  const setOrderOpen = useExerciseHybridViewStore(({ setOrderOpen }) => setOrderOpen);
 
   const { order, setOrder } = useExerciseQueryStore(({ order, setOrder }) => ({
     order,
@@ -51,10 +41,10 @@ export default function ExerciseSortForm() {
     defaultValues: { ...order },
   });
 
-  function reset(e: FormEvent) {
-    e.preventDefault();
-    form.setValue('name', undefined);
-    form.setValue('createdAt', 'desc');
+  function reset() {
+    form.setValue("name", undefined);
+    form.setValue("createdAt", "desc");
+    setOrder({ name: undefined, createdAt: "desc" });
     setOrderOpen(false);
   }
 
@@ -77,7 +67,7 @@ export default function ExerciseSortForm() {
                   <Unselect
                     options={SortOptions.NAME}
                     onChange={(value) => {
-                      form.setValue('name', value as OrderSchema);
+                      form.setValue("name", value as OrderSchema);
                     }}
                     defaultValue={order.name}
                   />
@@ -97,7 +87,7 @@ export default function ExerciseSortForm() {
                   <Unselect
                     options={SortOptions.CREATION}
                     onChange={(value) => {
-                      form.setValue('createdAt', value as OrderSchema);
+                      form.setValue("createdAt", value as OrderSchema);
                     }}
                     defaultValue={order.createdAt}
                   />
@@ -109,12 +99,7 @@ export default function ExerciseSortForm() {
         </div>
 
         <div className="flex gap-2">
-          <Button
-            className="w-full"
-            variant="outline"
-            type="button"
-            onClick={(e) => reset(e)}
-          >
+          <Button className="w-full" variant="outline" type="button" onClick={() => reset()}>
             Clear
           </Button>
 

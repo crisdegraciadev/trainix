@@ -129,7 +129,7 @@ func (s *Store) UpdateExercise(id int, exercise types.Exercise, muscleIDs []int,
 	}
 
 	if exercise.VideoURL != "" {
-		updates = append(updates, fmt.Sprintf(" videoUrl = '%s'", exercise.VideoURL))
+		updates = append(updates, fmt.Sprintf(" videoUrl = '%v'", exercise.VideoURL))
 	}
 
 	// no updates added, nothing to update
@@ -148,7 +148,7 @@ func (s *Store) UpdateExercise(id int, exercise types.Exercise, muscleIDs []int,
 }
 
 func (s *Store) FindExercise(id int) (exercise *types.Exercise, err error) {
-	rows, err := s.db.Query("SELECT id, name, description, videoUrl, userId, createdAt FROM exercises WHERE id = ?", id)
+	rows, err := s.db.Query("SELECT id, name, description,  userId, createdAt FROM exercises WHERE id = ?", id)
 
 	if err != nil {
 		return nil, err
@@ -157,7 +157,7 @@ func (s *Store) FindExercise(id int) (exercise *types.Exercise, err error) {
 	exercise = new(types.Exercise)
 
 	for rows.Next() {
-		exercise, err = scanRowIntoExercise(rows)
+		exercise, err = s.scanRowIntoExercise(rows)
 
 		if err != nil {
 			log.Printf("%s", err)
@@ -183,7 +183,7 @@ func (s *Store) FilterExercises(
 	var queryBuilder strings.Builder
 
 	queryBuilder.WriteString(`
-    SELECT DISTINCT id, name, description, videoUrl, userId, createdAt FROM exercises e 
+    SELECT DISTINCT id, name, description, userId, createdAt FROM exercises e 
     LEFT JOIN exercise_muscle em ON e.id = em.exerciseId  
     LEFT JOIN exercise_difficulty ed ON e.id = ed.exerciseId
     WHERE 1 = 1  
@@ -222,7 +222,7 @@ func (s *Store) FilterExercises(
 	}
 
 	for rows.Next() {
-		exercise, err := scanRowIntoExercise(rows)
+		exercise, err := s.scanRowIntoExercise(rows)
 
 		if err != nil {
 			return nil, err
@@ -284,20 +284,32 @@ func (s *Store) CountExercises(filter types.ExerciseFilter) (count int, err erro
 	return count, nil
 }
 
-func scanRowIntoExercise(rows *sql.Rows) (*types.Exercise, error) {
+func (s *Store) scanRowIntoExercise(rows *sql.Rows) (*types.Exercise, error) {
 	exercise := new(types.Exercise)
 
 	err := rows.Scan(
 		&exercise.ID,
 		&exercise.Name,
 		&exercise.Description,
-		&exercise.VideoURL,
 		&exercise.UserID,
 		&exercise.CreatedAt,
 	)
 
 	if err != nil {
 		return nil, err
+	}
+
+	var videoUrl sql.NullString
+	err = s.db.QueryRow("SELECT videoUrl FROM exercises WHERE id = ?", exercise.ID).Scan(&videoUrl)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if videoUrl.Valid {
+		exercise.VideoURL = videoUrl.String
+	} else {
+		exercise.VideoURL = ""
 	}
 
 	return exercise, nil
