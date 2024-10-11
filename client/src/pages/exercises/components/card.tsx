@@ -104,7 +104,7 @@ export default function ExerciseCard(exercise: Exercise) {
       isDesktop={isDesktop}
       open={isOpen}
       setOpen={(value) => setDetailsOpen({ ...detailsOpen, [id]: value })}
-      title=""
+      title={exercise.name}
       description=""
       content={<ExerciseDetails {...exercise} />}
       trigger={<ExerciseTrigger {...exercise} />}
