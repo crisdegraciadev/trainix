@@ -1,8 +1,8 @@
-import { useFindExercises } from '@/core/api/queries/use-find-exercises';
-import { useExerciseQueryStore } from '../state/exercise-query-store';
-import ExerciseCard from './card';
-import { LegacyRef, useEffect } from 'react';
-import { useInfiniteScroll } from '@/core/hooks/use-infinite-scroll';
+import { useFindExercises } from "@/core/api/queries/use-find-exercises";
+import { useExerciseQueryStore } from "../state/exercise-query-store";
+import ExerciseCard from "./card";
+import { LegacyRef, useEffect } from "react";
+import { useInfiniteScroll } from "@/core/hooks/use-infinite-scroll";
 
 export default function ExerciseList() {
   const query = useExerciseQueryStore(({ order, filter }) => ({
@@ -10,8 +10,7 @@ export default function ExerciseList() {
     filter,
   }));
 
-  const { data, isLoading, isError, fetchNextPage, refetch } =
-    useFindExercises(query);
+  const { data, isLoading, isError, fetchNextPage, refetch } = useFindExercises(query);
 
   const { ref: infiniteScrollRef } = useInfiniteScroll(fetchNextPage);
 
@@ -28,7 +27,14 @@ export default function ExerciseList() {
   const totalExercises = data.pages[0].totalItems;
   const exercises = data.pages.flatMap(({ values }) => values);
 
-  console.log({exercises})
+  if (!exercises.length) {
+    return (
+      <div className="flex flex-col items-center">
+        <img className="mt-[22vh] w-128 mb-4" src="/empty_exercises.svg" />
+        <p className="text-muted-foreground md:text-xl text-lg">No exercises created yet.</p>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -47,9 +53,7 @@ export default function ExerciseList() {
         ))}
       </div>
 
-      {totalExercises > exercises.length && (
-        <div ref={infiniteScrollRef as LegacyRef<HTMLDivElement>} />
-      )}
+      {totalExercises > exercises.length && <div ref={infiniteScrollRef as LegacyRef<HTMLDivElement>} />}
     </>
   );
 }

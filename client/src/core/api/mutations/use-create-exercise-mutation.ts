@@ -18,7 +18,7 @@ export function useCreateExerciseMutation() {
   return useMutation({
     mutationFn,
     onSuccess: () => {
-      // queryClient.invalidateQueries({ queryKey: QueryKeys.FILTER_EXERCISES });
+      queryClient.invalidateQueries({ queryKey: QueryKeys.FILTER_EXERCISES });
     },
   });
 }

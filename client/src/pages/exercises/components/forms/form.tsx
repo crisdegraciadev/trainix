@@ -116,7 +116,13 @@ export default function ExerciseForm() {
                   Description <span className="text-muted-foreground">(Optional)</span>
                 </FormLabel>
                 <FormControl>
-                  <Textarea placeholder="The perfect exercise to train your chest." className="resize-none" autoComplete="off" disabled={isPending} {...field} />
+                  <Textarea
+                    placeholder="The perfect exercise to train your chest."
+                    className="resize-none"
+                    autoComplete="off"
+                    disabled={isPending}
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -162,7 +168,7 @@ export default function ExerciseForm() {
                       value: String(m.value),
                     }))}
                     onValueChange={(muscles: string[]) => form.setValue("muscleIds", muscles?.map(Number))}
-                    value={form.getValues("muscleIds").map(String)}
+                    value={form.getValues("muscleIds")?.map(String) ?? []}
                     defaultValue={field.value.map(String)}
                     placeholder="Select muscles"
                     maxCount={3}
