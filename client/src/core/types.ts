@@ -87,8 +87,8 @@ export type UpdateExerciseDTO = Partial<ExerciseDTO>;
 export type FilterExercisesDTO = Partial<{
   name: string;
   userId: string;
-  muscles: number[];
-  difficulty: number;
+  muscleIds: number[];
+  difficultyId: number;
 }>;
 
 export type OrderExercisesDTO = Partial<{

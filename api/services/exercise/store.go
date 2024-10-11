@@ -199,8 +199,8 @@ func (s *Store) FilterExercises(
 		queryBuilder.WriteString(condition)
 	}
 
-	if len(filter.DifficultyIDs) != 0 {
-		condition := fmt.Sprintf(" AND ed.difficultyId IN %s", utils.MapIDsToSQLRange(filter.DifficultyIDs))
+	if filter.DifficultyID != 0 {
+		condition := fmt.Sprintf(" AND ed.difficultyId = %d", filter.DifficultyID)
 		queryBuilder.WriteString(condition)
 	}
 
@@ -256,8 +256,8 @@ func (s *Store) CountExercises(filter types.ExerciseFilter) (count int, err erro
 		queryBuilder.WriteString(condition)
 	}
 
-	if len(filter.DifficultyIDs) != 0 {
-		condition := fmt.Sprintf(" AND ed.difficultyId IN %s", utils.MapIDsToSQLRange(filter.DifficultyIDs))
+	if filter.DifficultyID != 0 {
+		condition := fmt.Sprintf(" AND ed.difficultyId = %d", filter.DifficultyID)
 		queryBuilder.WriteString(condition)
 	}
 

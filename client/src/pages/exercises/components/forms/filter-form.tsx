@@ -16,8 +16,8 @@ import { useExerciseQueryStore } from "../../state/exercise-query-store";
 const formSchema = z.object({
   name: z.string().optional(),
   userId: z.string().optional(),
-  difficulty: z.number().optional(),
-  muscles: z.array(z.number()).optional(),
+  difficultyId: z.number().optional(),
+  muscleIds: z.array(z.number()).optional(),
 });
 
 export default function ExerciseFilterForm() {
@@ -31,6 +31,8 @@ export default function ExerciseFilterForm() {
     setFilter,
   }));
 
+  console.log({ filter });
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: { ...filter },
@@ -38,8 +40,8 @@ export default function ExerciseFilterForm() {
 
   function reset() {
     form.setValue("name", undefined);
-    form.setValue("difficulty", undefined);
-    form.setValue("muscles", undefined);
+    form.setValue("difficultyId", undefined);
+    form.setValue("muscleIds", undefined);
   }
 
   function onSubmit(values: z.infer<typeof formSchema>) {
@@ -78,7 +80,7 @@ export default function ExerciseFilterForm() {
 
           <FormField
             control={form.control}
-            name="difficulty"
+            name="difficultyId"
             render={() => (
               <FormItem>
                 <FormLabel>Difficulty</FormLabel>
@@ -88,8 +90,9 @@ export default function ExerciseFilterForm() {
                       label: formatString(d.label, StrFormat.TITLE_CASE),
                       value: String(d.value),
                     }))}
+                    defaultValue={filter.difficultyId ? String(filter.difficultyId) : undefined}
                     onChange={(value) => {
-                      form.setValue("difficulty", Number(value));
+                      form.setValue("difficultyId", Number(value));
                     }}
                   />
                 </FormControl>
@@ -100,16 +103,16 @@ export default function ExerciseFilterForm() {
 
           <FormField
             control={form.control}
-            name="muscles"
+            name="muscleIds"
             render={() => (
               <FormItem>
                 <FormLabel>Muscles</FormLabel>
                 <FormControl>
                   <FacetedFilter
                     onChange={(muscles: string[]) => {
-                      form.setValue("muscles", muscles.map(Number));
+                      form.setValue("muscleIds", muscles.map(Number));
                     }}
-                    defaultValues={filter.muscles?.map(String) ?? []}
+                    defaultValues={filter.muscleIds?.map(String) ?? []}
                     title="Muscles"
                     options={muscles.map((m: Muscle) => ({
                       label: formatString(m.label, StrFormat.TITLE_CASE),

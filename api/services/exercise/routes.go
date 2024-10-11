@@ -132,16 +132,18 @@ func (h *Handler) handleFilter(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if _, err := h.checkDifficultyIDs(rawFilter.DifficultyIDs); err != nil && len(rawFilter.DifficultyIDs) != 0 {
+	if _, err := h.checkDifficultyIDs([]int{rawFilter.DifficultyID}); err != nil && rawFilter.DifficultyID != 0 {
 		utils.WriteError(w, http.StatusNotFound, err)
 		return
 	}
 
 	filter := types.ExerciseFilter{
-		Name:          rawFilter.Name,
-		MuscleIDs:     rawFilter.MuscleIDs,
-		DifficultyIDs: rawFilter.DifficultyIDs,
+		Name:         rawFilter.Name,
+		MuscleIDs:    rawFilter.MuscleIDs,
+		DifficultyID: rawFilter.DifficultyID,
 	}
+
+	log.Printf("Exercise Filter Request: %v", filter)
 
 	// setup order
 	order := types.ExerciseOrder{
@@ -169,6 +171,7 @@ func (h *Handler) handleFilter(w http.ResponseWriter, r *http.Request) {
 		Skip: skip,
 	}
 
+	// filter exercises
 	exercises, err := h.exerciseStore.FilterExercises(filter, order, pagination)
 
 	if err != nil {
