@@ -132,13 +132,41 @@ func (s *Store) UpdateExercise(id int, exercise types.Exercise, muscleIDs []int,
 		updates = append(updates, fmt.Sprintf(" videoUrl = '%v'", exercise.VideoURL))
 	}
 
-	// no updates added, nothing to update
+	// Update difficulty
+	_, err := s.db.Exec("DELETE FROM exercise_difficulty WHERE exerciseId = ?", id)
+
+	if err != nil {
+		return err
+	}
+
+	_, err = s.db.Exec("INSERT INTO exercise_difficulty (exerciseId,difficultyId) VALUES(?,?)", id, difficultyID)
+
+	if err != nil {
+		return err
+	}
+
+	// Update muscles
+	_, err = s.db.Exec("DELETE FROM exercise_muscle WHERE exerciseId = ?", id)
+
+	if err != nil {
+		return err
+	}
+
+	for _, muscleId := range muscleIDs {
+		_, err = s.db.Exec("INSERT INTO exercise_muscle (exerciseId,muscleId) VALUES(?,?)", id, muscleId)
+
+		if err != nil {
+			return err
+		}
+	}
+
+	// no updates on base model added, nothing to update
 	if len(updates) == 0 {
 		return nil
 	}
 
 	query := fmt.Sprintf("%s %s WHERE id = %d", baseQuery, strings.Join(updates, ","), id)
-	_, err := s.db.Exec(query)
+	_, err = s.db.Exec(query)
 
 	if err != nil {
 		return err

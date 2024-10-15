@@ -17,6 +17,7 @@ import { z } from "zod";
 import { useExerciseHybridViewStore } from "../../state/exercise-hybrid-view-store";
 import { formatString, StrFormat } from "@/core/utils";
 import { MultiSelect } from "@/components/multi-select";
+import { useUpdateExerciseMutation } from "@/core/api/mutations/use-update-exercise-mutation";
 
 const formSchema = z.object({
   name: z.string({ required_error: "Exercise name is required" }).min(1, "Exercise name is required"),
@@ -26,33 +27,73 @@ const formSchema = z.object({
   videoUrl: z.union([z.string().url(), z.string().length(0)]).optional(),
 });
 
-export default function ExerciseForm() {
+type Props = {
+  defaultValues?: {
+    name: string;
+    description: string;
+    videoUrl?: string;
+    difficultyId: number;
+    muscleIds: number[];
+  };
+  exerciseId?: string;
+};
+
+const EMPTY_FORM_VALUES = {
+  name: "",
+  description: "",
+  videoUrl: "",
+  difficultyId: undefined,
+  muscleIds: [],
+};
+
+export default function ExerciseForm({ defaultValues, exerciseId }: Props) {
   const { data: muscles } = useFindAllMuscles();
   const { data: difficulties } = useFindAllDifficulties();
 
   const setFormOpen = useExerciseHybridViewStore(({ setFormOpen }) => setFormOpen);
 
-  const { mutate, isSuccess, isError, isPending } = useCreateExerciseMutation();
+  const { mutate: createExercise, isSuccess: isSuccessCreate, isError: isErrorCreate, isPending: isPendingCreate } = useCreateExerciseMutation();
+  const { mutate: updateExercise, isSuccess: isSuccessUpdate, isError: isErrorUpdate, isPending: isPendingUpdate } = useUpdateExerciseMutation();
 
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: "",
-      description: "",
-      difficultyId: undefined,
-      muscleIds: [],
-    },
+    defaultValues: defaultValues ?? EMPTY_FORM_VALUES,
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log({ values });
-    mutate({ ...values });
+    if (!exerciseId || !defaultValues) {
+      createExercise({ ...values });
+    } else {
+      updateExercise({ id: exerciseId, dto: values });
+    }
   }
 
   useEffect(() => {
-    if (isSuccess) {
+    console.log({ isSuccessUpdate });
+    if (isSuccessUpdate) {
+      toast({
+        title: "Exercise updated!",
+        description: "Your exercise has been updated successfully.",
+      });
+
+      setFormOpen(false);
+    }
+  }, [setFormOpen, isSuccessUpdate, toast]);
+
+  useEffect(() => {
+    if (isErrorUpdate) {
+      toast({
+        title: "Whoops! Something went wrong.",
+        description: "Your exercise hasn't been updated.",
+        variant: "destructive",
+      });
+    }
+  }, [toast, isErrorUpdate]);
+
+  useEffect(() => {
+    if (isSuccessCreate) {
       toast({
         title: "Exercise created!",
         description: "Your exercise has been created successfully.",
@@ -60,17 +101,17 @@ export default function ExerciseForm() {
 
       setFormOpen(false);
     }
-  }, [setFormOpen, isSuccess, toast]);
+  }, [setFormOpen, isSuccessCreate, toast]);
 
   useEffect(() => {
-    if (isError) {
+    if (isErrorCreate) {
       toast({
         title: "Whoops! Something went wrong.",
         description: "Your exercise hasn't been created.",
         variant: "destructive",
       });
     }
-  });
+  }, [toast, isErrorCreate]);
 
   if (!muscles || !difficulties) {
     return <p>Loading...</p>;
@@ -87,7 +128,7 @@ export default function ExerciseForm() {
               <FormItem>
                 <FormLabel>Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="Push Up" disabled={isPending} autoComplete="off" {...field} />
+                  <Input placeholder="Push Up" disabled={isPendingCreate || isPendingUpdate} autoComplete="off" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -101,7 +142,13 @@ export default function ExerciseForm() {
               <FormItem>
                 <FormLabel>Video URL</FormLabel>
                 <FormControl>
-                  <Input placeholder="Explanatory Youtube video" type="url" disabled={isPending} autoComplete="off" {...field} />
+                  <Input
+                    placeholder="Explanatory Youtube video"
+                    type="url"
+                    disabled={isPendingCreate || isPendingUpdate}
+                    autoComplete="off"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -120,7 +167,7 @@ export default function ExerciseForm() {
                     placeholder="The perfect exercise to train your chest."
                     className="resize-none"
                     autoComplete="off"
-                    disabled={isPending}
+                    disabled={isPendingCreate || isPendingUpdate}
                     {...field}
                   />
                 </FormControl>
@@ -135,7 +182,11 @@ export default function ExerciseForm() {
             render={() => (
               <FormItem>
                 <FormLabel>Difficulty</FormLabel>
-                <Select onValueChange={(value) => form.setValue("difficultyId", Number(value))} disabled={isPending}>
+                <Select
+                  onValueChange={(value) => form.setValue("difficultyId", Number(value))}
+                  disabled={isPendingCreate || isPendingUpdate}
+                  defaultValue={String(difficulties.find((d: Difficulty) => d.id === defaultValues?.difficultyId)?.value) ?? "2"}
+                >
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue className="placeholder:text-muted-foreground" placeholder="Select difficulty level" />
@@ -157,7 +208,7 @@ export default function ExerciseForm() {
           <FormField
             control={form.control}
             name="muscleIds"
-            disabled={isPending}
+            disabled={isPendingCreate || isPendingUpdate}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Muscles</FormLabel>
@@ -178,8 +229,8 @@ export default function ExerciseForm() {
           />
         </div>
 
-        <Button className="w-full" type="submit" disabled={isPending}>
-          {isPending && <LoaderCircle className="w-4 h-4 mr-2 animate-spin" />}
+        <Button className="w-full" type="submit" disabled={isPendingCreate || isPendingUpdate}>
+          {(isPendingCreate || isPendingUpdate) && <LoaderCircle className="w-4 h-4 mr-2 animate-spin" />}
           Save
         </Button>
       </form>

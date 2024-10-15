@@ -8,9 +8,13 @@ import { ExerciseDifficultyBadge } from "./difficulty-badge";
 import HybridView from "@/components/hybrid-view";
 import { useResolutionStore } from "@/core/state/resolution-store";
 import { useState } from "react";
+import ExerciseForm from "./forms/form";
+import { useExerciseHybridViewStore } from "../state/exercise-hybrid-view-store";
 
 export default function ExerciseDetails({ id, name, videoUrl, favourite, description, difficulty, muscles }: Exercise) {
   const { isDesktop } = useResolutionStore(({ isDesktop }) => ({ isDesktop }));
+  const { formOpen, setFormOpen } = useExerciseHybridViewStore(({ formOpen, setFormOpen }) => ({ formOpen, setFormOpen }));
+
   const [deleteOpen, setDeleteOpen] = useState(false);
 
   const { mutate: deleteExercise, isPending } = useDeleteExerciseMutation();
@@ -74,6 +78,7 @@ export default function ExerciseDetails({ id, name, videoUrl, favourite, descrip
             setOpen={setDeleteOpen}
             title="Delete exercise"
             description="This operation can't be undone, the exercise will be deleted permanently. Please confirm the operation."
+            hideFooterOnDrawer={true}
             content={
               <div className="flex gap-2">
                 <Button className="w-full" variant="destructive" onClick={() => handleDelete()} disabled={isPending}>
@@ -84,7 +89,6 @@ export default function ExerciseDetails({ id, name, videoUrl, favourite, descrip
                 </Button>
               </div>
             }
-            hideFooterOnDrawer={true}
             trigger={
               <Button className="w-full" variant="destructive" disabled={isPending}>
                 {isPending && <LoaderCircle className="w-4 h-4 mr-2 animate-spin" />} Delete
@@ -92,9 +96,30 @@ export default function ExerciseDetails({ id, name, videoUrl, favourite, descrip
             }
           />
 
-          <Button className="w-full" variant="outline" disabled={isPending}>
-            {isPending && <LoaderCircle className="w-4 h-4 mr-2 animate-spin" />} Edit
-          </Button>
+          <HybridView
+            isDesktop={isDesktop}
+            open={formOpen}
+            setOpen={setFormOpen}
+            title="Update exercise"
+            description="Update an exercise here. Click save when you're done."
+            content={
+              <ExerciseForm
+                defaultValues={{
+                  name,
+                  description,
+                  videoUrl,
+                  difficultyId: difficulty.id,
+                  muscleIds: muscles.map((m) => m.id),
+                }}
+                exerciseId={id}
+              />
+            }
+            trigger={
+              <Button className="w-full" variant="outline" disabled={isPending}>
+                {isPending && <LoaderCircle className="w-4 h-4 mr-2 animate-spin" />} Edit
+              </Button>
+            }
+          />
         </div>
       </div>
     </>
