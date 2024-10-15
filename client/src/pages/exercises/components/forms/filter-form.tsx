@@ -1,4 +1,4 @@
-import { FacetedFilter } from "@/components/faceted-filter";
+import { MultiSelect } from "@/components/multi-select";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -107,7 +107,7 @@ export default function ExerciseFilterForm() {
               <FormItem>
                 <FormLabel>Muscles</FormLabel>
                 <FormControl>
-                  <FacetedFilter
+                  <MultiSelect
                     onChange={(muscles: string[]) => {
                       form.setValue("muscleIds", muscles.map(Number));
                     }}

@@ -15,8 +15,8 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useExerciseHybridViewStore } from "../../state/exercise-hybrid-view-store";
-import { MultiSelect } from "@/components/ui/multi-select";
 import { formatString, StrFormat } from "@/core/utils";
+import { MultiSelect } from "@/components/multi-select";
 
 const formSchema = z.object({
   name: z.string({ required_error: "Exercise name is required" }).min(1, "Exercise name is required"),
@@ -167,12 +167,9 @@ export default function ExerciseForm() {
                       label: formatString(m.label, StrFormat.TITLE_CASE),
                       value: String(m.value),
                     }))}
-                    onValueChange={(muscles: string[]) => form.setValue("muscleIds", muscles?.map(Number))}
-                    value={form.getValues("muscleIds")?.map(String) ?? []}
-                    defaultValue={field.value.map(String)}
-                    placeholder="Select muscles"
-                    maxCount={3}
-                    disabled={isPending}
+                    onChange={(muscles: string[]) => form.setValue("muscleIds", muscles?.map(Number))}
+                    defaultValues={field.value.map(String)}
+                    title="Select muscles"
                   />
                 </FormControl>
                 <FormMessage />
