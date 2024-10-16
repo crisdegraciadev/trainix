@@ -50,6 +50,8 @@ export default function ExerciseForm({ defaultValues, exerciseId }: Props) {
   const { data: muscles } = useFindAllMuscles();
   const { data: difficulties } = useFindAllDifficulties();
 
+  console.log({ difficulties });
+
   const setFormOpen = useExerciseHybridViewStore(({ setFormOpen }) => setFormOpen);
 
   const { mutate: createExercise, isSuccess: isSuccessCreate, isError: isErrorCreate, isPending: isPendingCreate } = useCreateExerciseMutation();
@@ -71,7 +73,6 @@ export default function ExerciseForm({ defaultValues, exerciseId }: Props) {
   }
 
   useEffect(() => {
-    console.log({ isSuccessUpdate });
     if (isSuccessUpdate) {
       toast({
         title: "Exercise updated!",
@@ -185,7 +186,11 @@ export default function ExerciseForm({ defaultValues, exerciseId }: Props) {
                 <Select
                   onValueChange={(value) => form.setValue("difficultyId", Number(value))}
                   disabled={isPendingCreate || isPendingUpdate}
-                  defaultValue={String(difficulties.find((d: Difficulty) => d.id === defaultValues?.difficultyId)?.value) ?? "2"}
+                  defaultValue={
+                    difficulties.find((d: Difficulty) => d.id === defaultValues?.difficultyId)
+                      ? String(difficulties.find((d: Difficulty) => d.id === defaultValues?.difficultyId).value)
+                      : "2"
+                  }
                 >
                   <FormControl>
                     <SelectTrigger>

@@ -18,7 +18,7 @@ func NewStore(db *sql.DB) *Store {
 	return &Store{db: db}
 }
 
-func (s *Store) CreateExercise(ctx context.Context, exercise types.Exercise, muscleIDs []int, difficultyID int) error {
+func (s *Store) CreateExercise(ctx context.Context, exercise types.Exercise, muscleIDs []int) error {
 	// setup transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	defer tx.Rollback()
@@ -29,8 +29,8 @@ func (s *Store) CreateExercise(ctx context.Context, exercise types.Exercise, mus
 
 	// insert exercise
 	r, err := tx.Exec(
-		"INSERT INTO exercises (name, description, videoUrl, userId) VALUES (?,?,?,?)",
-		exercise.Name, exercise.Description, exercise.VideoURL, exercise.UserID,
+		"INSERT INTO exercises (name, description, videoUrl, userId, difficultyId) VALUES (?,?,?,?,?)",
+		exercise.Name, exercise.Description, exercise.VideoURL, exercise.UserID, exercise.DifficultyID,
 	)
 
 	if err != nil {
@@ -52,13 +52,6 @@ func (s *Store) CreateExercise(ctx context.Context, exercise types.Exercise, mus
 		}
 	}
 
-	// link difficulty with exercise
-	err = s.linkExerciseDifficulty(tx, int(exerciseID), difficultyID)
-
-	if err != nil {
-		return err
-	}
-
 	// commit the transaction
 	if err = tx.Commit(); err != nil {
 		return err
@@ -71,19 +64,6 @@ func (s *Store) linkExerciseMuscle(tx *sql.Tx, exerciseId int, muscleId int) err
 	_, err := tx.Exec(
 		"INSERT INTO exercise_muscle (exerciseId, muscleId) VALUES (?,?)",
 		exerciseId, muscleId,
-	)
-
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (s *Store) linkExerciseDifficulty(tx *sql.Tx, exerciseId int, difficultyId int) error {
-	_, err := tx.Query(
-		"INSERT INTO exercise_difficulty (exerciseId, difficultyId) VALUES (?,?)",
-		exerciseId, difficultyId,
 	)
 
 	if err != nil {
@@ -116,7 +96,7 @@ func (s *Store) DeleteExercise(id int) error {
 	return nil
 }
 
-func (s *Store) UpdateExercise(id int, exercise types.Exercise, muscleIDs []int, difficultyID int) error {
+func (s *Store) UpdateExercise(id int, exercise types.Exercise, muscleIDs []int) error {
 	baseQuery := "UPDATE exercises SET"
 	updates := []string{}
 
@@ -132,21 +112,12 @@ func (s *Store) UpdateExercise(id int, exercise types.Exercise, muscleIDs []int,
 		updates = append(updates, fmt.Sprintf(" videoUrl = '%v'", exercise.VideoURL))
 	}
 
-	// Update difficulty
-	_, err := s.db.Exec("DELETE FROM exercise_difficulty WHERE exerciseId = ?", id)
-
-	if err != nil {
-		return err
-	}
-
-	_, err = s.db.Exec("INSERT INTO exercise_difficulty (exerciseId,difficultyId) VALUES(?,?)", id, difficultyID)
-
-	if err != nil {
-		return err
+	if exercise.DifficultyID != 0 {
+		updates = append(updates, fmt.Sprintf(" difficultyId = '%d'", exercise.DifficultyID))
 	}
 
 	// Update muscles
-	_, err = s.db.Exec("DELETE FROM exercise_muscle WHERE exerciseId = ?", id)
+	_, err := s.db.Exec("DELETE FROM exercise_muscle WHERE exerciseId = ?", id)
 
 	if err != nil {
 		return err
@@ -176,7 +147,7 @@ func (s *Store) UpdateExercise(id int, exercise types.Exercise, muscleIDs []int,
 }
 
 func (s *Store) FindExercise(id int) (exercise *types.Exercise, err error) {
-	rows, err := s.db.Query("SELECT id, name, description,  userId, createdAt FROM exercises WHERE id = ?", id)
+	rows, err := s.db.Query("SELECT id, name, description, userId, difficultyId, createdAt FROM exercises WHERE id = ?", id)
 
 	if err != nil {
 		return nil, err
@@ -211,9 +182,8 @@ func (s *Store) FilterExercises(
 	var queryBuilder strings.Builder
 
 	queryBuilder.WriteString(`
-    SELECT DISTINCT id, name, description, userId, createdAt FROM exercises e 
+    SELECT DISTINCT id, name, description, userId, difficultyId, createdAt FROM exercises e 
     LEFT JOIN exercise_muscle em ON e.id = em.exerciseId  
-    LEFT JOIN exercise_difficulty ed ON e.id = ed.exerciseId
     WHERE 1 = 1  
   `)
 
@@ -228,7 +198,7 @@ func (s *Store) FilterExercises(
 	}
 
 	if filter.DifficultyID != 0 {
-		condition := fmt.Sprintf(" AND ed.difficultyId = %d", filter.DifficultyID)
+		condition := fmt.Sprintf(" AND e.difficultyId = %d", filter.DifficultyID)
 		queryBuilder.WriteString(condition)
 	}
 
@@ -270,7 +240,6 @@ func (s *Store) CountExercises(filter types.ExerciseFilter) (count int, err erro
 	queryBuilder.WriteString(`
     SELECT COUNT(DISTINCT e.id) FROM exercises e 
     LEFT JOIN exercise_muscle em ON e.id = em.exerciseId  
-    LEFT JOIN exercise_difficulty ed ON e.id = ed.exerciseId
     WHERE 1 = 1  
   `)
 
@@ -285,7 +254,7 @@ func (s *Store) CountExercises(filter types.ExerciseFilter) (count int, err erro
 	}
 
 	if filter.DifficultyID != 0 {
-		condition := fmt.Sprintf(" AND ed.difficultyId = %d", filter.DifficultyID)
+		condition := fmt.Sprintf(" AND e.difficultyId = %d", filter.DifficultyID)
 		queryBuilder.WriteString(condition)
 	}
 
@@ -320,6 +289,7 @@ func (s *Store) scanRowIntoExercise(rows *sql.Rows) (*types.Exercise, error) {
 		&exercise.Name,
 		&exercise.Description,
 		&exercise.UserID,
+		&exercise.DifficultyID,
 		&exercise.CreatedAt,
 	)
 

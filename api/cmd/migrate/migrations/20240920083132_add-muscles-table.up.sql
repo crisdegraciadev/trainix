@@ -1,7 +1,0 @@
-CREATE TABLE IF NOT EXISTS muscles (
-    `id` INT UNSIGNED AUTO_INCREMENT NOT NULL,
-    `label` VARCHAR(255) NOT NULL,
-    `value` INT NOT NULL,
-
-    PRIMARY KEY (`id`)
-)

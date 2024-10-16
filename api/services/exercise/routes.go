@@ -92,10 +92,11 @@ func (h *Handler) handleCreate(w http.ResponseWriter, r *http.Request) {
 
 	// create exercise on db
 	exercise := types.Exercise{
-		Name:        payload.Name,
-		Description: payload.Description,
-		VideoURL:    payload.VideoURL,
-		UserID:      auth.GetUserIDFromContext(r.Context()),
+		Name:         payload.Name,
+		Description:  payload.Description,
+		VideoURL:     payload.VideoURL,
+		UserID:       auth.GetUserIDFromContext(r.Context()),
+		DifficultyID: payload.DifficultyID,
 	}
 
 	ctx := context.Background()
@@ -104,7 +105,6 @@ func (h *Handler) handleCreate(w http.ResponseWriter, r *http.Request) {
 		ctx,
 		exercise,
 		payload.MuscleIDs,
-		payload.DifficultyID,
 	)
 
 	if err != nil {
@@ -201,7 +201,7 @@ func (h *Handler) handleFilter(w http.ResponseWriter, r *http.Request) {
 
 		exerciseWithRelation.Muscles = muscles
 
-		difficulty, err := h.difficultyStore.FindDifficultyRelatedWithExercise(exercise.ID)
+		difficulty, err := h.difficultyStore.FindDifficultyByID(exercise.DifficultyID)
 
 		if err != nil {
 			log.Printf("failed to find difficulty related with exercise %v", err)
@@ -338,12 +338,13 @@ func (h *Handler) handleUpdate(w http.ResponseWriter, r *http.Request) {
 
 	// update the exercise
 	updatedData := types.Exercise{
-		Name:        payload.Name,
-		Description: payload.Description,
-		VideoURL:    payload.VideoURL,
+		Name:         payload.Name,
+		Description:  payload.Description,
+		DifficultyID: payload.DifficultyID,
+		VideoURL:     payload.VideoURL,
 	}
 
-	err = h.exerciseStore.UpdateExercise(id, updatedData, payload.MuscleIDs, payload.DifficultyID)
+	err = h.exerciseStore.UpdateExercise(id, updatedData, payload.MuscleIDs)
 
 	if err != nil {
 		utils.WriteError(w, http.StatusInternalServerError, err)

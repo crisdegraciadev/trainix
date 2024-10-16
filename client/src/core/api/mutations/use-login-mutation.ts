@@ -29,6 +29,5 @@ export function useLoginMutation() {
   return useMutation({
     mutationFn,
     onSuccess: ({ token }) => onLoginSuccess(token),
-    onMutate: () => console.log('WTF'),
   });
 }

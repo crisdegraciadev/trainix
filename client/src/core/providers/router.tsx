@@ -1,8 +1,9 @@
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { AppRoutes } from '../constants/app-routes';
-import LoginPage from '@/pages/login';
-import RegisterPage from '@/pages/register';
-import ExercisesPage from '@/pages/exercises';
+import ExercisesPage from "@/pages/exercises";
+import LoginPage from "@/pages/login";
+import RegisterPage from "@/pages/register";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { AppRoutes } from "../constants/app-routes";
+import { useLoadSession } from "../hooks/use-load-session";
 
 const router = createBrowserRouter([
   { path: AppRoutes.ROOT, element: <LoginPage /> },
@@ -12,5 +13,7 @@ const router = createBrowserRouter([
 ]);
 
 export default function AppRouterProvider() {
+   useLoadSession();
+
   return <RouterProvider router={router} />;
 }

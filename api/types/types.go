@@ -68,22 +68,23 @@ type RegisterUserDTO struct {
 
 // Exercise
 type ExerciseStore interface {
-	CreateExercise(ctx context.Context, exercise Exercise, muscleIDS []int, difficultyID int) error
+	CreateExercise(ctx context.Context, exercise Exercise, muscleIDS []int) error
 	IsExerciseDuplicated(name string) (v bool, err error)
 	FilterExercises(filter ExerciseFilter, order ExerciseOrder, pagination Pagination) (exercises []Exercise, err error)
 	CountExercises(filter ExerciseFilter) (count int, err error)
 	FindExercise(id int) (exercise *Exercise, err error)
-	UpdateExercise(id int, exercise Exercise, muscleIDs []int, difficultyID int) error
+	UpdateExercise(id int, exercise Exercise, muscleIDs []int) error
 	DeleteExercise(id int) error
 }
 
 type Exercise struct {
-	ID          int       `json:"id"`
-	Name        string    `json:"name"`
-	Description string    `json:"description"`
-	VideoURL    string    `json:"videoUrl"`
-	UserID      int       `json:"userId"`
-	CreatedAt   time.Time `json:"createdAt"`
+	ID           int       `json:"id"`
+	Name         string    `json:"name"`
+	Description  string    `json:"description"`
+	VideoURL     string    `json:"videoUrl"`
+	UserID       int       `json:"userId"`
+	DifficultyID int       `json:"difficultyId"`
+	CreatedAt    time.Time `json:"createdAt"`
 }
 
 type ExerciseWithRelations struct {
@@ -123,9 +124,9 @@ type QueryExercisesDTO struct {
 }
 
 type FilterExercisesDTO struct {
-	Name          string `json:"name"`
-	MuscleIDs     []int  `json:"muscleIds"`
-	DifficultyID int  `json:"difficultyId"`
+	Name         string `json:"name"`
+	MuscleIDs    []int  `json:"muscleIds"`
+	DifficultyID int    `json:"difficultyId"`
 }
 
 type OrderExercisesDTO struct {
