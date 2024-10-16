@@ -85,7 +85,7 @@ func (h *Handler) handleCreate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// check if difficulty exists
-	if _, err := h.checkDifficultyIDs([]int{payload.DifficultyID}); err != nil {
+	if _, err := h.checkDifficultyID(payload.DifficultyID); err != nil {
 		utils.WriteError(w, http.StatusNotFound, err)
 		return
 	}
@@ -132,7 +132,7 @@ func (h *Handler) handleFilter(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if _, err := h.checkDifficultyIDs([]int{rawFilter.DifficultyID}); err != nil && rawFilter.DifficultyID != 0 {
+	if _, err := h.checkDifficultyID(rawFilter.DifficultyID); err != nil && rawFilter.DifficultyID != 0 {
 		utils.WriteError(w, http.StatusNotFound, err)
 		return
 	}
@@ -330,7 +330,7 @@ func (h *Handler) handleUpdate(w http.ResponseWriter, r *http.Request) {
 	if payload.DifficultyID != 0 {
 
 		// check if difficulty exists
-		if _, err := h.checkDifficultyIDs([]int{payload.DifficultyID}); err != nil {
+		if _, err := h.checkDifficultyID(payload.DifficultyID); err != nil {
 			utils.WriteError(w, http.StatusNotFound, err)
 			return
 		}
@@ -366,13 +366,11 @@ func (h *Handler) checkMuscleIDs(muscleIDs []int) (isValid bool, err error) {
 	return true, nil
 }
 
-func (h *Handler) checkDifficultyIDs(difficultyIDs []int) (isValid bool, err error) {
-	for _, difficultyID := range difficultyIDs {
-		_, err = h.difficultyStore.FindDifficultyByID(difficultyID)
+func (h *Handler) checkDifficultyID(difficultyID int) (isValid bool, err error) {
+	_, err = h.difficultyStore.FindDifficultyByID(difficultyID)
 
-		if err != nil {
-			return false, fmt.Errorf("difficulty with id [%d] not found", difficultyID)
-		}
+	if err != nil {
+		return false, fmt.Errorf("difficulty with id [%d] not found", difficultyID)
 	}
 
 	return true, nil

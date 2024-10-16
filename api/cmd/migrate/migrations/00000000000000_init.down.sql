@@ -1,4 +1,11 @@
--- unlink exercises and difficulties
+-- delete data from status
+DELETE FROM status;
+
+-- unlink workouts and users
+ALTER TABLE workouts DROP FOREIGN KEY fk_workout_user;
+ALTER TABLE workouts DROP COLUMN `userId`;
+
+-- unlink workouts and difficulties
 ALTER TABLE workouts DROP FOREIGN KEY fk_workout_difficulty;
 ALTER TABLE workouts DROP COLUMN `difficultyId`;
 

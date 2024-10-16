@@ -160,3 +160,14 @@ CREATE TABLE workout_muscle (
 ALTER TABLE workouts ADD COLUMN `difficultyId` INT UNSIGNED;
 ALTER TABLE workouts ADD CONSTRAINT fk_workout_difficulty
 FOREIGN KEY (`difficultyId`) REFERENCES difficulties (`id`) ON DELETE CASCADE;
+
+-- link workouts with users
+ALTER TABLE workouts ADD COLUMN `userId` INT UNSIGNED;
+ALTER TABLE workouts ADD CONSTRAINT fk_workout_user
+FOREIGN KEY (`userId`) REFERENCES users (`id`) ON DELETE CASCADE;
+
+-- insert status data
+INSERT INTO status (label, value) VALUES
+('slow down', 1),
+('stay', 2),
+('level up', 3);
