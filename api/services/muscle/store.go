@@ -89,6 +89,32 @@ func (s *Store) FindMusclesRelatedWithExercise(exerciseId int) ([]types.Muscle, 
 	return muscles, nil
 }
 
+func (s *Store) FindMusclesRelatedWithWorkout(workoutId int) ([]types.Muscle, error) {
+	rows, err := s.db.Query("SELECT muscleId FROM workout_muscle WHERE workoutId= ?", workoutId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	muscles := []types.Muscle{}
+	var muscleID int
+
+	for rows.Next() {
+		rows.Scan(&muscleID)
+		m, err := s.FindMuscleByID(muscleID)
+
+		if err != nil {
+			return nil, err
+		}
+
+		muscles = append(muscles, *m)
+	}
+
+	rows.Close()
+
+	return muscles, nil
+}
+
 func scanRowIntoMuscle(rows *sql.Rows) (*types.Muscle, error) {
 	muscle := new(types.Muscle)
 

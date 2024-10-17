@@ -4,6 +4,7 @@ type MuscleStore interface {
 	FindMuscleByID(id int) (*Muscle, error)
 	FindAllMuscles() ([]Muscle, error)
 	FindMusclesRelatedWithExercise(exerciseId int) ([]Muscle, error)
+	FindMusclesRelatedWithWorkout(workoutId int) ([]Muscle, error)
 }
 
 type Muscle struct {

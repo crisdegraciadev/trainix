@@ -3,6 +3,7 @@ package workout
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
 	"trainix/services/auth"
 	"trainix/types"
@@ -67,7 +68,7 @@ func (h *Handler) handleCreate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if isDuplicated {
-		utils.WriteError(w, http.StatusConflict, fmt.Errorf("exercise with name [%s] already exists", payload.Name))
+		utils.WriteError(w, http.StatusConflict, fmt.Errorf("workout with name [%s] already exists", payload.Name))
 		return
 	}
 
@@ -110,19 +111,240 @@ func (h *Handler) handleCreate(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) handleFilter(w http.ResponseWriter, r *http.Request) {
-	// TODO
+	// get JSON payload
+	var payload types.QueryWorkoutsDTO
+
+	if err := utils.ParseJSON(r, &payload); err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
+		return
+	}
+
+	rawFilter, rawOrder := payload.Filter, payload.Order
+
+	// setup filter
+	if _, err := h.checkMuscleIDs(rawFilter.MuscleIDs); err != nil && len(rawFilter.MuscleIDs) != 0 {
+		utils.WriteError(w, http.StatusNotFound, err)
+		return
+	}
+
+	if _, err := h.checkDifficultyID(rawFilter.DifficultyID); err != nil && rawFilter.DifficultyID != 0 {
+		utils.WriteError(w, http.StatusNotFound, err)
+		return
+	}
+
+	filter := types.WorkoutFilter{
+		Name:         rawFilter.Name,
+		MuscleIDs:    rawFilter.MuscleIDs,
+		DifficultyID: rawFilter.DifficultyID,
+	}
+
+	log.Printf("Exercise Filter Request: %v", filter)
+
+	// setup order
+	order := types.WorkoutOrder{
+		Name:      rawOrder.Name,
+		CreatedAt: rawOrder.CreatedAt,
+	}
+
+	// setup pagination
+	skip, err := utils.ParseQueryParam(r, "skip", 0)
+
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	take, err := utils.ParseQueryParam(r, "take", 12)
+
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	pagination := types.Pagination{
+		Take: take,
+		Skip: skip,
+	}
+
+	// filter workouts
+	workouts, err := h.workoutStore.FilterWorkouts(filter, order, pagination)
+
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	newValues := []types.WorkoutWithRelations{}
+
+	for _, workout := range workouts {
+		workoutWithRelations := types.WorkoutWithRelations{
+			ID:          workout.ID,
+			Name:        workout.Name,
+			Description: workout.Description,
+			UserID:      workout.UserID,
+			CreatedAt:   workout.CreatedAt,
+		}
+
+		muscles, err := h.muscleStore.FindMusclesRelatedWithWorkout(workout.ID)
+
+		if err != nil {
+			log.Printf("failed to find muscle related with exercise %v", err)
+			utils.WriteError(w, http.StatusNotFound, fmt.Errorf("related muscle not found"))
+			return
+		}
+
+		workoutWithRelations.Muscles = muscles
+
+		difficulty, err := h.difficultyStore.FindDifficultyByID(workout.DifficultyID)
+
+		if err != nil {
+			log.Printf("failed to find difficulty related with exercise %v", err)
+			utils.WriteError(w, http.StatusNotFound, fmt.Errorf("related difficulty not found"))
+			return
+		}
+
+		workoutWithRelations.Difficulty = *difficulty
+
+		newValues = append(newValues, workoutWithRelations)
+	}
+
+	// totalItems how many exercises where found
+	totalItems, err := h.workoutStore.CountWorkouts(filter)
+
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	// create page
+	totalPages, pageNumber := utils.CalculatePageMetada(skip, take, totalItems)
+
+	page := types.Page[types.WorkoutWithRelations]{
+		Values:     newValues,
+		TotalItems: totalItems,
+		TotalPages: totalPages,
+		PageNumber: pageNumber,
+		PageSize:   take,
+		PageOffset: skip,
+	}
+
+	utils.WriteJSON(w, http.StatusOK, page)
 }
 
 func (h *Handler) handleFind(w http.ResponseWriter, r *http.Request) {
-	// TODO
+	// get id from path param
+	id, err := utils.ParsePathParam(r, "id")
+
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
+		return
+	}
+
+	// find the exercise
+	exercise, err := h.workoutStore.FindWorkout(id)
+
+	if err != nil {
+		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("workout with id [%d] not found", id))
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusOK, exercise)
 }
 
 func (h *Handler) handleUpdate(w http.ResponseWriter, r *http.Request) {
-	// TODO
+	// get id from path param
+	id, err := utils.ParsePathParam(r, "id")
+
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
+		return
+	}
+
+	// get JSON payload
+	var payload types.UpdateWorkoutDTO
+
+	if err := utils.ParseJSON(r, &payload); err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
+		return
+	}
+
+	// check that update to update exists
+	_, err = h.workoutStore.FindWorkout(id)
+
+	if err != nil {
+		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("workout to delete with id [%d] not found", id))
+		return
+	}
+
+	// check muscleIDs if provided
+	if payload.MuscleIDs != nil {
+
+		// check muscleIds is not empty
+		if len(payload.MuscleIDs) == 0 {
+			utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("no muscles given to link"))
+			return
+		}
+
+		// check if muscles exists
+		if _, err := h.checkMuscleIDs(payload.MuscleIDs); err != nil {
+			utils.WriteError(w, http.StatusNotFound, err)
+			return
+		}
+	}
+
+	// check difficultyId if provided
+	if payload.DifficultyID != 0 {
+
+		// check if difficulty exists
+		if _, err := h.checkDifficultyID(payload.DifficultyID); err != nil {
+			utils.WriteError(w, http.StatusNotFound, err)
+			return
+		}
+	}
+
+	// update the exercise
+	updatedData := types.Workout{
+		Name:         payload.Name,
+		Description:  payload.Description,
+		DifficultyID: payload.DifficultyID,
+	}
+
+	err = h.workoutStore.UpdateWorkout(id, updatedData, payload.MuscleIDs)
+
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusOK, nil)
 }
 
 func (h *Handler) handleDelete(w http.ResponseWriter, r *http.Request) {
-	// TODO
+	// get id from path param
+	id, err := utils.ParsePathParam(r, "id")
+
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
+		return
+	}
+
+	// check that workout to delete exists
+	_, err = h.workoutStore.FindWorkout(id)
+
+	if err != nil {
+		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("workout to delete with id [%d] not found", id))
+		return
+	}
+
+	// delete exercise
+	err = h.workoutStore.DeleteWorkout(id)
+
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusOK, nil)
 }
 
 func (h *Handler) checkMuscleIDs(muscleIDs []int) (isValid bool, err error) {
