@@ -2,14 +2,15 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useDeleteExerciseMutation } from "@/core/api/mutations/use-delete-exercise-mutation";
 import { Exercise } from "@/core/types";
-import { extractYoutubeVideoId, formatString, StrFormat } from "@/core/utils";
+import { formatString, StrFormat } from "@/core/utils/string";
+import { extractYoutubeVideoId } from "@/core/utils/url";
 import { HeartIcon, LoaderCircle, Play } from "lucide-react";
-import { ExerciseDifficultyBadge } from "./difficulty-badge";
 import HybridView from "@/components/hybrid-view";
 import { useResolutionStore } from "@/core/state/resolution-store";
 import { useState } from "react";
-import ExerciseForm from "./forms/form";
+import ExerciseForm from "./form";
 import { useExerciseHybridViewStore } from "../state/exercise-hybrid-view-store";
+import { DifficultyBadge } from "@/components/difficulty-badge";
 
 export default function ExerciseDetails({ id, name, videoUrl, favourite, description, difficulty, muscles }: Exercise) {
   const { isDesktop } = useResolutionStore(({ isDesktop }) => ({ isDesktop }));
@@ -54,7 +55,7 @@ export default function ExerciseDetails({ id, name, videoUrl, favourite, descrip
             <div className="flex items-center gap-2">
               {favourite && <HeartIcon color="red" fill="red" className="w-5 h-5" />}
               <h3 className="text-2xl font-bold">{name}</h3>
-              <ExerciseDifficultyBadge difficulty={difficulty} />
+              <DifficultyBadge difficulty={difficulty} />
             </div>
             <p className="text-sm text-muted-foreground">{description}</p>
           </div>

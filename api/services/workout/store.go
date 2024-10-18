@@ -87,7 +87,59 @@ func (s *Store) linkWorkoutMuscle(tx *sql.Tx, workoutId int, muscleId int) error
 }
 
 func (s *Store) FilterWorkouts(filter types.WorkoutFilter, order types.WorkoutOrder, pagination types.Pagination) (workouts []types.Workout, err error) {
-	return []types.Workout{}, nil
+	var queryBuilder strings.Builder
+
+	queryBuilder.WriteString(`
+    SELECT DISTINCT id, name, description, userId, difficultyId, createdAt FROM workouts w 
+    LEFT JOIN workout_muscle wm ON w.id = wm.workoutId 
+    WHERE 1 = 1  
+  `)
+
+	if filter.Name != "" {
+		condition := fmt.Sprintf(" AND w.name LIKE '%%%s%%'", filter.Name)
+		queryBuilder.WriteString(condition)
+	}
+
+	if len(filter.MuscleIDs) != 0 {
+		condition := fmt.Sprintf(" AND wm.muscleId IN %s", utils.MapIDsToSQLRange(filter.MuscleIDs))
+		queryBuilder.WriteString(condition)
+	}
+
+	if filter.DifficultyID != 0 {
+		condition := fmt.Sprintf(" AND w.difficultyId = %d", filter.DifficultyID)
+		queryBuilder.WriteString(condition)
+	}
+
+	if order.Name != "" || order.CreatedAt != "" {
+		order := utils.MapOrdersToSQL(map[string]string{"name": order.Name, "createdAt": order.CreatedAt})
+		queryBuilder.WriteString(order)
+	}
+
+	queryBuilder.WriteString(fmt.Sprintf(" LIMIT %d OFFSET %d", pagination.Take, pagination.Skip))
+
+	query := queryBuilder.String()
+
+	log.Printf("%s", query)
+
+	rows, err := s.db.Query(query)
+
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		exercise, err := s.scanRowIntoWorkout(rows)
+
+		if err != nil {
+			return nil, err
+		}
+
+		workouts = append(workouts, *exercise)
+	}
+
+	rows.Close()
+
+	return workouts, nil
 }
 
 func (s *Store) CountWorkouts(filter types.WorkoutFilter) (count int, err error) {
@@ -95,7 +147,7 @@ func (s *Store) CountWorkouts(filter types.WorkoutFilter) (count int, err error)
 
 	queryBuilder.WriteString(`
     SELECT COUNT(DISTINCT w.id) FROM workouts w 
-    LEFT JOIN workout_muscle wm ON w.id = wm.exerciseId  
+    LEFT JOIN workout_muscle wm ON w.id = wm.workoutId  
     WHERE 1 = 1  
   `)
 

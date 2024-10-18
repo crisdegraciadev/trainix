@@ -1,50 +1,14 @@
+import { DifficultyBadge } from "@/components/difficulty-badge";
 import HybridView from "@/components/hybrid-view";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useResolutionStore } from "@/core/state/resolution-store";
 import { Exercise } from "@/core/types";
-import { extractYoutubeVideoId, formatString, StrFormat } from "@/core/utils";
+import { extractYoutubeVideoId } from "@/core/utils/url";
 import { HeartIcon } from "lucide-react";
-import { ComponentProps, forwardRef, PropsWithChildren } from "react";
+import { ComponentProps, forwardRef } from "react";
 import { useExerciseHybridViewStore } from "../state/exercise-hybrid-view-store";
 import ExerciseDetails from "./details";
-import { ExerciseDifficultyBadge } from "./difficulty-badge";
-
-function MuscleList({ muscles }: Pick<Exercise, "muscles">) {
-  const [primary, ...rest] = muscles;
-
-  const musclesRemaining = rest.length;
-
-  const BaseList = ({ children }: PropsWithChildren) => (
-    <div className="flex gap-1">
-      <Badge className="h-fit text-nowrap">{formatString(primary.label, StrFormat.TITLE_CASE)}</Badge>
-      {children}
-    </div>
-  );
-
-  if (musclesRemaining > 2) {
-    return (
-      <BaseList>
-        <Badge className="h-fit text-nowrap" variant="secondary">
-          {formatString(rest[0].label, StrFormat.TITLE_CASE)}
-        </Badge>
-        <Badge className="h-fit text-nowrap" variant="secondary">
-          {`+ ${musclesRemaining - 1} more`}
-        </Badge>
-      </BaseList>
-    );
-  }
-
-  return (
-    <BaseList>
-      {rest.map((muscle) => (
-        <Badge key={muscle.label} className="h-fit text-nowrap" variant="secondary">
-          {formatString(muscle.label, StrFormat.TITLE_CASE)}
-        </Badge>
-      ))}
-    </BaseList>
-  );
-}
+import { MuscleList } from "@/components/muscle-list";
 
 const ExerciseTrigger = forwardRef<HTMLDivElement, ComponentProps<"div"> & Exercise>(function (
   { name, description, muscles, difficulty, favourite, videoUrl, ...rest },
@@ -74,8 +38,8 @@ const ExerciseTrigger = forwardRef<HTMLDivElement, ComponentProps<"div"> & Exerc
 
         <div className="p-4 bg-background flex flex-col space-y-2 min-h-[120px]">
           <div className="flex items-center gap-2">
-            <h3 className="text-xl font-bold">{name}</h3>
-            <ExerciseDifficultyBadge difficulty={difficulty} />
+            <h3 className="text-xl font-bold truncate">{name}</h3>
+            <DifficultyBadge difficulty={difficulty} />
           </div>
           <p className="text-sm text-muted-foreground h-10 line-clamp-2">{description}</p>
           <MuscleList muscles={muscles} />

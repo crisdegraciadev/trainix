@@ -1,10 +1,10 @@
 import HybridView from '@/components/hybrid-view';
 import { ArrowDownNarrowWide, ListFilter, PlusCircle } from 'lucide-react';
-import ExerciseForm from './forms/form';
+import ExerciseForm from './form';
 import { useResolutionStore } from '@/core/state/resolution-store';
 import { useExerciseHybridViewStore } from '../state/exercise-hybrid-view-store';
-import ExerciseSortForm from './forms/sort-form';
-import ExerciseFilterForm from './forms/filter-form';
+import ExerciseSortForm from './sort-form';
+import ExerciseFilterForm from './filter-form';
 import { Button } from '@/components/ui/button';
 
 export default function ExerciseToolbar() {
