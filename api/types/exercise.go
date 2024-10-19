@@ -51,7 +51,7 @@ type CreateExerciseDTO struct {
 	Name         string `json:"name" validate:"required"`
 	Description  string `json:"description"`
 	VideoURL     string `json:"videoUrl" validate:"omitempty,url"`
-	MuscleIDs    []int  `json:"muscleIds" validate:"required"`
+	MuscleIDs    []int  `json:"muscleIds" validate:"required,min=1"`
 	DifficultyID int    `json:"difficultyID" validate:"required"`
 }
 

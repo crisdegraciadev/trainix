@@ -7,7 +7,7 @@ import (
 
 type WorkoutStore interface {
 	CreateWorkout(ctx context.Context, workout Workout, muscleIDS []int) error
-	IsWorkoutDuplicated(name string) (v bool, err error)
+	ExistWorkout(name string) (v bool, err error)
 	FilterWorkouts(filter WorkoutFilter, order WorkoutOrder, pagination Pagination) (workouts []Workout, err error)
 	CountWorkouts(filter WorkoutFilter) (count int, err error)
 	FindWorkout(id int) (workout *Workout, err error)
@@ -65,12 +65,12 @@ type CreateWorkoutDTO struct {
 	Name         string `json:"name" validate:"required"`
 	Description  string `json:"description"`
 	DifficultyID int    `json:"difficultyId" validate:"required"`
-	MuscleIDs    []int  `json:"muscleIds" validate:"required"`
+	MuscleIDs    []int  `json:"muscleIds" validate:"required,min=1"`
 }
 
 type UpdateWorkoutDTO struct {
-	Name         string `json:"name" validate:"required"`
+	Name         string `json:"name"`
 	Description  string `json:"description"`
-	MuscleIDs    []int  `json:"muscleIds" validate:"required"`
-	DifficultyID int    `json:"difficultyID" validate:"required"`
+	MuscleIDs    []int  `json:"muscleIds"`
+	DifficultyID int    `json:"difficultyID"`
 }

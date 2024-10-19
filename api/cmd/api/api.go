@@ -7,6 +7,7 @@ import (
 	"trainix/services/auth"
 	"trainix/services/difficulty"
 	"trainix/services/exercise"
+	"trainix/services/iteration"
 	"trainix/services/muscle"
 	"trainix/services/user"
 	"trainix/services/workout"
@@ -46,8 +47,11 @@ func (s *APIServer) Run() error {
 	difficultyRouter := mainRouter.PathPrefix("/difficulties").Subrouter()
 	setupDifficultyRoutes(s, difficultyRouter)
 
-  workoutRouter := mainRouter.PathPrefix("/workouts").Subrouter()
-  setupWorkoutRoutes(s,workoutRouter)
+	workoutRouter := mainRouter.PathPrefix("/workouts").Subrouter()
+	setupWorkoutRoutes(s, workoutRouter)
+
+	iterationRouter := mainRouter.PathPrefix("/iterations").Subrouter()
+	setupIterationRoutes(s, iterationRouter)
 
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"http://localhost:5173"},
@@ -126,4 +130,15 @@ func setupWorkoutRoutes(s *APIServer, workoutRouter *mux.Router) {
 
 	workoutHandler := workout.NewHandler(di)
 	workoutHandler.RegisterRoutes(workoutRouter)
+}
+
+func setupIterationRoutes(s *APIServer, iterationRouter *mux.Router) {
+	di := iteration.DI{
+		IteartionStore: iteration.NewStore(s.db),
+		WorkoutStore:   workout.NewStore(s.db),
+		UserStore:      user.NewStore(s.db),
+	}
+
+	iterationHandler := iteration.NewHandler(di)
+	iterationHandler.RegisterRoutes(iterationRouter)
 }

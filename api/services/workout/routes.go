@@ -60,7 +60,7 @@ func (h *Handler) handleCreate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// check if exercise already exists
-	isDuplicated, err := h.workoutStore.IsWorkoutDuplicated(payload.Name)
+	isDuplicated, err := h.workoutStore.ExistWorkout(payload.Name)
 
 	if err != nil {
 		utils.WriteError(w, http.StatusInternalServerError, err)

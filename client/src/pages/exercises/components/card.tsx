@@ -18,7 +18,7 @@ const ExerciseTrigger = forwardRef<HTMLDivElement, ComponentProps<"div"> & Exerc
     <div ref={ref} {...rest}>
       <span className="sr-only">View Exercise</span>
 
-      <div className="overflow-hidden transition-transform duration-300 ease-in-out rounded-lg shadow-lg group hover:shadow-xl hover:-translate-y-2">
+      <div className="overflow-hidden transition-transform duration-300 ease-in-out rounded-lg shadow-lg group">
         <div className="relative">
           <img
             src={

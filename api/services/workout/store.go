@@ -60,7 +60,7 @@ func (s *Store) CreateWorkout(ctx context.Context, workout types.Workout, muscle
 	return nil
 }
 
-func (s *Store) IsWorkoutDuplicated(name string) (v bool, err error) {
+func (s *Store) ExistWorkout(name string) (v bool, err error) {
 	var count int
 
 	row := s.db.QueryRow("SELECT COUNT(*) FROM workouts WHERE name = ?", name)
