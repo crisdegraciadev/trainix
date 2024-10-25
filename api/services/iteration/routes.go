@@ -15,12 +15,14 @@ import (
 type DI struct {
 	UserStore      types.UserStore
 	IteartionStore types.IterationStore
+	ActivityStore  types.ActivityStore
 	WorkoutStore   types.WorkoutStore
 }
 
 type Handler struct {
 	userStore      types.UserStore
 	iterationStore types.IterationStore
+	activityStore  types.ActivityStore
 	workoutStore   types.WorkoutStore
 }
 
@@ -28,6 +30,7 @@ func NewHandler(di DI) *Handler {
 	return &Handler{
 		userStore:      di.UserStore,
 		iterationStore: di.IteartionStore,
+		activityStore:  di.ActivityStore,
 		workoutStore:   di.WorkoutStore,
 	}
 }
@@ -69,10 +72,7 @@ func (h *Handler) handleCreate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// create iteration on db
-	iteration := types.Iteration{
-		WorkoutID: payload.WorkoutID,
-	}
-
+	iteration := types.Iteration{WorkoutID: payload.WorkoutID}
 	activities := []types.Activity{}
 
 	for _, a := range payload.Activities {
@@ -86,7 +86,6 @@ func (h *Handler) handleCreate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ctx := context.Background()
-
 	err = h.iterationStore.CreateIteration(ctx, iteration, activities)
 
 	if err != nil {
@@ -104,6 +103,63 @@ func (h *Handler) handleFind(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) handleUpdate(w http.ResponseWriter, r *http.Request) {
+	// get id from path param
+	id, err := utils.ParsePathParam(r, "id")
+
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
+		return
+	}
+
+	// get JSON payload
+	var payload types.UpdateIterationDTO
+
+	if err := utils.ParseJSON(r, &payload); err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
+		return
+	}
+
+	// check that iteration to update exists
+	_, err = h.iterationStore.FindIteration(id)
+
+	if err != nil {
+		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("workout to update with id [%d] not found", id))
+		return
+	}
+
+	// check activities are provided
+	if len(payload.Activities) != 0 {
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("no activities given to update"))
+		return
+	}
+
+	// check if activities exists
+	for _, a := range payload.Activities {
+		if _, err := h.activityStore.ExistActivity(a.ID); err != nil {
+			utils.WriteError(w, http.StatusNotFound, err)
+			return
+		}
+	}
+
+	// Update activities on iteration
+	for _, a := range payload.Activities {
+		updatedData := types.Activity{
+			Name:       a.Name,
+			Sets:       a.Sets,
+			Reps:       a.Reps,
+			StatusID:   a.StatusID,
+			ExerciseID: a.ExerciseID,
+		}
+
+		err := h.activityStore.UpdateActivity(a.ID, updatedData)
+
+		if err != nil {
+			utils.WriteError(w, http.StatusInternalServerError, err)
+			return
+		}
+	}
+
+	utils.WriteJSON(w, http.StatusOK, nil)
 }
 
 func (h *Handler) handleDelete(w http.ResponseWriter, r *http.Request) {

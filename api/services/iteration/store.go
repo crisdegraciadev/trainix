@@ -3,7 +3,9 @@ package iteration
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"log"
+	"trainix/services/activity"
 	"trainix/types"
 )
 
@@ -24,6 +26,9 @@ func (s *Store) CreateIteration(ctx context.Context, iteration types.Iteration, 
 		return err
 	}
 
+	// setup linked activity store
+	activityStore := activity.NewStore(s.db)
+
 	// insert iteration
 	r, err := tx.Exec("INSERT INTO iterations (workoutId) VALUES (?)", iteration.WorkoutID)
 
@@ -39,13 +44,10 @@ func (s *Store) CreateIteration(ctx context.Context, iteration types.Iteration, 
 
 	// insert activities
 	for _, a := range activities {
-		_, err := tx.Exec("INSERT INTO activities (name, sets, reps, statusId, exerciseId, iterationId) VALUES (?,?,?,?,?,?)",
-			a.Name, a.Sets, a.Reps, a.StatusID, a.ExerciseID, iterationId,
-		)
-		log.Printf("Activity = {%v}", iterationId)
+		err = activityStore.CreateActivity(tx, int(iterationId), a)
 
 		if err != nil {
-			return err
+			return fmt.Errorf("cannot create activity")
 		}
 	}
 
@@ -57,6 +59,42 @@ func (s *Store) CreateIteration(ctx context.Context, iteration types.Iteration, 
 	return nil
 }
 
-func (s *Store) UpdateIteration(id int, iteration types.Iteration) error {
-	return nil
+func (s *Store) FindIteration(id int) (*types.Iteration, error) {
+	rows, err := s.db.Query("SELECT id, createdAt FROM iterations WHERE id = ?", id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	iteration := new(types.Iteration)
+
+	for rows.Next() {
+		iteration, err = s.scanRowIntoIteration(rows)
+
+		if err != nil {
+			log.Printf("%s", err)
+			return nil, err
+		}
+	}
+
+	rows.Close()
+
+	if iteration.ID == 0 {
+		log.Printf("%s", "iteration ID is 0")
+		return nil, fmt.Errorf("iteration not found")
+	}
+
+	return iteration, nil
+}
+
+func (s *Store) scanRowIntoIteration(rows *sql.Rows) (*types.Iteration, error) {
+	iteration := new(types.Iteration)
+
+	err := rows.Scan(&iteration.ID, &iteration.CreatedAt)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return iteration, nil
 }

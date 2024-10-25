@@ -268,11 +268,11 @@ func (h *Handler) handleUpdate(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// check that update to update exists
+	// check that workout to update exists
 	_, err = h.workoutStore.FindWorkout(id)
 
 	if err != nil {
-		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("workout to delete with id [%d] not found", id))
+		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("workout to update with id [%d] not found", id))
 		return
 	}
 

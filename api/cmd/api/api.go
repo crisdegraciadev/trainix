@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"log"
 	"net/http"
+	"trainix/services/activity"
 	"trainix/services/auth"
 	"trainix/services/difficulty"
 	"trainix/services/exercise"
@@ -135,6 +136,7 @@ func setupWorkoutRoutes(s *APIServer, workoutRouter *mux.Router) {
 func setupIterationRoutes(s *APIServer, iterationRouter *mux.Router) {
 	di := iteration.DI{
 		IteartionStore: iteration.NewStore(s.db),
+		ActivityStore:  activity.NewStore(s.db),
 		WorkoutStore:   workout.NewStore(s.db),
 		UserStore:      user.NewStore(s.db),
 	}

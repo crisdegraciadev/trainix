@@ -7,7 +7,7 @@ import (
 
 type IterationStore interface {
 	CreateIteration(ctx context.Context, iteration Iteration, activities []Activity) error
-	UpdateIteration(id int, iteration Iteration) error
+	FindIteration(id int) (iteration *Iteration, err error)
 }
 
 type Iteration struct {
@@ -22,5 +22,5 @@ type CreateIterationDTO struct {
 }
 
 type UpdateIterationDTO struct {
-	Activities []CreateActivityDTO
+	Activities []UpdateActivityDTO `json:"activities"`
 }

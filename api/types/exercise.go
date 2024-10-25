@@ -5,6 +5,8 @@ import (
 	"time"
 )
 
+type ExerciseService interface{}
+
 type ExerciseStore interface {
 	CreateExercise(ctx context.Context, exercise Exercise, muscleIDS []int) error
 	IsExerciseDuplicated(name string) (v bool, err error)

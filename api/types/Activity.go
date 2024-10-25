@@ -1,10 +1,14 @@
 package types
 
-import "time"
+import (
+	"database/sql"
+	"time"
+)
 
 type ActivityStore interface {
-	CreateActivity(activity Activity) error
+	CreateActivity(tx *sql.Tx, iterationId int, activity Activity) error
 	UpdateActivity(id int, activity Activity) error
+	ExistActivity(id int) (v bool, err error)
 }
 
 type Activity struct {
@@ -19,9 +23,18 @@ type Activity struct {
 }
 
 type CreateActivityDTO struct {
-	Name        string `json:"name"`
-	Sets        int    `json:"sets"`
-	Reps        int    `json:"reps"`
-	StatusID    int    `json:"statusID"`
-	ExerciseID  int    `json:"exerciseID"`
+	Name       string `json:"name"`
+	Sets       int    `json:"sets"`
+	Reps       int    `json:"reps"`
+	StatusID   int    `json:"statusID"`
+	ExerciseID int    `json:"exerciseID"`
+}
+
+type UpdateActivityDTO struct {
+	ID         int    `json:"id"`
+	Name       string `json:"name"`
+	Sets       int    `json:"sets"`
+	Reps       int    `json:"reps"`
+	StatusID   int    `json:"statusID"`
+	ExerciseID int    `json:"exerciseID"`
 }
