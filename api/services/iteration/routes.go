@@ -17,6 +17,8 @@ type DI struct {
 	IteartionStore types.IterationStore
 	ActivityStore  types.ActivityStore
 	WorkoutStore   types.WorkoutStore
+	ExerciseStore  types.ExerciseStore
+	StatusStore    types.StatusStore
 }
 
 type Handler struct {
@@ -24,6 +26,8 @@ type Handler struct {
 	iterationStore types.IterationStore
 	activityStore  types.ActivityStore
 	workoutStore   types.WorkoutStore
+	exerciseStore  types.ExerciseStore
+	statusStore    types.StatusStore
 }
 
 func NewHandler(di DI) *Handler {
@@ -32,12 +36,14 @@ func NewHandler(di DI) *Handler {
 		iterationStore: di.IteartionStore,
 		activityStore:  di.ActivityStore,
 		workoutStore:   di.WorkoutStore,
+		exerciseStore:  di.ExerciseStore,
+		statusStore:    di.StatusStore,
 	}
 }
 
 func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("", auth.WithJWTAuth(h.handleCreate, h.userStore)).Methods("POST")
-	router.HandleFunc("/{id}", auth.WithJWTAuth(h.handleFind, h.userStore)).Methods("GET")
+	router.HandleFunc("/{id}", auth.WithJWTAuth(h.handleFindAll, h.userStore)).Methods("GET")
 	router.HandleFunc("/{id}", auth.WithJWTAuth(h.handleUpdate, h.userStore)).Methods("PUT")
 	router.HandleFunc("/{id}", auth.WithJWTAuth(h.handleDelete, h.userStore)).Methods("DELETE")
 }
@@ -95,24 +101,106 @@ func (h *Handler) handleCreate(w http.ResponseWriter, r *http.Request) {
 	utils.WriteJSON(w, http.StatusCreated, nil)
 }
 
-func (h *Handler) handleFind(w http.ResponseWriter, r *http.Request) {
-	// get createdAt from path param
-	createdAt, err := utils.ParsePathParamTime(r, "createdAt")
+func (h *Handler) handleFindAll(w http.ResponseWriter, r *http.Request) {
+	// setup pagination
+	skip, err := utils.ParseQueryParam(r, "skip", 0)
 
 	if err != nil {
-		utils.WriteError(w, http.StatusBadRequest, err)
+		utils.WriteError(w, http.StatusInternalServerError, err)
 		return
 	}
 
-	// find the iteration
-	iteration, err := h.iterationStore.FindIterationBefore(createdAt)
+	take, err := utils.ParseQueryParam(r, "take", 10)
 
 	if err != nil {
-		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("iteartion with createdAt before to [%s] not found", createdAt.String()))
+		utils.WriteError(w, http.StatusInternalServerError, err)
 		return
 	}
 
-	utils.WriteJSON(w, http.StatusOK, iteration)
+	pagination := types.Pagination{
+		Take: take,
+		Skip: skip,
+	}
+
+	// filter iterations
+	iterations, err := h.iterationStore.FindAllIterations(pagination)
+
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	iterationsWR := []types.IterationWithRelations{}
+
+	for _, i := range iterations {
+
+		activities, err := h.activityStore.FindActivitiesByIteraion(i.ID)
+
+		if err != nil {
+			utils.WriteError(w, http.StatusNotFound, fmt.Errorf("related activities not found"))
+			return
+		}
+
+		activitiesWR := []types.ActivityWithRelations{}
+
+		for _, a := range activities {
+			exercise, err := h.exerciseStore.FindExercise(a.ExerciseID)
+
+			if err != nil {
+				utils.WriteError(w, http.StatusNotFound, fmt.Errorf("exercise not found"))
+				return
+			}
+
+			status, err := h.statusStore.FindStatus(a.StatusID)
+
+			if err != nil {
+				utils.WriteError(w, http.StatusNotFound, fmt.Errorf("status not found"))
+				return
+			}
+
+			activityWithRelations := types.ActivityWithRelations{
+				Name:      a.Name,
+				Sets:      a.Sets,
+				Reps:      a.Reps,
+				Exercise:  *exercise,
+				Status:    *status,
+				CreatedAt: a.CreatedAt,
+			}
+
+			activitiesWR = append(activitiesWR, activityWithRelations)
+		}
+
+		iterationWithRelations := types.IterationWithRelations{
+			ID:         i.ID,
+			WorkoutID:  i.WorkoutID,
+			Activities: activitiesWR,
+			CreatedAt:  i.CreatedAt,
+		}
+
+		iterationsWR = append(iterationsWR, iterationWithRelations)
+	}
+
+	// totalItems how many exercises where found
+	totalItems, err := h.iterationStore.CountIterations()
+
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	// create page
+	totalPages, pageNumber := utils.CalculatePageMetada(skip, take, totalItems)
+
+	page := types.Page[types.IterationWithRelations]{
+		Values:     iterationsWR,
+		TotalItems: totalItems,
+		TotalPages: totalPages,
+		PageNumber: pageNumber,
+		PageSize:   take,
+		PageOffset: skip,
+	}
+
+	utils.WriteJSON(w, http.StatusOK, page)
 }
 
 func (h *Handler) handleUpdate(w http.ResponseWriter, r *http.Request) {

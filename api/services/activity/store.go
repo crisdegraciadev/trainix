@@ -3,6 +3,7 @@ package activity
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"strings"
 	"trainix/types"
 )
@@ -16,6 +17,63 @@ type Store struct {
 
 func NewStore(db *sql.DB) *Store {
 	return &Store{db: db}
+}
+
+func (s *Store) FindActivity(id int) (*types.Activity, error) {
+	rows, err := s.db.Query("SELECT id, name, sets, reps, statusId, exerciseId, iterationId FROM activities WHERE id = ?", id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	activity := new(types.Activity)
+
+	for rows.Next() {
+		activity, err = s.scanRowIntoActivity(rows)
+
+		if err != nil {
+			log.Printf("%s", err)
+			return nil, err
+		}
+	}
+
+	rows.Close()
+
+	if activity.ID == 0 {
+		log.Printf("%s", "activity ID is 0")
+		return nil, fmt.Errorf("activity not found")
+	}
+
+	return activity, nil
+}
+
+func (s *Store) FindActivitiesByIteraion(iterationId int) ([]types.Activity, error) {
+	rows, err := s.db.Query("SELECT id, name, sets, reps, statusId, exerciseId, iterationId FROM activities WHERE iterationId = ?", iterationId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	activities := []types.Activity{}
+
+	for rows.Next() {
+		activity, err := s.scanRowIntoActivity(rows)
+
+		if err != nil {
+			return nil, err
+		}
+
+		if activity.ID == 0 {
+			log.Printf("%s", "activity ID is 0")
+			return nil, fmt.Errorf("activity not found")
+		}
+
+		activities = append(activities, *activity)
+	}
+
+	rows.Close()
+
+	return activities, nil
 }
 
 func (s *Store) CreateActivity(tx *sql.Tx, iterationId int, activity types.Activity) error {
@@ -80,4 +138,25 @@ func (s *Store) ExistActivity(id int) (v bool, err error) {
 	}
 
 	return count > 0, nil
+}
+
+func (s *Store) scanRowIntoActivity(rows *sql.Rows) (*types.Activity, error) {
+	activity := new(types.Activity)
+
+	err := rows.Scan(
+		&activity.ID,
+		&activity.Name,
+		&activity.Sets,
+		&activity.Reps,
+		&activity.StatusID,
+		&activity.ExerciseID,
+		&activity.IterationID,
+		&activity.CreatedAt,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return activity, nil
 }

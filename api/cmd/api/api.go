@@ -139,6 +139,7 @@ func setupIterationRoutes(s *APIServer, iterationRouter *mux.Router) {
 		ActivityStore:  activity.NewStore(s.db),
 		WorkoutStore:   workout.NewStore(s.db),
 		UserStore:      user.NewStore(s.db),
+		ExerciseStore:  exercise.NewStore(s.db),
 	}
 
 	iterationHandler := iteration.NewHandler(di)

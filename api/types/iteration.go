@@ -7,14 +7,22 @@ import (
 
 type IterationStore interface {
 	CreateIteration(ctx context.Context, iteration Iteration, activities []Activity) error
-	FindIteration(id int) (iteration *Iteration, err error)
-	FindIterationBefore(createdAt time.Time) (iteration *Iteration, err error)
+	FindAllIterations(pagination Pagination) (iterations []Iteration, err error)
+	FindIteration(id int) (*Iteration, error)
+	CountIterations() (int, error)
 }
 
 type Iteration struct {
 	ID        int       `json:"id"`
 	WorkoutID int       `json:"workoutId"`
 	CreatedAt time.Time `json:"createdAt"`
+}
+
+type IterationWithRelations struct {
+	ID         int                     `json:"id"`
+	WorkoutID  int                     `json:"workoutId"`
+	Activities []ActivityWithRelations `json:"activities"`
+	CreatedAt  time.Time               `json:"createdAt"`
 }
 
 type CreateIterationDTO struct {

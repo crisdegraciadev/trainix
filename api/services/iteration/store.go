@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	"time"
 	"trainix/services/activity"
 	"trainix/types"
 )
@@ -88,32 +87,21 @@ func (s *Store) FindIteration(id int) (*types.Iteration, error) {
 	return iteration, nil
 }
 
-func (s *Store) FindIterationBefore(createdAt time.Time) (*types.Iteration, error) {
-	rows, err := s.db.Query("SELECT id, createdAt FROM iterations WHERE created_at < ? ORDER BY createdAt DESC LIMIT 1", createdAt)
+func (s *Store) FindAllIterations(pagination types.Pagination) (iterations []types.Iteration, err error) {
+	return nil, nil
+}
+
+func (s *Store) CountInterations() (int, error) {
+	var count int
+
+	row := s.db.QueryRow("SELECT COUNT(*) FROM iterations")
+	err := row.Scan(&count)
 
 	if err != nil {
-		return nil, err
+		return 0, err
 	}
 
-	iteration := new(types.Iteration)
-
-	for rows.Next() {
-		iteration, err = s.scanRowIntoIteration(rows)
-
-		if err != nil {
-			log.Printf("%s", err)
-			return nil, err
-		}
-	}
-
-	rows.Close()
-
-	if iteration.ID == 0 {
-		log.Printf("%s", "iteration ID is 0")
-		return nil, fmt.Errorf("iteration not found")
-	}
-
-	return iteration, nil
+	return count, nil
 }
 
 func (s *Store) scanRowIntoIteration(rows *sql.Rows) (*types.Iteration, error) {
