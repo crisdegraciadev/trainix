@@ -239,7 +239,7 @@ func (h *Handler) handleFilter(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) handleFind(w http.ResponseWriter, r *http.Request) {
 	// get id from path param
-	id, err := utils.ParsePathParam(r, "id")
+	id, err := utils.ParsePathParamInt(r, "id")
 
 	if err != nil {
 		utils.WriteError(w, http.StatusBadRequest, err)
@@ -259,7 +259,7 @@ func (h *Handler) handleFind(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) handleDelete(w http.ResponseWriter, r *http.Request) {
 	// get id from path param
-	id, err := utils.ParsePathParam(r, "id")
+	id, err := utils.ParsePathParamInt(r, "id")
 
 	if err != nil {
 		utils.WriteError(w, http.StatusBadRequest, err)
@@ -287,7 +287,7 @@ func (h *Handler) handleDelete(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) handleUpdate(w http.ResponseWriter, r *http.Request) {
 	// get id from path param
-	id, err := utils.ParsePathParam(r, "id")
+	id, err := utils.ParsePathParamInt(r, "id")
 
 	if err != nil {
 		utils.WriteError(w, http.StatusBadRequest, err)

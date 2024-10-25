@@ -233,27 +233,27 @@ func (h *Handler) handleFilter(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) handleFind(w http.ResponseWriter, r *http.Request) {
 	// get id from path param
-	id, err := utils.ParsePathParam(r, "id")
+	id, err := utils.ParsePathParamInt(r, "id")
 
 	if err != nil {
 		utils.WriteError(w, http.StatusBadRequest, err)
 		return
 	}
 
-	// find the exercise
-	exercise, err := h.workoutStore.FindWorkout(id)
+	// find the workout
+	workout, err := h.workoutStore.FindWorkout(id)
 
 	if err != nil {
 		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("workout with id [%d] not found", id))
 		return
 	}
 
-	utils.WriteJSON(w, http.StatusOK, exercise)
+	utils.WriteJSON(w, http.StatusOK, workout)
 }
 
 func (h *Handler) handleUpdate(w http.ResponseWriter, r *http.Request) {
 	// get id from path param
-	id, err := utils.ParsePathParam(r, "id")
+	id, err := utils.ParsePathParamInt(r, "id")
 
 	if err != nil {
 		utils.WriteError(w, http.StatusBadRequest, err)
@@ -321,7 +321,7 @@ func (h *Handler) handleUpdate(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) handleDelete(w http.ResponseWriter, r *http.Request) {
 	// get id from path param
-	id, err := utils.ParsePathParam(r, "id")
+	id, err := utils.ParsePathParamInt(r, "id")
 
 	if err != nil {
 		utils.WriteError(w, http.StatusBadRequest, err)

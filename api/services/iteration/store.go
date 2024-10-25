@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"time"
 	"trainix/services/activity"
 	"trainix/types"
 )
@@ -61,6 +62,34 @@ func (s *Store) CreateIteration(ctx context.Context, iteration types.Iteration, 
 
 func (s *Store) FindIteration(id int) (*types.Iteration, error) {
 	rows, err := s.db.Query("SELECT id, createdAt FROM iterations WHERE id = ?", id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	iteration := new(types.Iteration)
+
+	for rows.Next() {
+		iteration, err = s.scanRowIntoIteration(rows)
+
+		if err != nil {
+			log.Printf("%s", err)
+			return nil, err
+		}
+	}
+
+	rows.Close()
+
+	if iteration.ID == 0 {
+		log.Printf("%s", "iteration ID is 0")
+		return nil, fmt.Errorf("iteration not found")
+	}
+
+	return iteration, nil
+}
+
+func (s *Store) FindIterationBefore(createdAt time.Time) (*types.Iteration, error) {
+	rows, err := s.db.Query("SELECT id, createdAt FROM iterations WHERE created_at < ? ORDER BY createdAt DESC LIMIT 1", createdAt)
 
 	if err != nil {
 		return nil, err

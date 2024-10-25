@@ -8,6 +8,7 @@ import (
 type IterationStore interface {
 	CreateIteration(ctx context.Context, iteration Iteration, activities []Activity) error
 	FindIteration(id int) (iteration *Iteration, err error)
+	FindIterationBefore(createdAt time.Time) (iteration *Iteration, err error)
 }
 
 type Iteration struct {

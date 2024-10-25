@@ -37,7 +37,6 @@ func NewHandler(di DI) *Handler {
 
 func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("", auth.WithJWTAuth(h.handleCreate, h.userStore)).Methods("POST")
-	router.HandleFunc("", auth.WithJWTAuth(h.handleFindAll, h.userStore)).Methods("GET")
 	router.HandleFunc("/{id}", auth.WithJWTAuth(h.handleFind, h.userStore)).Methods("GET")
 	router.HandleFunc("/{id}", auth.WithJWTAuth(h.handleUpdate, h.userStore)).Methods("PUT")
 	router.HandleFunc("/{id}", auth.WithJWTAuth(h.handleDelete, h.userStore)).Methods("DELETE")
@@ -96,15 +95,29 @@ func (h *Handler) handleCreate(w http.ResponseWriter, r *http.Request) {
 	utils.WriteJSON(w, http.StatusCreated, nil)
 }
 
-func (h *Handler) handleFindAll(w http.ResponseWriter, r *http.Request) {
-}
-
 func (h *Handler) handleFind(w http.ResponseWriter, r *http.Request) {
+	// get createdAt from path param
+	createdAt, err := utils.ParsePathParamTime(r, "createdAt")
+
+	if err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
+		return
+	}
+
+	// find the iteration
+	iteration, err := h.iterationStore.FindIterationBefore(createdAt)
+
+	if err != nil {
+		utils.WriteError(w, http.StatusNotFound, fmt.Errorf("iteartion with createdAt before to [%s] not found", createdAt.String()))
+		return
+	}
+
+	utils.WriteJSON(w, http.StatusOK, iteration)
 }
 
 func (h *Handler) handleUpdate(w http.ResponseWriter, r *http.Request) {
 	// get id from path param
-	id, err := utils.ParsePathParam(r, "id")
+	id, err := utils.ParsePathParamInt(r, "id")
 
 	if err != nil {
 		utils.WriteError(w, http.StatusBadRequest, err)
