@@ -30,7 +30,6 @@ export default function ExerciseFilterForm() {
     setFilter,
   }));
 
-  console.log({ filter });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),

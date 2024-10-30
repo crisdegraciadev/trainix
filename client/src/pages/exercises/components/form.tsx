@@ -2,22 +2,23 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
+import { MultiSelect } from "@/components/multi-select";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { queryClient } from "@/core/api/client";
 import { useCreateExerciseMutation } from "@/core/api/mutations/use-create-exercise-mutation";
+import { useUpdateExerciseMutation } from "@/core/api/mutations/use-update-exercise-mutation";
 import { useFindAllDifficulties } from "@/core/api/queries/use-find-all-difficulties";
 import { useFindAllMuscles } from "@/core/api/queries/use-find-all-muscles";
+import { QueryKeys } from "@/core/api/query-keys";
 import { useToast } from "@/core/hooks/use-toast";
 import { Difficulty, Muscle } from "@/core/types";
+import { formatString, StrFormat } from "@/core/utils/string";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoaderCircle } from "lucide-react";
-import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useExerciseHybridViewStore } from "../state/exercise-hybrid-view-store";
-import { MultiSelect } from "@/components/multi-select";
-import { useUpdateExerciseMutation } from "@/core/api/mutations/use-update-exercise-mutation";
-import { formatString, StrFormat } from "@/core/utils/string";
 
 type Props = {
   defaultValues?: {
@@ -52,8 +53,15 @@ export default function ExerciseForm({ defaultValues, exerciseId }: Props) {
 
   const setFormOpen = useExerciseHybridViewStore(({ setFormOpen }) => setFormOpen);
 
-  const { mutate: createExercise, isSuccess: isSuccessCreate, isError: isErrorCreate, isPending: isPendingCreate } = useCreateExerciseMutation();
-  const { mutate: updateExercise, isSuccess: isSuccessUpdate, isError: isErrorUpdate, isPending: isPendingUpdate } = useUpdateExerciseMutation();
+  const { mutate: createExercise, isPending: isPendingCreate } = useCreateExerciseMutation({
+    handleSuccess: handleSuccessCreate,
+    handlError: handleErrorCreate,
+  });
+
+  const { mutate: updateExercise, isPending: isPendingUpdate } = useUpdateExerciseMutation({
+    handleSuccess: handleSuccessUpdate,
+    handlError: handleErrorUpdate,
+  });
 
   const { toast } = useToast();
 
@@ -70,47 +78,43 @@ export default function ExerciseForm({ defaultValues, exerciseId }: Props) {
     }
   }
 
-  useEffect(() => {
-    if (isSuccessUpdate) {
-      toast({
-        title: "Exercise updated!",
-        description: "Your exercise has been updated successfully.",
-      });
+  function handleSuccessUpdate() {
+    queryClient.invalidateQueries({ queryKey: QueryKeys.FILTER_EXERCISES });
 
-      setFormOpen(false);
-    }
-  }, [setFormOpen, isSuccessUpdate, toast]);
+    toast({
+      title: "Exercise updated!",
+      description: "Your exercise has been updated successfully.",
+    });
 
-  useEffect(() => {
-    if (isErrorUpdate) {
-      toast({
-        title: "Whoops! Something went wrong.",
-        description: "Your exercise hasn't been updated.",
-        variant: "destructive",
-      });
-    }
-  }, [toast, isErrorUpdate]);
+    setFormOpen(false);
+  }
 
-  useEffect(() => {
-    if (isSuccessCreate) {
-      toast({
-        title: "Exercise created!",
-        description: "Your exercise has been created successfully.",
-      });
+  function handleErrorUpdate() {
+    toast({
+      title: "Whoops! Something went wrong.",
+      description: "Your exercise hasn't been updated.",
+      variant: "destructive",
+    });
+  }
 
-      setFormOpen(false);
-    }
-  }, [setFormOpen, isSuccessCreate, toast]);
+  function handleSuccessCreate() {
+    queryClient.invalidateQueries({ queryKey: QueryKeys.FILTER_EXERCISES });
 
-  useEffect(() => {
-    if (isErrorCreate) {
-      toast({
-        title: "Whoops! Something went wrong.",
-        description: "Your exercise hasn't been created.",
-        variant: "destructive",
-      });
-    }
-  }, [toast, isErrorCreate]);
+    toast({
+      title: "Exercise created!",
+      description: "Your exercise has been created successfully.",
+    });
+
+    setFormOpen(false);
+  }
+
+  function handleErrorCreate() {
+    toast({
+      title: "Whoops! Something went wrong.",
+      description: "Your exercise hasn't been created.",
+      variant: "destructive",
+    });
+  }
 
   if (!muscles || !difficulties) {
     return <p>Loading...</p>;

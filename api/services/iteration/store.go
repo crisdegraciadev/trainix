@@ -87,14 +87,43 @@ func (s *Store) FindIteration(id int) (*types.Iteration, error) {
 	return iteration, nil
 }
 
-func (s *Store) FindAllIterations(pagination types.Pagination) (iterations []types.Iteration, err error) {
-	return nil, nil
+func (s *Store) FilterAllIterations(
+	filter types.IterationFilter,
+	order types.IterationOrder,
+	pagination types.Pagination,
+) (iterations []types.Iteration, err error) {
+	query := fmt.Sprintf(
+		"SELECT * FROM iterations WHERE workoutId = %d ORDER BY createdAt %s LIMIT %d OFFSET %d",
+		filter.WorkoutID, order.CreatedAt, pagination.Take, pagination.Skip,
+	)
+
+	rows, err := s.db.Query(query)
+
+	if err != nil {
+		return nil, err
+	}
+
+	iterations = []types.Iteration{}
+
+	for rows.Next() {
+		iteration, err := s.scanRowIntoIteration(rows)
+
+		if err != nil {
+			return nil, err
+		}
+
+		iterations = append(iterations, *iteration)
+	}
+
+	rows.Close()
+
+	return iterations, nil
 }
 
-func (s *Store) CountInterations() (int, error) {
+func (s *Store) CountInterations(workoutId int) (int, error) {
 	var count int
 
-	row := s.db.QueryRow("SELECT COUNT(*) FROM iterations")
+	row := s.db.QueryRow("SELECT COUNT(*) FROM iterations WHERE workoutId = ?", workoutId)
 	err := row.Scan(&count)
 
 	if err != nil {

@@ -1,16 +1,19 @@
 import { ApiPaths } from "@/core/constants/api-paths";
-import request from "../request";
-import { useMutation } from "@tanstack/react-query";
-import { queryClient } from "../client";
-import { QueryKeys } from "../query-keys";
 import { UpdateWorkoutDTO } from "@/core/types";
+import { useMutation } from "@tanstack/react-query";
+import request from "../request";
+
+type Props = {
+  handleSuccess?: () => void;
+  handlError?: () => void;
+};
 
 type MutationProps = {
   id: string;
   dto: UpdateWorkoutDTO;
 };
 
-export function useUpdateWorkoutMutation() {
+export function useUpdateWorkoutMutation({ handleSuccess, handlError }: Props = { handleSuccess: () => {}, handlError: () => {} }) {
   function mutationFn({ id, dto }: MutationProps) {
     return request({
       url: `${ApiPaths.WORKOUTS}/${id}`,
@@ -21,8 +24,7 @@ export function useUpdateWorkoutMutation() {
 
   return useMutation({
     mutationFn,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QueryKeys.FILTER_WORKOUTS });
-    },
+    onSuccess: handleSuccess,
+    onError: handlError,
   });
 }

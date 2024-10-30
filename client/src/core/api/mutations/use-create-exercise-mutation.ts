@@ -1,24 +1,25 @@
-import { ApiPaths } from '@/core/constants/api-paths';
-import { CreateExerciseDTO } from '@/core/types';
-import { useMutation } from '@tanstack/react-query';
-import { queryClient } from '../client';
-import { QueryKeys } from '../query-keys';
-import request from '../request';
+import { ApiPaths } from "@/core/constants/api-paths";
+import { CreateExerciseDTO } from "@/core/types";
+import { useMutation } from "@tanstack/react-query";
+import request from "../request";
 
-export function useCreateExerciseMutation() {
+type Props = {
+  handleSuccess?: () => void;
+  handlError?: () => void;
+};
 
+export function useCreateExerciseMutation({ handleSuccess, handlError }: Props = { handleSuccess: () => {}, handlError: () => {} }) {
   function mutationFn(dto: CreateExerciseDTO) {
     return request({
       url: ApiPaths.EXERCISES,
-      method: 'post',
+      method: "post",
       data: { ...dto },
     });
   }
 
   return useMutation({
     mutationFn,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QueryKeys.FILTER_EXERCISES });
-    },
+    onSuccess: handleSuccess,
+    onError: handlError,
   });
 }

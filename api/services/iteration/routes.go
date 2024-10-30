@@ -3,6 +3,7 @@ package iteration
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
 	"trainix/services/auth"
 	"trainix/types"
@@ -43,7 +44,7 @@ func NewHandler(di DI) *Handler {
 
 func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("", auth.WithJWTAuth(h.handleCreate, h.userStore)).Methods("POST")
-	router.HandleFunc("/{id}", auth.WithJWTAuth(h.handleFindAll, h.userStore)).Methods("GET")
+	router.HandleFunc("/{id}", auth.WithJWTAuth(h.handleFilterAll, h.userStore)).Methods("GET")
 	router.HandleFunc("/{id}", auth.WithJWTAuth(h.handleUpdate, h.userStore)).Methods("PUT")
 	router.HandleFunc("/{id}", auth.WithJWTAuth(h.handleDelete, h.userStore)).Methods("DELETE")
 }
@@ -101,7 +102,35 @@ func (h *Handler) handleCreate(w http.ResponseWriter, r *http.Request) {
 	utils.WriteJSON(w, http.StatusCreated, nil)
 }
 
-func (h *Handler) handleFindAll(w http.ResponseWriter, r *http.Request) {
+// TODO: Add QueryIterationDTO
+func (h *Handler) handleFilterAll(w http.ResponseWriter, r *http.Request) {
+	// get JSON payload
+	var payload types.QueryIterationDTO
+
+	if err := utils.ParseJSON(r, &payload); err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
+		return
+	}
+
+	rawFilter, rawOrder := payload.Filter, payload.Order
+
+	// setup filter
+	if _, err := h.workoutStore.FindWorkout(rawFilter.WorkoutID); err != nil && rawFilter.WorkoutID != 0 {
+		utils.WriteError(w, http.StatusNotFound, err)
+		return
+	}
+
+	filter := types.IterationFilter{
+		WorkoutID: rawFilter.WorkoutID,
+	}
+
+	log.Printf("Iteration Filter Request: %v", filter)
+
+	// setup order
+	order := types.IterationOrder{
+		CreatedAt: rawOrder.CreatedAt,
+	}
+
 	// setup pagination
 	skip, err := utils.ParseQueryParam(r, "skip", 0)
 
@@ -123,13 +152,45 @@ func (h *Handler) handleFindAll(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// filter iterations
-	iterations, err := h.iterationStore.FindAllIterations(pagination)
+	iterations, err := h.iterationStore.FilterAllIterations(filter, order, pagination)
 
 	if err != nil {
 		utils.WriteError(w, http.StatusInternalServerError, err)
 		return
 	}
 
+  // build iterations with relations
+	iterationsWR, err := h.buildIterationsWithRelations(iterations)
+
+	if err != nil {
+		utils.WriteError(w, http.StatusNotFound, err)
+		return
+	}
+
+	// totalItems how many exercises where found
+	totalItems, err := h.iterationStore.CountIterations(filter.WorkoutID)
+
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	// create page
+	totalPages, pageNumber := utils.CalculatePageMetada(skip, take, totalItems)
+
+	page := types.Page[types.IterationWithRelations]{
+		Values:     iterationsWR,
+		TotalItems: totalItems,
+		TotalPages: totalPages,
+		PageNumber: pageNumber,
+		PageSize:   take,
+		PageOffset: skip,
+	}
+
+	utils.WriteJSON(w, http.StatusOK, page)
+}
+
+func (h *Handler) buildIterationsWithRelations(iterations []types.Iteration) ([]types.IterationWithRelations, error) {
 	iterationsWR := []types.IterationWithRelations{}
 
 	for _, i := range iterations {
@@ -137,8 +198,7 @@ func (h *Handler) handleFindAll(w http.ResponseWriter, r *http.Request) {
 		activities, err := h.activityStore.FindActivitiesByIteraion(i.ID)
 
 		if err != nil {
-			utils.WriteError(w, http.StatusNotFound, fmt.Errorf("related activities not found"))
-			return
+			return nil, fmt.Errorf("related activities not found")
 		}
 
 		activitiesWR := []types.ActivityWithRelations{}
@@ -147,15 +207,13 @@ func (h *Handler) handleFindAll(w http.ResponseWriter, r *http.Request) {
 			exercise, err := h.exerciseStore.FindExercise(a.ExerciseID)
 
 			if err != nil {
-				utils.WriteError(w, http.StatusNotFound, fmt.Errorf("exercise not found"))
-				return
+				return nil, fmt.Errorf("exercise not found")
 			}
 
 			status, err := h.statusStore.FindStatus(a.StatusID)
 
 			if err != nil {
-				utils.WriteError(w, http.StatusNotFound, fmt.Errorf("status not found"))
-				return
+				return nil, fmt.Errorf("status not found")
 			}
 
 			activityWithRelations := types.ActivityWithRelations{
@@ -180,27 +238,7 @@ func (h *Handler) handleFindAll(w http.ResponseWriter, r *http.Request) {
 		iterationsWR = append(iterationsWR, iterationWithRelations)
 	}
 
-	// totalItems how many exercises where found
-	totalItems, err := h.iterationStore.CountIterations()
-
-	if err != nil {
-		utils.WriteError(w, http.StatusInternalServerError, err)
-		return
-	}
-
-	// create page
-	totalPages, pageNumber := utils.CalculatePageMetada(skip, take, totalItems)
-
-	page := types.Page[types.IterationWithRelations]{
-		Values:     iterationsWR,
-		TotalItems: totalItems,
-		TotalPages: totalPages,
-		PageNumber: pageNumber,
-		PageSize:   take,
-		PageOffset: skip,
-	}
-
-	utils.WriteJSON(w, http.StatusOK, page)
+	return iterationsWR, nil
 }
 
 func (h *Handler) handleUpdate(w http.ResponseWriter, r *http.Request) {

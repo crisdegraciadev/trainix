@@ -17,6 +17,8 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useWorkoutHybridViewStore } from "../state/workout-hybrid-view-store";
+import { queryClient } from "@/core/api/client";
+import { QueryKeys } from "@/core/api/query-keys";
 
 type Props = {
   defaultValues?: {
@@ -48,8 +50,15 @@ export default function WorkoutForm({ defaultValues, workoutId }: Props) {
 
   const setFormOpen = useWorkoutHybridViewStore(({ setFormOpen }) => setFormOpen);
 
-  const { mutate: createWorkout, isSuccess: isSuccessCreate, isError: isErrorCreate, isPending: isPendingCreate } = useCreateWorkoutMutation();
-  const { mutate: updateWorkout, isSuccess: isSuccessUpdate, isError: isErrorUpdate, isPending: isPendingUpdate } = useUpdateWorkoutMutation();
+  const { mutate: createWorkout, isPending: isPendingCreate } = useCreateWorkoutMutation({
+    handleSuccess: handleSuccessCreate,
+    handlError: handleErrorCreate,
+  });
+
+  const { mutate: updateWorkout, isPending: isPendingUpdate } = useUpdateWorkoutMutation({
+    handleSuccess: handleSuccessUpdate,
+    handlError: handleErrorUpdate,
+  });
 
   const { toast } = useToast();
 
@@ -66,47 +75,43 @@ export default function WorkoutForm({ defaultValues, workoutId }: Props) {
     }
   }
 
-  useEffect(() => {
-    if (isSuccessUpdate) {
-      toast({
-        title: "Workout updated!",
-        description: "Your workout has been updated successfully.",
-      });
+  function handleSuccessCreate() {
+    queryClient.invalidateQueries({ queryKey: QueryKeys.FILTER_WORKOUTS });
 
-      setFormOpen(false);
-    }
-  }, [setFormOpen, isSuccessUpdate, toast]);
+    toast({
+      title: "Workout updated!",
+      description: "Your workout has been updated successfully.",
+    });
 
-  useEffect(() => {
-    if (isErrorUpdate) {
-      toast({
-        title: "Whoops! Something went wrong.",
-        description: "Your workout hasn't been updated.",
-        variant: "destructive",
-      });
-    }
-  }, [toast, isErrorUpdate]);
+    setFormOpen(false);
+  }
 
-  useEffect(() => {
-    if (isSuccessCreate) {
-      toast({
-        title: "Workout created!",
-        description: "Your workout has been created successfully.",
-      });
+  function handleErrorCreate() {
+    toast({
+      title: "Whoops! Something went wrong.",
+      description: "Your workout hasn't been updated.",
+      variant: "destructive",
+    });
+  }
 
-      setFormOpen(false);
-    }
-  }, [setFormOpen, isSuccessCreate, toast]);
+  function handleSuccessUpdate() {
+    queryClient.invalidateQueries({ queryKey: QueryKeys.FILTER_WORKOUTS });
 
-  useEffect(() => {
-    if (isErrorCreate) {
-      toast({
-        title: "Whoops! Something went wrong.",
-        description: "Your workout hasn't been created.",
-        variant: "destructive",
-      });
-    }
-  }, [toast, isErrorCreate]);
+    toast({
+      title: "Workout updated!",
+      description: "Your workout has been updated successfully.",
+    });
+
+    setFormOpen(false);
+  }
+
+  function handleErrorUpdate() {
+    toast({
+      title: "Whoops! Something went wrong.",
+      description: "Your workout hasn't been updated.",
+      variant: "destructive",
+    });
+  }
 
   if (!muscles || !difficulties) {
     return <p>Loading...</p>;
