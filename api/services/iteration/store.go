@@ -87,11 +87,7 @@ func (s *Store) FindIteration(id int) (*types.Iteration, error) {
 	return iteration, nil
 }
 
-func (s *Store) FilterAllIterations(
-	filter types.IterationFilter,
-	order types.IterationOrder,
-	pagination types.Pagination,
-) (iterations []types.Iteration, err error) {
+func (s *Store) FilterAllIterations(filter types.IterationFilter, order types.IterationOrder, pagination types.Pagination) (iterations []types.Iteration, err error) {
 	query := fmt.Sprintf(
 		"SELECT * FROM iterations WHERE workoutId = %d ORDER BY createdAt %s LIMIT %d OFFSET %d",
 		filter.WorkoutID, order.CreatedAt, pagination.Take, pagination.Skip,
@@ -120,7 +116,7 @@ func (s *Store) FilterAllIterations(
 	return iterations, nil
 }
 
-func (s *Store) CountInterations(workoutId int) (int, error) {
+func (s *Store) CountIterations(workoutId int) (int, error) {
 	var count int
 
 	row := s.db.QueryRow("SELECT COUNT(*) FROM iterations WHERE workoutId = ?", workoutId)

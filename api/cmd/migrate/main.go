@@ -63,4 +63,11 @@ func main() {
 			log.Fatal(err)
 		}
 	}
+
+
+	if cmd == "drop" {
+		if err := m.Drop(); err != nil && err != migrate.ErrNoChange {
+			log.Fatal(err)
+		}
+	}
 }
