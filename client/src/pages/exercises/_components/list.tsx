@@ -1,4 +1,4 @@
-import { useFindExercises } from "@/core/api/queries/use-find-exercises";
+import { useFilterExercises } from "@/core/api/queries/use-filter-exercises";
 import { useExerciseQueryStore } from "../_state/exercise-query-store";
 import ExerciseCard from "./card";
 import { LegacyRef, useEffect } from "react";
@@ -10,7 +10,7 @@ export default function ExerciseList() {
     filter,
   }));
 
-  const { data, isLoading, isError, fetchNextPage, refetch } = useFindExercises(query);
+  const { data, isLoading, isError, fetchNextPage, refetch } = useFilterExercises(query);
 
   const { ref: infiniteScrollRef } = useInfiniteScroll(fetchNextPage);
 

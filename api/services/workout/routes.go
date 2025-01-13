@@ -235,6 +235,8 @@ func (h *Handler) handleFind(w http.ResponseWriter, r *http.Request) {
 	// get id from path param
 	id, err := utils.ParsePathParamInt(r, "id")
 
+	fmt.Printf("%d", id)
+
 	if err != nil {
 		utils.WriteError(w, http.StatusBadRequest, err)
 		return
