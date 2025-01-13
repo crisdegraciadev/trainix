@@ -12,6 +12,7 @@ const router = createBrowserRouter([
   { path: AppRoutes.REGISTER, element: <RegisterPage /> },
   { path: AppRoutes.EXERCISES, element: <ExercisesPage /> },
   { path: AppRoutes.WORKOUTS, element: <WorkoutsPage /> },
+  { path: `${AppRoutes.WORKOUTS}/:id`, element: <WorkoutsPage /> },
 ]);
 
 export default function AppRouterProvider() {

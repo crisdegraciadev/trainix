@@ -1,7 +1,7 @@
 import { ORDER_SCHEMA, OrderSchema } from "@/core/types";
 import { z } from "zod";
-import { useWorkoutHybridViewStore } from "../state/workout-hybrid-view-store";
-import { useWorkoutQueryStore } from "../state/workout-query-store";
+import { useWorkoutHybridViewStore } from "../_state/workout-hybrid-view-store";
+import { useWorkoutQueryStore } from "../_state/workout-query-store";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";

@@ -9,7 +9,7 @@ import HybridView from "@/components/hybrid-view";
 import { useResolutionStore } from "@/core/state/resolution-store";
 import { useState } from "react";
 import ExerciseForm from "./form";
-import { useExerciseHybridViewStore } from "../state/exercise-hybrid-view-store";
+import { useExerciseHybridViewStore } from "../_state/exercise-hybrid-view-store";
 import { DifficultyBadge } from "@/components/difficulty-badge";
 
 export default function ExerciseDetails({ id, name, videoUrl, favourite, description, difficulty, muscles }: Exercise) {

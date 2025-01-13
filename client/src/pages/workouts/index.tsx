@@ -5,8 +5,8 @@ import TopbarLayout from "@/layouts/topbar-layout";
 import { useMediaQuery } from "@uidotdev/usehooks";
 import { PropsWithChildren, useEffect } from "react";
 import { Navigate } from "react-router-dom";
-import WorkoutToolbar from "./components/toolbar";
-import WorkoutList from "./components/list";
+import WorkoutToolbar from "./_components/toolbar";
+import WorkoutList from "./_components/list";
 
 export default function WorkoutsPage() {
   const isLoggedIn = useAuthStore(({ isLoggedIn }) => isLoggedIn);

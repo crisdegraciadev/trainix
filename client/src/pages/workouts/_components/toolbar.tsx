@@ -1,5 +1,5 @@
 import { useResolutionStore } from "@/core/state/resolution-store";
-import { useWorkoutHybridViewStore } from "../state/workout-hybrid-view-store";
+import { useWorkoutHybridViewStore } from "../_state/workout-hybrid-view-store";
 import HybridView from "@/components/hybrid-view";
 import { Button } from "@/components/ui/button";
 import { ArrowDownNarrowWide, ListFilter, PlusCircle } from "lucide-react";

@@ -1,16 +1,16 @@
-import { useFindWorkouts } from "@/core/api/queries/use-find-workouts";
-import { useWorkoutQueryStore } from "../state/workout-query-store";
-import { useInfiniteScroll } from "@/core/hooks/use-infinite-scroll";
+import { useFindExercises } from "@/core/api/queries/use-find-exercises";
+import { useExerciseQueryStore } from "../_state/exercise-query-store";
+import ExerciseCard from "./card";
 import { LegacyRef, useEffect } from "react";
-import WorkoutCard from "./card";
+import { useInfiniteScroll } from "@/core/hooks/use-infinite-scroll";
 
-export default function WorkoutList() {
-  const query = useWorkoutQueryStore(({ order, filter }) => ({
+export default function ExerciseList() {
+  const query = useExerciseQueryStore(({ order, filter }) => ({
     order,
     filter,
   }));
 
-  const { data, isLoading, isError, fetchNextPage, refetch } = useFindWorkouts(query);
+  const { data, isLoading, isError, fetchNextPage, refetch } = useFindExercises(query);
 
   const { ref: infiniteScrollRef } = useInfiniteScroll(fetchNextPage);
 
@@ -40,7 +40,7 @@ export default function WorkoutList() {
     <>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {exercises.map((exercise) => (
-          <WorkoutCard
+          <ExerciseCard
             key={exercise.name}
             id={exercise.id}
             name={exercise.name}

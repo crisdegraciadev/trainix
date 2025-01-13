@@ -6,7 +6,7 @@ import { Exercise } from "@/core/types";
 import { extractYoutubeVideoId } from "@/core/utils/url";
 import { HeartIcon } from "lucide-react";
 import { ComponentProps, forwardRef } from "react";
-import { useExerciseHybridViewStore } from "../state/exercise-hybrid-view-store";
+import { useExerciseHybridViewStore } from "../_state/exercise-hybrid-view-store";
 import ExerciseDetails from "./details";
 import { MuscleList } from "@/components/muscle-list";
 

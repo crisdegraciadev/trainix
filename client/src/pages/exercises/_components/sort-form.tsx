@@ -3,10 +3,10 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useExerciseQueryStore } from "../state/exercise-query-store";
+import { useExerciseQueryStore } from "../_state/exercise-query-store";
 
 import Unselect from "@/components/unselect";
-import { useExerciseHybridViewStore } from "../state/exercise-hybrid-view-store";
+import { useExerciseHybridViewStore } from "../_state/exercise-hybrid-view-store";
 import { ORDER_SCHEMA, OrderSchema } from "@/core/types";
 
 const formSchema = z.object({

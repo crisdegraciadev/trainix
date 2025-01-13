@@ -1,17 +1,17 @@
-import { MultiSelect } from "@/components/multi-select";
-import { Button } from "@/components/ui/button";
+import { useFindAllDifficulties } from "@/core/api/queries/use-find-all-difficulties";
+import { useFindAllMuscles } from "@/core/api/queries/use-find-all-muscles";
+import { z } from "zod";
+import { useWorkoutHybridViewStore } from "../_state/workout-hybrid-view-store";
+import { useWorkoutQueryStore } from "../_state/workout-query-store";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import Unselect from "@/components/unselect";
-import { useFindAllDifficulties } from "@/core/api/queries/use-find-all-difficulties";
-import { useFindAllMuscles } from "@/core/api/queries/use-find-all-muscles";
-import { Difficulty, Muscle } from "@/core/types";
 import { formatString, StrFormat } from "@/core/utils/string";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { useExerciseHybridViewStore } from "../state/exercise-hybrid-view-store";
-import { useExerciseQueryStore } from "../state/exercise-query-store";
+import { Difficulty, Muscle } from "@/core/types";
+import { MultiSelect } from "@/components/multi-select";
+import { Button } from "@/components/ui/button";
 
 const formSchema = z.object({
   name: z.string().optional(),
@@ -19,17 +19,18 @@ const formSchema = z.object({
   muscleIds: z.array(z.number()).optional(),
 });
 
-export default function ExerciseFilterForm() {
+export default function WorkoutFilterForm() {
   const { data: muscles } = useFindAllMuscles();
   const { data: difficulties } = useFindAllDifficulties();
 
-  const setFilterOpen = useExerciseHybridViewStore(({ setFilterOpen }) => setFilterOpen);
+  const setFilterOpen = useWorkoutHybridViewStore(({ setFilterOpen }) => setFilterOpen);
 
-  const { filter, setFilter } = useExerciseQueryStore(({ filter, setFilter }) => ({
+  const { filter, setFilter } = useWorkoutQueryStore(({ filter, setFilter }) => ({
     filter,
     setFilter,
   }));
 
+  console.log({ filter });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -63,7 +64,7 @@ export default function ExerciseFilterForm() {
               <FormItem>
                 <FormLabel>Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="Exercise name" autoComplete="off" onChange={field.onChange} defaultValue={field.value} />
+                  <Input placeholder="Workout name" autoComplete="off" onChange={field.onChange} defaultValue={field.value} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

@@ -18,7 +18,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { LoaderCircle } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useExerciseHybridViewStore } from "../state/exercise-hybrid-view-store";
+import { useExerciseHybridViewStore } from "../_state/exercise-hybrid-view-store";
 
 type Props = {
   defaultValues?: {

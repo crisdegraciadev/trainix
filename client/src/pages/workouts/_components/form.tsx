@@ -16,7 +16,7 @@ import { LoaderCircle } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useWorkoutHybridViewStore } from "../state/workout-hybrid-view-store";
+import { useWorkoutHybridViewStore } from "../_state/workout-hybrid-view-store";
 import { queryClient } from "@/core/api/client";
 import { QueryKeys } from "@/core/api/query-keys";
 
