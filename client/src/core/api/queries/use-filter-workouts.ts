@@ -12,7 +12,7 @@ export function useFilterWorkouts(query: QueryWorkoutsDTO) {
       url: ApiPaths.WORKOUTS,
       method: "query",
       data: { ...query },
-      params: { ...params, ...query },
+      params: { ...params  },
     });
   }
 

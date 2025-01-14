@@ -2,6 +2,7 @@ export * from "./auth";
 export * from "./common";
 export * from "./difficulty";
 export * from "./exercise";
+export * from "./iterations";
 export * from "./muscle";
 export * from "./schemas";
 export * from "./user";

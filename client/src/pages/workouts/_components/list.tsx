@@ -33,7 +33,7 @@ export default function WorkoutList() {
     return (
       <div className="flex flex-col items-center">
         <img className="mt-[22vh] w-128 mb-4" src="/empty_exercises.svg" />
-        <p className="text-muted-foreground md:text-xl text-lg">No exercises created yet.</p>
+        <p className="text-muted-foreground md:text-xl text-lg">No workouts created yet.</p>
       </div>
     );
   }

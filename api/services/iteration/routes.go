@@ -44,7 +44,7 @@ func NewHandler(di DI) *Handler {
 
 func (h *Handler) RegisterRoutes(router *mux.Router) {
 	router.HandleFunc("", auth.WithJWTAuth(h.handleCreate, h.userStore)).Methods("POST")
-	router.HandleFunc("/{id}", auth.WithJWTAuth(h.handleFilterAll, h.userStore)).Methods("GET")
+	router.HandleFunc("", auth.WithJWTAuth(h.handleFilter, h.userStore)).Methods("QUERY")
 	router.HandleFunc("/{id}", auth.WithJWTAuth(h.handleUpdate, h.userStore)).Methods("PUT")
 	router.HandleFunc("/{id}", auth.WithJWTAuth(h.handleDelete, h.userStore)).Methods("DELETE")
 }
@@ -103,7 +103,7 @@ func (h *Handler) handleCreate(w http.ResponseWriter, r *http.Request) {
 }
 
 // TODO: Add QueryIterationDTO
-func (h *Handler) handleFilterAll(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) handleFilter(w http.ResponseWriter, r *http.Request) {
 	// get JSON payload
 	var payload types.QueryIterationDTO
 

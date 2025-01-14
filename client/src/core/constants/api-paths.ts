@@ -6,4 +6,5 @@ export const ApiPaths = {
   WORKOUTS: "/workouts",
   MUSCLES: "/muscles",
   DIFFICULTIES: "/difficulties",
+  ITERATIONS: "/iterations",
 };

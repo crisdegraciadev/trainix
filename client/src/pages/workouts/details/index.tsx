@@ -6,6 +6,7 @@ import TopbarLayout from "@/layouts/topbar-layout";
 import { useMediaQuery } from "@uidotdev/usehooks";
 import { PropsWithChildren, useEffect } from "react";
 import { Navigate, useParams } from "react-router-dom";
+import IterationList from "./_components/list";
 
 export default function WorkoutDetailsPage() {
   const isLoggedIn = useAuthStore(({ isLoggedIn }) => isLoggedIn);
@@ -13,11 +14,9 @@ export default function WorkoutDetailsPage() {
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
   const { id } = useParams();
-  const workoutId = id ?? "";
+  const workoutId = Number(id) ?? 0;
 
-  const { data, isLoading } = useFindWorkout(workoutId);
-
-  console.log({ id, data });
+  const { data: workout, isLoading } = useFindWorkout(workoutId);
 
   useEffect(() => {
     setIsDesktop(isDesktop);
@@ -26,7 +25,7 @@ export default function WorkoutDetailsPage() {
   const PageLayout = ({ children }: PropsWithChildren) => (
     <TopbarLayout>
       <header>
-        <h1 className="text-4xl font-semibold">Workouts</h1>
+        <h1 className="text-4xl font-semibold">{workout?.name}</h1>
       </header>
       <main className="space-y-4">{children}</main>
     </TopbarLayout>
@@ -36,13 +35,14 @@ export default function WorkoutDetailsPage() {
     return <Navigate to={AppRoutes.LOGIN} />;
   }
 
-  if (isLoading || !data) {
+  if (isLoading || !workout) {
     return <p>Loading</p>;
   }
 
   return (
     <PageLayout>
       <p>Workout details</p>
+      <IterationList workoutId={workoutId} />
     </PageLayout>
   );
 }

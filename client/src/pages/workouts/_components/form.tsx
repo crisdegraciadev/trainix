@@ -4,21 +4,20 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { queryClient } from "@/core/api/client";
 import { useCreateWorkoutMutation } from "@/core/api/mutations/use-create-workout-mutation";
 import { useUpdateWorkoutMutation } from "@/core/api/mutations/use-update-workout-mutation";
 import { useFindAllDifficulties } from "@/core/api/queries/use-find-all-difficulties";
 import { useFindAllMuscles } from "@/core/api/queries/use-find-all-muscles";
+import { QueryKeys } from "@/core/api/query-keys";
 import { useToast } from "@/core/hooks/use-toast";
 import { Difficulty, Muscle } from "@/core/types";
 import { formatString, StrFormat } from "@/core/utils/string";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoaderCircle } from "lucide-react";
-import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useWorkoutHybridViewStore } from "../_state/workout-hybrid-view-store";
-import { queryClient } from "@/core/api/client";
-import { QueryKeys } from "@/core/api/query-keys";
 
 type Props = {
   defaultValues?: {
