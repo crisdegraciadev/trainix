@@ -77,8 +77,8 @@ func (s *Store) FindActivitiesByIteraion(iterationId int) ([]types.Activity, err
 }
 
 func (s *Store) CreateActivity(tx *sql.Tx, iterationId int, activity types.Activity) error {
-	_, err := tx.Exec("INSERT INTO activities (name, sets, reps, statusId, exerciseId, iterationId) VALUES (?,?,?,?,?,?)",
-		activity.Name, activity.Sets, activity.Reps, activity.StatusID, activity.ExerciseID, iterationId,
+	_, err := tx.Exec("INSERT INTO activities (name, sets, reps, order, statusId, exerciseId, iterationId) VALUES (?,?,?,?,?,?)",
+		activity.Name, activity.Sets, activity.Reps, activity.Order, activity.StatusID, activity.ExerciseID, iterationId,
 	)
 
 	if err != nil {

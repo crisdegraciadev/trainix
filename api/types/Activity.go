@@ -18,6 +18,7 @@ type Activity struct {
 	Name        string    `json:"name"`
 	Sets        int       `json:"sets"`
 	Reps        int       `json:"reps"`
+	Order      int    `json:"order"`
 	StatusID    int       `json:"statusID"`
 	ExerciseID  int       `json:"exerciseID"`
 	IterationID int       `json:"iterationId"`
@@ -38,6 +39,7 @@ type CreateActivityDTO struct {
 	Name       string `json:"name"`
 	Sets       int    `json:"sets"`
 	Reps       int    `json:"reps"`
+	Order      int    `json:"order"`
 	StatusID   int    `json:"statusID"`
 	ExerciseID int    `json:"exerciseID"`
 }
